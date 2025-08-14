@@ -1,0 +1,9 @@
+*.class
+*.jar
+*.war
+target/
+WEB-INF/lib/
+logs/
+*.log
+.idea/
+.vscode/
