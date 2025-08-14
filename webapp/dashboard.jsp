@@ -20,17 +20,15 @@
     double totalFee = 0;
     double totalPaid = 0;
 %>
-<html>
-<head>
-    <title>Parent Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <h2>Parent Dashboard</h2>
-        <p>Welcome, <%= username %>!</p>
-        
-        <div class="dashboard-section">
+<% request.setAttribute("title", "Dashboard"); %>
+<%@ include file="/WEB-INF/jspf/header.jspf" %>
+
+<div class="page-section">
+    <h2>Parent Dashboard</h2>
+    <p>Welcome, <%= username %>!</p>
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
             <h3>Recent Attendance</h3>
             <%
                 try {
@@ -70,18 +68,22 @@
                         rs = pstmt.executeQuery();
             %>
             <table>
-                <tr>
-                    <th>Course</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
                 <% while (rs.next()) { %>
                 <tr>
-                    <td><%= rs.getString("CourseName") %></td>
-                    <td><%= rs.getDate("SessionDate") %></td>
-                    <td><%= rs.getString("Status") %></td>
+                    <td data-label="Course"><%= rs.getString("CourseName") %></td>
+                    <td data-label="Date"><%= rs.getDate("SessionDate") %></td>
+                    <td data-label="Status"><%= rs.getString("Status") %></td>
                 </tr>
                 <% } %>
+                </tbody>
             </table>
             <%
                         rs.close();
@@ -97,7 +99,7 @@
             %>
         </div>
         
-        <div class="dashboard-section">
+        <div class="dashboard-card">
             <h3>Upcoming Events</h3>
             <%
                 try {
@@ -131,18 +133,22 @@
                         rs = pstmt.executeQuery();
             %>
             <table>
-                <tr>
-                    <th>Event</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
                 <% while (rs.next()) { %>
                 <tr>
-                    <td><%= rs.getString("EventName") %></td>
-                    <td><%= rs.getString("EventType") %></td>
-                    <td><%= rs.getDate("EventDate") %></td>
+                    <td data-label="Event"><%= rs.getString("EventName") %></td>
+                    <td data-label="Type"><%= rs.getString("EventType") %></td>
+                    <td data-label="Date"><%= rs.getDate("EventDate") %></td>
                 </tr>
                 <% } %>
+                </tbody>
             </table>
             <%
                     }
@@ -156,7 +162,7 @@
             %>
         </div>
         
-        <div class="dashboard-section">
+        <div class="dashboard-card">
             <h3>Fee Status</h3>
             <%
                 try {
@@ -204,8 +210,7 @@
                 }
             %>
         </div>
-        
-        <p><a href="index.jsp">Logout</a></p>
     </div>
-</body>
-</html>
+</div>
+
+<%@ include file="/WEB-INF/jspf/footer.jspf" %>

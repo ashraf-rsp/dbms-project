@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Center - <%= request.getAttribute("title") != null ? request.getAttribute("title") : "Management System" %></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">Academic Center</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard.jsp">Dashboard</a></li>
+                    <li><a href="mark_absent.jsp">Mark Absent</a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="logout.jsp">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="container">

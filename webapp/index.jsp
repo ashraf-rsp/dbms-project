@@ -1,10 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Parent Login - Academic Center</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
+<% request.setAttribute("title", "Login"); %>
+<%@ include file="/WEB-INF/jspf/header.jspf" %>
+
+<div class="login-page-wrapper">
     <div class="login-container">
         <%
             String error = request.getParameter("error");
@@ -30,5 +28,6 @@
             </div>
         </form>
     </div>
-</body>
-</html>
+</div>
+
+<%@ include file="/WEB-INF/jspf/footer.jspf" %>
