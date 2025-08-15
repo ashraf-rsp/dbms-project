@@ -2,14 +2,6 @@
 <%
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean"; // Default theme
-
-    // Mock data for student profile
-    String studentName = "Jane Doe";
-    String studentId = "STD12345";
-    String gradeLevel = "10th Grade";
-    String dateOfBirth = "2008-05-15";
-    String address = "123 Main St, Anytown, USA";
-    String parentContact = "John Doe (john.doe@example.com)";
 %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
@@ -34,12 +26,12 @@
                     <img src="assets/images/placeholder-student.png" alt="Student Avatar">
                 </div>
                 <div class="profile-details">
-                    <h3><%= studentName %></h3>
-                    <p><strong>Student ID:</strong> <%= studentId %></p>
-                    <p><strong>Grade Level:</strong> <%= gradeLevel %></p>
-                    <p><strong>Date of Birth:</strong> <%= dateOfBirth %></p>
-                    <p><strong>Address:</strong> <%= address %></p>
-                    <p><strong>Parent Contact:</strong> <%= parentContact %></p>
+                    <h3>Jane Doe</h3> <%-- Replaced <%= studentName %> --%>
+                    <p><strong>Student ID:</strong> STD12345</p> <%-- Replaced <%= studentId %> --%>
+                    <p><strong>Grade Level:</strong> 10th Grade</p> <%-- Replaced <%= gradeLevel %> --%>
+                    <p><strong>Date of Birth:</strong> 2008-05-15</p> <%-- Replaced <%= dateOfBirth %> --%>
+                    <p><strong>Address:</strong> 123 Main St, Anytown, USA</p> <%-- Replaced <%= address %> --%>
+                    <p><strong>Parent Contact:</strong> John Doe (john.doe@example.com)</p> <%-- Replaced <%= parentContact %> --%>
                 </div>
             </div>
         </main>

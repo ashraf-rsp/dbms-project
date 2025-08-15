@@ -59,7 +59,7 @@
                 
                 <!-- Mobile Card View -->
                 <div class="mobile-cards">
-                    <% for (int i = 0; i = courses.length; i++) { %>
+                    <% for (int i = 0; i < courses.length; i++) { %>
                         <div class="course-card">
                             <div class="card-header">
                                 <h4><%= courses[i][0] %></h4>

@@ -38,6 +38,13 @@ body {
     font-size: 1.8rem;
 }
 
+.main-header .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
 .main-header .header-actions {
     display: flex;
     align-items: center;
@@ -53,11 +60,11 @@ body {
     background: var(--accent-rose);
     color: white;
     border-radius: 50%;
-    padding: 2px 66px;
+    padding: 2px 6px;
     font-size: 0.7rem;
     position: absolute;
     top: -5px;
-    right: -5px;
+    right: -10px; /* Adjusted position */
 }
 
 .main-header .user-menu {
@@ -126,8 +133,8 @@ body {
 
 /* Footer Styles (from footer.jsp) */
 .main-footer {
-    background: var(--gray-800);
-    color: var(--gray-200);
+    background: var(--bg-tertiary);
+    color: var(--gray-500);
     text-align: center;
     padding: 1rem 20px;
     box-shadow: var(--shadow-sm);
@@ -353,12 +360,14 @@ body {
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;
-        /* Add padding-left to make space for the sidebar when it's open */
-        transition: padding-left 0.3s ease-in-out;
     }
 
-    .main-container.sidebar-open {
-        padding-left: 250px; /* Adjust based on sidebar width */
+    .content-area { /* Apply padding to content-area */
+        transition: margin-left 0.3s ease-in-out; /* Use margin-left to push content */
+    }
+
+    .main-container.sidebar-open .content-area {
+        margin-left: 250px; /* Push content when sidebar is open */
     }
 
     .sidebar {

@@ -1,9 +1,4 @@
-*.class
-*.jar
+.trashed-*
+Screenshot_*.jpg
 *.war
-target/
-WEB-INF/lib/
-logs/
-*.log
-.idea/
-.vscode/
+webapp/WEB-INF/lib/
