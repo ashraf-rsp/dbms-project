@@ -28,10 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const mainContainer = document.querySelector('.main-container'); // Get main container
 
-    if (mobileMenuToggle && sidebar && mainContainer) {
+    if (mobileMenuToggle && sidebar && mainContainer && !mobileMenuToggle.dataset.listenerAttached) {
         mobileMenuToggle.addEventListener('click', function() {
+            console.log('Hamburger menu clicked!');
             sidebar.classList.toggle('active');
             mainContainer.classList.toggle('sidebar-open'); // Toggle class on main container
         });
+        mobileMenuToggle.dataset.listenerAttached = 'true'; // Set a flag
     }
 });
