@@ -1,0 +1,441 @@
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-primary);
+    color: var(--gray-700);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Main Container Layout */
+.main-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Content Area */
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    background: var(--bg-secondary);
+}
+
+/* Header Styles (from header.jsp) */
+.main-header {
+    background: var(--primary-600);
+    color: white;
+    padding: 1rem 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-md);
+}
+
+.main-header .logo-section h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.main-header .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.main-header .notification-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.main-header .notification-count {
+    background: var(--accent-rose);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 66px;
+    font-size: 0.7rem;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+.main-header .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.main-header .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.main-header .mobile-menu-toggle {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Sidebar Styles (from sidebar.jsp) */
+.sidebar {
+    width: 250px;
+    background: var(--gray-50);
+    padding: 20px 0;
+    box-shadow: var(--shadow-md);
+    transition: width 0.3s ease, transform 0.3s ease; /* Keep for desktop */
+}
+
+.sidebar .nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar .nav-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--gray-600);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar .nav-menu li a i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.sidebar .nav-menu li a:hover {
+    background: var(--gray-100);
+    color: var(--primary-600);
+}
+
+.sidebar .nav-menu li a.active {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    font-weight: 600;
+    border-left: 4px solid var(--primary-600);
+}
+
+/* Footer Styles (from footer.jsp) */
+.main-footer {
+    background: var(--gray-800);
+    color: var(--gray-200);
+    text-align: center;
+    padding: 1rem 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.page-header h2 {
+    margin: 0;
+    color: var(--gray-700);
+}
+
+.page-header .term-selector select {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--gray-700);
+}
+
+/* Card Styles (general) */
+.summary-card, .profile-card, .message-card, .announcement-card, .schedule-card, .teacher-card, .course-card, .grade-card, .attendance-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Table Styles (general) */
+.data-table-container {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto; /* For responsive tables */
+    margin-bottom: 20px;
+}
+
+.data-table-container .table-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table-container .table-header h3 {
+    margin: 0;
+    color: var(--gray-700);
+}
+
+.responsive-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.responsive-table th, .responsive-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--gray-600);
+}
+
+.responsive-table th {
+    background-color: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+/* Mobile Card View */
+.mobile-cards {
+    display: none; /* Hidden by default, shown on mobile */
+}
+
+/* Specific Card Styles */
+.grade-card, .attendance-card, .message-card, .announcement-card, .schedule-card, .teacher-card, .course-card {
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.grade-card .card-header, .attendance-card .card-header, .message-card .card-header, .announcement-card .card-header, .schedule-card .card-header, .teacher-card .card-header, .course-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--gray-50);
+}
+
+.grade-card .card-body, .attendance-card .card-body, .message-card .card-body, .announcement-card .card-body, .schedule-card .card-body, .teacher-card .card-body, .course-card .card-body {
+    padding: 10px 15px;
+}
+
+/* Grade Badges */
+.grade-badge, .status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+/* Grade-specific styling for JSP-generated content */
+.grade-badge.grade-a { background: var(--success); }
+.grade-badge.grade-b { background: var(--primary-500); }
+.grade-badge.grade-c { background: var(--warning); color: var(--dark-text); }
+.grade-badge.grade-d { background: var(--danger); }
+.grade-badge.grade-f { background: var(--error); }
+
+/* Status Badges (for attendance) */
+.status-badge.status-present { background: var(--accent-emerald); }
+.status-badge.status-absent { background: var(--accent-rose); }
+.status-badge.status-tardy { background: var(--accent-amber); }
+
+
+/* Login Page Specific Styles */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--bg-primary);
+}
+
+.login-container {
+    background: var(--surface-elevated);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-container h2 {
+    color: var(--primary-600);
+    margin-bottom: 30px;
+}
+
+.login-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.login-container .input-field {
+    width: calc(100% - 24px); /* Adjust for padding */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--gray-800);
+}
+
+.login-container .button {
+    background: var(--primary-600);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    width: 100%;
+}
+
+.login-container .button:hover {
+    background: var(--primary-700);
+}
+
+/* Profile Card Specific Styles */
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.profile-card .profile-avatar {
+    flex-shrink: 0;
+}
+
+.profile-card .profile-avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-500);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-card .profile-details h3 {
+    margin-top: 0;
+    color: var(--primary-700);
+}
+
+.profile-card .profile-details p {
+    margin-bottom: 8px;
+    color: var(--gray-600);
+}
+
+/* Container for main content within content-area */
+.container {
+    max-width: 1200px; /* Or adjust as needed */
+    margin: 0 auto;
+    padding: 0 20px; /* Add horizontal padding */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        /* Add padding-left to make space for the sidebar when it's open */
+        transition: padding-left 0.3s ease-in-out;
+    }
+
+    .main-container.sidebar-open {
+        padding-left: 250px; /* Adjust based on sidebar width */
+    }
+
+    .sidebar {
+        width: 250px; /* Fixed width for mobile sidebar */
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%); /* Hidden by default */
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+        box-shadow: var(--shadow-lg); /* Add shadow for depth */
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+        transform: translateX(0); /* Show when active */
+    }
+
+    .sidebar .nav-menu li a {
+        justify-content: flex-start; /* Align text to left in mobile sidebar */
+    }
+
+    .main-header .mobile-menu-toggle {
+        display: block;
+    }
+
+    .main-header .header-actions {
+        display: none; /* Hide on mobile */
+    }
+
+    .content-area {
+        padding: 15px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-header .term-selector {
+        margin-top: 10px;
+    }
+
+    .responsive-table table {
+        display: none; /* Hide table on mobile */
+    }
+
+    .mobile-cards {
+        display: block; /* Show cards on mobile */
+    }
+
+    .login-container {
+        margin: 20px;
+        padding: 30px;
+    }
+
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-card .profile-avatar {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0.8rem 15px;
+    }
+
+    .main-header .logo-section h1 {
+        font-size: 1.5rem;
+    }
+
+    .login-container {
+        padding: 20px;
+    }
+}

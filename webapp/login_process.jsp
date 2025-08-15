@@ -21,14 +21,14 @@
         if (rs.next()) {
             // User authenticated successfully
             session.setAttribute("username", username);
-            response.sendRedirect("dashboard.jsp");
+            response.sendRedirect("index.jsp");
         } else {
             // Authentication failed
-            response.sendRedirect("index.jsp?error=1");
+            response.sendRedirect("login.jsp?error=1");
         }
     } catch (Exception e) {
         e.printStackTrace();
-        response.sendRedirect("index.jsp?error=2");
+        response.sendRedirect("login.jsp?error=2");
     } finally {
         if (rs != null) try { rs.close(); } catch (Exception e) {}
         if (pstmt != null) try { pstmt.close(); } catch (Exception e) {}

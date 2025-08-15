@@ -1,0 +1,40 @@
+.attendance-records {
+    display: flex; /* Use flexbox */
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 20px; /* Space between columns */
+    margin-top: 20px;
+}
+
+.calendar-view, .detailed-records {
+    flex: 1; /* Allow items to grow and shrink */
+    min-width: 300px; /* Minimum width before wrapping */
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+
+.calendar-view ul {
+    list-style: none;
+    padding: 0;
+}
+
+.calendar-view ul li {
+    padding: 5px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+.calendar-view ul li:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .attendance-records {
+        flex-direction: column; /* Stack calendar and detailed records */
+    }
+
+    .calendar-view, .detailed-records {
+        min-width: unset; /* Remove min-width when stacked */
+        width: 100%; /* Take full width when stacked */
+    }
+}
