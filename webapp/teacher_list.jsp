@@ -1,42 +1,56 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ include file="db_connection.jsp" %>
+<%@ include file="includes/auth_check.jspf" %>
+<%
+    // This page is accessible by all logged-in users.
+    String userRole = (String) session.getAttribute("userRole");
+    Integer userId = (Integer) session.getAttribute("userId");
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+%>
 <%@ include file="WEB-INF/jspf/header.jspf" %>
 <main class="container">
     <h1>Teacher List</h1>
     <section class="teacher-list-section">
         <h2>Our Faculty</h2>
         <div class="teacher-grid">
+            <%
+                try {
+                    conn = getConnection();
+                    String sql = "SELECT UserID, Username FROM Users WHERE UserType = 'Teacher' ORDER BY Username";
+                    pstmt = conn.prepareStatement(sql);
+                    rs = pstmt.executeQuery();
+                    if (!rs.isBeforeFirst()) { // Check if ResultSet is empty
+                        out.println("<p>No teachers found.</p>");
+                    } else {
+                        while (rs.next()) {
+            %>
             <div class="teacher-card">
                 <img src="assets/images/placeholder-teacher.png" alt="Teacher Photo" class="teacher-photo">
-                <h3>John Doe</h3>
-                <p><strong>Subject:</strong> Mathematics</p>
-                <p><strong>Email:</strong> john.doe@example.com</p>
-                <p><strong>Phone:</strong> (123) 456-7890</p>
-                <a href="messages.jsp?composeTo=john.doe@example.com" class="button primary-button"><i class="fas fa-envelope"></i> Contact</a>
+                <h3><%= rs.getString("Username") %></h3>
+                <p><strong>Subject:</strong> N/A</p> <%-- Subject not available in Users table --%>
+                <p><strong>Email:</strong> N/A</p> <%-- Email not available in Users table --%>
+                <p><strong>Phone:</strong> N/A</p> <%-- Phone not available in Users table --%>
+                <a href="messages.jsp?composeTo=<%= rs.getString("Username") %>" class="button primary-button"><i class="fas fa-envelope"></i> Contact</a>
             </div>
-            <div class="teacher-card">
-                <img src="assets/images/placeholder-teacher.png" alt="Teacher Photo" class="teacher-photo">
-                <h3>Jane Smith</h3>
-                <p><strong>Subject:</strong> Science</p>
-                <p><strong>Email:</strong> jane.smith@example.com</p>
-                <p><strong>Phone:</strong> (123) 987-6543</p>
-                <a href="messages.jsp?composeTo=jane.smith@example.com" class="button primary-button"><i class="fas fa-envelope"></i> Contact</a>
-            </div>
-            <div class="teacher-card">
-                <img src="assets/images/placeholder-teacher.png" alt="Teacher Photo" class="teacher-photo">
-                <h3>Robert Johnson</h3>
-                <p><strong>Subject:</strong> History</p>
-                <p><strong>Email:</strong> robert.j@example.com</p>
-                <p><strong>Phone:</strong> (123) 111-2222</p>
-                <a href="messages.jsp?composeTo=robert.j@example.com" class="button primary-button"><i class="fas fa-envelope"></i> Contact</a>
-            </div>
-            <div class="teacher-card">
-                <img src="assets/images/placeholder-teacher.png" alt="Teacher Photo" class="teacher-photo">
-                <h3>Emily White</h3>
-                <p><strong>Subject:</strong> English</p>
-                <p><strong>Email:</strong> emily.w@example.com</p>
-                <p><strong>Phone:</strong> (123) 333-4444</p>
-                <a href="messages.jsp?composeTo=emily.w@example.com" class="button primary-button"><i class="fas fa-envelope"></i> Contact</a>
-            </div>
+            <%
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error loading teacher list: " + e.getMessage());
+                    out.println("<p>Error loading teacher list. Please try again.</p>");
+                } finally {
+                    if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
+                    if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+                    if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
+                }
+            %>
         </div>
     </section>
 </main>

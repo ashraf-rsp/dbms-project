@@ -19,12 +19,10 @@
             <div class="login-page-wrapper">
                 <div class="login-container">
                     <%
-                        String error = request.getParameter("error");
-                        if (error != null && error.equals("1")) {
-                            out.println("<p style='color:red;'>Invalid username or password.</p>");
-                        }
-                        if (error != null && error.equals("2")) {
-                            out.println("<p style='color:red;'>An error occurred. Please try again.</p>");
+                        String loginError = (String) session.getAttribute("loginError");
+                        if (loginError != null) {
+                            out.println("<p style='color:red;'>" + loginError + "</p>");
+                            session.removeAttribute("loginError"); // Clear the error after displaying
                         }
                     %>
                     <h2>Parent Login</h2>

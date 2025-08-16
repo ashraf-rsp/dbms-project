@@ -1,0 +1,32 @@
+<%@ page import="java.util.logging.Logger" %>
+<%@ page import="java.util.logging.Level" %>
+<%
+    // This fragment should be included at the top of any protected JSP page.
+    // It checks if a user is logged in and, optionally, if they have a required role.
+
+    Logger authLogger = Logger.getLogger("AuthCheck");
+
+    // Check if user is logged in
+    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    String userRole = (String) session.getAttribute("userRole");
+
+    if (loggedInUser == null || loggedInUser.isEmpty()) {
+        authLogger.log(Level.WARNING, "Unauthorized access attempt: User not logged in. Redirecting to login.jsp");
+        response.sendRedirect("login.jsp");
+        return; // Stop further processing of the page
+    }
+
+    // Optional: Check for required roles
+    // To use this, set a request attribute like: request.setAttribute("requiredRole", "Admin");
+    String requiredRole = (String) request.getAttribute("requiredRole");
+    if (requiredRole != null && !requiredRole.isEmpty()) {
+        if (userRole == null || !userRole.equals(requiredRole)) {
+            authLogger.log(Level.WARNING, "Unauthorized access attempt for user {0} with role {1}. Required role: {2}. Redirecting to access_denied.jsp", new Object[]{loggedInUser, userRole, requiredRole});
+            // You might want to create an access_denied.jsp page
+            response.sendRedirect("access_denied.jsp"); // Or redirect to dashboard with an error
+            return; // Stop further processing
+        }
+    }
+
+    // If execution reaches here, the user is logged in and authorized.
+%>
