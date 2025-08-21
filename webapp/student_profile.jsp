@@ -1,62 +1,73 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Student or Parent can access this page
     String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
+    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    int userId = (Integer) session.getAttribute("userId");
 
     if (!"Student".equals(userRole) && !"Parent".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-
     int studentId = -1;
     String studentFirstName = "";
     String studentLastName = "";
     String studentDOB = "";
-    String enrollmentDate = "N/A"; // Assuming EnrollmentDate is in Enrollments table
-    String currentClass = "N/A"; // Assuming CurrentClass is in Courses table via Enrollments
+    String enrollmentDate = "N/A";
+    String currentClass = "N/A";
 
     String parentFirstName = "";
     String parentLastName = "";
     String parentEmail = "";
     String parentPhone = "";
 
-    try {
-        conn = getConnection();
+    List<Integer> linkedStudentIds = new ArrayList<>();
+    List<String> linkedStudentNames = new ArrayList<>();
 
-        // Determine studentId based on userRole
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
         if ("Student".equals(userRole)) {
-            studentId = userId; // Assumption: UserID is StudentID for Student users
+            studentId = userId;
         } else if ("Parent".equals(userRole)) {
-            // If parent, get studentId from request parameter or linked student
+            String sqlAllLinkedStudents = "SELECT s.StudentID, s.FirstName, s.LastName FROM Students s JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID JOIN Users u ON spl.ParentID = u.ParentID WHERE u.UserID = ?";
+            pstmt = conn.prepareStatement(sqlAllLinkedStudents);
+            pstmt.setInt(1, userId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                linkedStudentIds.add(rs.getInt("StudentID"));
+                linkedStudentNames.add(rs.getString("FirstName") + " " + rs.getString("LastName"));
+            }
+            rs.close();
+            pstmt.close();
+
+            if (linkedStudentIds.isEmpty()) {
+                out.println("<p>No students linked to your account.</p>");
+                return;
+            }
+
             String paramStudentId = request.getParameter("studentId");
             if (paramStudentId != null && !paramStudentId.isEmpty()) {
-                studentId = Integer.parseInt(paramStudentId);
-                // IMPORTANT: Add logic here to verify this studentId is linked to the logged-in parent
-                // For now, assuming valid studentId is passed by parent.
-            } else {
-                // If no studentId param, try to get the first linked student for this parent
-                String sqlParentLinkedStudent = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ? LIMIT 1";
-                pstmt = conn.prepareStatement(sqlParentLinkedStudent);
-                pstmt.setInt(1, userId);
-                rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    studentId = rs.getInt("StudentID");
+                int requestedStudentId = Integer.parseInt(paramStudentId);
+                if (linkedStudentIds.contains(requestedStudentId)) {
+                    studentId = requestedStudentId;
+                } else {
+                    session.setAttribute("message", "You do not have access to this student's profile.");
+                    response.sendRedirect("student_profile.jsp");
+                    return;
                 }
-                rs.close();
-                pstmt.close();
+            } else {
+                studentId = linkedStudentIds.get(0);
             }
         }
 
         if (studentId != -1) {
-            // Fetch Student Details
             String sqlStudent = "SELECT FirstName, LastName, DateOfBirth FROM Students WHERE StudentID = ?";
             pstmt = conn.prepareStatement(sqlStudent);
             pstmt.setInt(1, studentId);
@@ -69,7 +80,6 @@
             rs.close();
             pstmt.close();
 
-            // Fetch Parent Details (via Student_Parent_Link)
             String sqlParentDetails = "SELECT p.FirstName, p.LastName, p.Email, p.Phone FROM Parents p " +
                                     "JOIN Student_Parent_Link spl ON p.ParentID = spl.ParentID " +
                                     "WHERE spl.StudentID = ? LIMIT 1";
@@ -85,10 +95,9 @@
             rs.close();
             pstmt.close();
 
-            // Fetch Enrollment Date and Current Class (from Enrollments and Courses)
             String sqlEnrollment = "SELECT e.EnrollmentDate, c.CourseName FROM Enrollments e " +
                                  "JOIN Courses c ON e.CourseID = c.CourseID " +
-                                 "WHERE e.StudentID = ? ORDER BY e.EnrollmentDate DESC LIMIT 1"; // Get most recent enrollment
+                                 "WHERE e.StudentID = ? ORDER BY e.EnrollmentDate DESC LIMIT 1";
             pstmt = conn.prepareStatement(sqlEnrollment);
             pstmt.setInt(1, studentId);
             rs = pstmt.executeQuery();
@@ -114,9 +123,25 @@
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 %>
-<%@ include file="WEB-INF/jspf/header.jspf" %>
+<%@ include file="includes/header.jsp" %>
 <main class="container">
     <h1>Student Profile</h1>
+    <% if ("Parent".equals(userRole) && linkedStudentIds.size() > 1) { %>
+    <div class="student-selection-dropdown">
+        <label for="selectStudent">Select Child:</label>
+        <select id="selectStudent" onchange="window.location.href='student_profile.jsp?studentId=' + this.value;">
+            <%
+                for (int i = 0; i < linkedStudentIds.size(); i++) {
+                    int sId = linkedStudentIds.get(i);
+                    String sName = linkedStudentNames.get(i);
+            %>
+            <option value="<%= sId %>" <%= (sId == studentId) ? "selected" : "" %>><%= sName %></option>
+            <%
+                }
+            %>
+        </select>
+    </div>
+    <% } %>
     <section class="profile-card">
         <div class="profile-header">
             <img src="assets/images/placeholder-student.png" alt="Student Photo" class="student-photo">
@@ -175,4 +200,4 @@
         </form>
     </section>
 </main>
-<%@ include file="WEB-INF/jspf/footer.jspf" %>
+<%@ include file="includes/footer.jsp" %>

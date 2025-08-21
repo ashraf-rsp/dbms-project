@@ -1,95 +1,110 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.logging.Logger" %>
-<%@ page import="java.util.logging.Level" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
+    // Ensure only Teacher can access this page
+    
+    
 
-    // Ensure only Admin or Teacher can access this page
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
-
-    if (!"Admin".equals(userRole) && !"Teacher".equals(userRole)) {
+    if (userRole == null || !userRole.equals("Teacher") || teacherUserId == null) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    String action = request.getParameter("action");
-    String studentId = request.getParameter("studentId"); // To redirect back to the correct student's attendance
-    String status = "error";
-    String message = "An unknown error occurred.";
+    String message = "";
+    
 
     try {
-        conn = getConnection();
+        
+        conn.setAutoCommit(false); // Start transaction
 
-        if ("add".equals(action)) {
-            int enrollmentId = Integer.parseInt(request.getParameter("enrollmentId"));
-            String sessionDate = request.getParameter("sessionDate");
-            String attendanceStatus = request.getParameter("status");
-            String notes = request.getParameter("notes");
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
+        String sessionDateStr = request.getParameter("sessionDate");
+        Date sessionDate = Date.valueOf(sessionDateStr);
 
-            String sql = "INSERT INTO Attendance (EnrollmentID, SessionDate, Status, Notes) VALUES (?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, enrollmentId);
-            pstmt.setString(2, sessionDate);
-            pstmt.setString(3, attendanceStatus);
-            pstmt.setString(4, notes);
+        // Get all enrollment IDs for the given course
+        String sqlEnrollments = "SELECT EnrollmentID FROM Enrollments WHERE CourseID = ?";
+        pstmt = conn.prepareStatement(sqlEnrollments);
+        pstmt.setInt(1, courseId);
+        ResultSet rsEnrollments = pstmt.executeQuery();
 
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                status = "success";
-                message = "Attendance marked successfully!";
-                logger.log(Level.INFO, "Attendance marked for EnrollmentID: {0} on {1} with status {2} by UserID: {3}", new Object[]{enrollmentId, sessionDate, attendanceStatus, userId});
-            } else {
-                message = "Failed to mark attendance.";
-                logger.log(Level.WARNING, "Failed to mark attendance for EnrollmentID: {0} on {1} with status {2} by UserID: {3}", new Object[]{enrollmentId, sessionDate, attendanceStatus, userId});
+        // Prepare for batch insert/update
+        String sqlInsertAttendance = "INSERT INTO Attendance (EnrollmentID, SessionDate, Status) VALUES (?, ?, ?)";
+        String sqlUpdateAttendance = "UPDATE Attendance SET Status = ? WHERE EnrollmentID = ? AND SessionDate = ?";
+
+        PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsertAttendance);
+        PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdateAttendance);
+
+        boolean allSuccessful = true;
+
+        while (rsEnrollments.next()) {
+            int enrollmentId = rsEnrollments.getInt("EnrollmentID");
+            String status = request.getParameter("status_" + enrollmentId);
+
+            if (status != null) {
+                // Check if attendance record already exists for this enrollment and date
+                String sqlCheck = "SELECT COUNT(*) FROM Attendance WHERE EnrollmentID = ? AND SessionDate = ?";
+                PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck);
+                pstmtCheck.setInt(1, enrollmentId);
+                pstmtCheck.setDate(2, sessionDate);
+                ResultSet rsCheck = pstmtCheck.executeQuery();
+                rsCheck.next();
+                int count = rsCheck.getInt(1);
+                rsCheck.close();
+                pstmtCheck.close();
+
+                if (count > 0) {
+                    // Update existing record
+                    pstmtUpdate.setString(1, status);
+                    pstmtUpdate.setInt(2, enrollmentId);
+                    pstmtUpdate.setDate(3, sessionDate);
+                    pstmtUpdate.addBatch();
+                } else {
+                    // Insert new record
+                    pstmtInsert.setInt(1, enrollmentId);
+                    pstmtInsert.setDate(2, sessionDate);
+                    pstmtInsert.setString(3, status);
+                    pstmtInsert.addBatch();
+                }
             }
+        }
+        rsEnrollments.close();
+        pstmt.close();
 
-        } else if ("edit".equals(action)) {
-            int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
-            String sessionDate = request.getParameter("sessionDate");
-            String attendanceStatus = request.getParameter("status");
-            String notes = request.getParameter("notes");
+        int[] insertResults = pstmtInsert.executeBatch();
+        int[] updateResults = pstmtUpdate.executeBatch();
 
-            String sql = "UPDATE Attendance SET SessionDate = ?, Status = ?, Notes = ? WHERE AttendanceID = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, sessionDate);
-            pstmt.setString(2, attendanceStatus);
-            pstmt.setString(3, notes);
-            pstmt.setInt(4, attendanceId);
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                status = "success";
-                message = "Attendance updated successfully!";
-                logger.log(Level.INFO, "Attendance updated for AttendanceID: {0} by UserID: {1}", new Object[]{attendanceId, userId});
-            } else {
-                message = "No changes made or attendance record not found.";
-                logger.log(Level.WARNING, "Attendance update failed or no changes for AttendanceID: {0}", attendanceId);
-            }
-
-        } else {
-            message = "Invalid action.";
-            logger.log(Level.WARNING, "Invalid action received: {0}", action);
+        for (int result : insertResults) {
+            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
+        }
+        for (int result : updateResults) {
+            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
         }
 
-    } catch (NumberFormatException e) {
-        message = "Invalid numeric input.";
-        logger.log(Level.SEVERE, "NumberFormatException in mark_attendance_process.jsp: " + e.getMessage(), e);
+        if (allSuccessful) {
+            conn.commit(); // Commit transaction
+            message = "Attendance marked successfully for Course ID: " + courseId;
+        } else {
+            conn.rollback(); // Rollback transaction
+            message = "Failed to mark attendance for some students. Please check logs.";
+        }
+
     } catch (SQLException e) {
+        try { if (conn != null) conn.rollback(); } catch (SQLException rbex) { /* ignore */ }
         message = "Database error: " + e.getMessage();
-        logger.log(Level.SEVERE, "SQLException in mark_attendance_process.jsp: " + e.getMessage(), e);
-    } catch (Exception e) {
-        message = "An unexpected error occurred: " + e.getMessage();
-        logger.log(Level.SEVERE, "Exception in mark_attendance_process.jsp: " + e.getMessage(), e);
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        message = "Invalid Course ID.";
+        e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+        message = "Server configuration error: JDBC Driver not found.";
+        e.printStackTrace();
     } finally {
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 
-    // Redirect back to view_attendance.jsp with status and message
-    response.sendRedirect("view_attendance.jsp?studentId=" + studentId + "&status=" + status + "&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
+    session.setAttribute("message", message);
+    response.sendRedirect("teacher_dashboard.jsp");
 %>

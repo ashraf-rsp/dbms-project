@@ -5,12 +5,11 @@
 <%@ include file="includes/auth_check.jspf" %>
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
+    
 
     // Ensure only Student or Parent can access this page
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
+    
+    
 
     if (!"Student".equals(userRole) && !"Parent".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
@@ -34,7 +33,7 @@
             return;
         }
 
-        conn = getConnection();
+        
 
         // Update Students table
         String sql = "UPDATE Students SET FirstName = ?, LastName = ?, DateOfBirth = ? WHERE StudentID = ?";

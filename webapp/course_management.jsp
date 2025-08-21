@@ -4,7 +4,7 @@
 <%@ include file="includes/auth_check.jspf" %>
 <%
     // Ensure only Admin or Teacher can access this page
-    String userRole = (String) session.getAttribute("userRole");
+    
     if (!"Admin".equals(userRole) && !"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
@@ -41,7 +41,7 @@
         <div class="course-list">
             <%
                 try {
-                    conn = getConnection();
+                    
                     String sql = "SELECT CourseID, CourseName, CourseDescription, CourseFee FROM Courses ORDER BY CourseName";
                     pstmt = conn.prepareStatement(sql);
                     rs = pstmt.executeQuery();

@@ -1,14 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<%@ include file="db_connection.jsp" %>
 <%
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean"; // Default theme
 
-    // Mock data for announcements
-    String[][] announcements = {
-        {"School Closure Due to Weather", "The school will be closed on August 16th due to severe weather conditions. Please check the website for updates.", "2025-08-15"},
-        {"Parent-Teacher Conference Schedule", "Parent-Teacher conferences will be held on September 1st and 2nd. Please sign up for a slot online.", "2025-08-10"},
-        {"New After-School Programs", "Exciting new after-school programs are now available! Visit the student activities page for more details.", "2025-08-05"}
-    };
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    String status = request.getParameter("status");
+    String message = request.getParameter("message");
+
 %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
@@ -42,29 +45,82 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for (int i = 0; i < announcements.length; i++) { %>
+                            <% 
+                                try {
+                                    conn = null; // Initialize conn to null
+                                    conn = getConnection();
+                                    String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
+                                    pstmt = conn.prepareStatement(sql);
+                                    rs = pstmt.executeQuery();
+                                    if (!rs.isBeforeFirst()) { // Check if ResultSet is empty
+                                        out.println("<tr><td colspan=\"2\">No announcements found.</td></tr>");
+                                    } else {
+                                        while (rs.next()) {
+                                            String fullMessage = rs.getString("Message");
+                                            String title = fullMessage.split("\\n")[0]; // Get first line as title
+                                            String date = rs.getTimestamp("Timestamp").toString().substring(0, 10); // YYYY-MM-DD
+                            %>
                                 <tr class="announcement-row">
-                                    <td><%= announcements[i][0] %></td>
-                                    <td><%= announcements[i][2] %></td>
+                                    <td><%= title %></td>
+                                    <td><%= date %></td>
                                 </tr>
-                            <% } %>
+                            <% 
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    System.err.println("Error loading announcements: " + e.getMessage());
+                                    out.println("<tr><td colspan=\"2\">Error loading announcements. Please try again.</td></tr>");
+                                } finally {
+                                    if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
+                                    if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+                                    if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
+                                }
+                            %>
                         </tbody>
                     </table>
                 </div>
                 
                 <!-- Mobile Card View -->
                 <div class="mobile-cards">
-                    <% for (int i = 0; i < announcements.length; i++) { %>
+                    <% 
+                        try {
+                            // Re-fetch data for mobile cards if needed, or reset ResultSet
+                            // For simplicity, re-executing query here. In a real app, manage ResultSet better.
+                            conn = null; // Initialize conn to null
+                            conn = getConnection(); // Re-establish connection for this block
+                            String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
+                            pstmt = conn.prepareStatement(sql);
+                            rs = pstmt.executeQuery();
+                            if (!rs.isBeforeFirst()) { // Check if ResultSet is empty
+                                out.println("<p>No announcements found.</p>");
+                            } else {
+                                while (rs.next()) {
+                                    String fullMessage = rs.getString("Message");
+                                    String title = fullMessage.split("\\n")[0]; // Get first line as title
+                                    String content = fullMessage.substring(fullMessage.indexOf("\\n") + 1); // Get content after first line
+                                    String date = rs.getTimestamp("Timestamp").toString().substring(0, 10); // YYYY-MM-DD
+                    %>
                         <div class="announcement-card">
                             <div class="card-header">
-                                <h4><%= announcements[i][0] %></h4>
-                                <span class="announcement-date"><%= announcements[i][2] %></span>
+                                <h4><%= title %></h4>
+                                <span class="announcement-date"><%= date %></span>
                             </div>
                             <div class="card-body">
-                                <p><%= announcements[i][1] %></p>
+                                <p><%= content %></p>
                             </div>
                         </div>
-                    <% } %>
+                    <% 
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error loading announcements for mobile view: " + e.getMessage());
+                            out.println("<p>Error loading announcements.</p>");
+                        } finally {
+                            if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
+                            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+                            if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
+                        }
+                    %>
                 </div>
             </div>
         </main>

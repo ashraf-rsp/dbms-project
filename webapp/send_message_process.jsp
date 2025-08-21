@@ -5,19 +5,17 @@
 <%@ include file="includes/auth_check.jspf" %>
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    
 
     // This page is accessible by all logged-in users.
-    Integer userId = (Integer) session.getAttribute("userId");
+    
 
     String action = request.getParameter("action");
     String status = "error";
     String message = "An unknown error occurred.";
 
     try {
-        conn = getConnection();
+        
 
         if ("send".equals(action)) {
             String receiverUsername = request.getParameter("receiverUsername");

@@ -1,93 +1,130 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.logging.Logger" %>
-<%@ page import="java.util.logging.Level" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
+    // Ensure only Teacher can access this page
+    
+    
 
-    // Ensure only Admin or Teacher can access this page
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
-
-    if (!"Admin".equals(userRole) && !"Teacher".equals(userRole)) {
+    if (userRole == null || !userRole.equals("Teacher") || teacherUserId == null) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    String action = request.getParameter("action");
-    String studentId = request.getParameter("studentId"); // To redirect back to the correct student's grades
-    String status = "error";
-    String message = "An unknown error occurred.";
+    String message = "";
+    
 
     try {
-        conn = getConnection();
+        
+        conn.setAutoCommit(false); // Start transaction
 
-        if ("add".equals(action)) {
-            int enrollmentId = Integer.parseInt(request.getParameter("enrollmentId"));
-            double gradePercentage = Double.parseDouble(request.getParameter("gradePercentage"));
-            String gradeLetter = request.getParameter("gradeLetter");
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
+        int gradedByUserId = Integer.parseInt(request.getParameter("gradedByUserId"));
+        Date gradeDate = Date.valueOf(LocalDate.now());
 
-            String sql = "INSERT INTO Grades (EnrollmentID, GradePercentage, GradeLetter, GradedByUserID, GradeDate) VALUES (?, ?, ?, ?, CURDATE())";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, enrollmentId);
-            pstmt.setDouble(2, gradePercentage);
-            pstmt.setString(3, gradeLetter);
-            pstmt.setInt(4, userId); // Graded by current user
+        // Get all enrollment IDs for the given course
+        String sqlEnrollments = "SELECT EnrollmentID FROM Enrollments WHERE CourseID = ?";
+        pstmt = conn.prepareStatement(sqlEnrollments);
+        pstmt.setInt(1, courseId);
+        ResultSet rsEnrollments = pstmt.executeQuery();
 
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                status = "success";
-                message = "Grade added successfully!";
-                logger.log(Level.INFO, "Grade added for EnrollmentID: {0} by UserID: {1}", new Object[]{enrollmentId, userId});
-            } else {
-                message = "Failed to add grade.";
-                logger.log(Level.WARNING, "Failed to add grade for EnrollmentID: {0} by UserID: {1}", new Object[]{enrollmentId, userId});
+        // Prepare for batch insert/update
+        String sqlInsertGrade = "INSERT INTO Grades (EnrollmentID, GradePercentage, GradeLetter, GradedByUserID, GradeDate) VALUES (?, ?, ?, ?, ?)";
+        String sqlUpdateGrade = "UPDATE Grades SET GradePercentage = ?, GradeLetter = ?, GradedByUserID = ?, GradeDate = ? WHERE EnrollmentID = ?";
+
+        PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsertGrade);
+        PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdateGrade);
+
+        boolean allSuccessful = true;
+
+        while (rsEnrollments.next()) {
+            int enrollmentId = rsEnrollments.getInt("EnrollmentID");
+            String gradePercentageStr = request.getParameter("grade_" + enrollmentId);
+            String gradeLetter = request.getParameter("gradeLetter_" + enrollmentId);
+
+            Double gradePercentage = null;
+            if (gradePercentageStr != null && !gradePercentageStr.isEmpty()) {
+                try {
+                    gradePercentage = Double.parseDouble(gradePercentageStr);
+                } catch (NumberFormatException e) {
+                    // Handle invalid number format, perhaps set to null or skip
+                    gradePercentage = null;
+                }
             }
 
-        } else if ("edit".equals(action)) {
-            int gradeId = Integer.parseInt(request.getParameter("gradeId"));
-            double gradePercentage = Double.parseDouble(request.getParameter("gradePercentage"));
-            String gradeLetter = request.getParameter("gradeLetter");
+            // Check if grade record already exists for this enrollment
+            String sqlCheck = "SELECT COUNT(*) FROM Grades WHERE EnrollmentID = ?";
+            PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck);
+            pstmtCheck.setInt(1, enrollmentId);
+            ResultSet rsCheck = pstmtCheck.executeQuery();
+            rsCheck.next();
+            int count = rsCheck.getInt(1);
+            rsCheck.close();
+            pstmtCheck.close();
 
-            String sql = "UPDATE Grades SET GradePercentage = ?, GradeLetter = ?, GradedByUserID = ?, GradeDate = CURDATE() WHERE GradeID = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setDouble(1, gradePercentage);
-            pstmt.setString(2, gradeLetter);
-            pstmt.setInt(3, userId); // Updated by current user
-            pstmt.setInt(4, gradeId);
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                status = "success";
-                message = "Grade updated successfully!";
-                logger.log(Level.INFO, "Grade updated for GradeID: {0} by UserID: {1}", new Object[]{gradeId, userId});
-            } else {
-                message = "No changes made or grade not found.";
-                logger.log(Level.WARNING, "Grade update failed or no changes for GradeID: {0}", gradeId);
+            if (count > 0) {
+                // Update existing record
+                if (gradePercentage != null) {
+                    pstmtUpdate.setDouble(1, gradePercentage);
+                } else {
+                    pstmtUpdate.setNull(1, java.sql.Types.DECIMAL);
+                }
+                pstmtUpdate.setString(2, gradeLetter);
+                pstmtUpdate.setInt(3, gradedByUserId);
+                pstmtUpdate.setDate(4, gradeDate);
+                pstmtUpdate.setInt(5, enrollmentId);
+                pstmtUpdate.addBatch();
+            } else if (gradePercentage != null || (gradeLetter != null && !gradeLetter.isEmpty())) {
+                // Insert new record only if there's actual grade data
+                if (gradePercentage != null) {
+                    pstmtInsert.setDouble(1, gradePercentage);
+                } else {
+                    pstmtInsert.setNull(1, java.sql.Types.DECIMAL);
+                }
+                pstmtInsert.setString(2, gradeLetter);
+                pstmtInsert.setInt(3, enrollmentId);
+                pstmtInsert.setInt(4, gradedByUserId);
+                pstmtInsert.setDate(5, gradeDate);
+                pstmtInsert.addBatch();
             }
+        }
+        rsEnrollments.close();
+        pstmt.close();
 
-        } else {
-            message = "Invalid action.";
-            logger.log(Level.WARNING, "Invalid action received: {0}", action);
+        int[] insertResults = pstmtInsert.executeBatch();
+        int[] updateResults = pstmtUpdate.executeBatch();
+
+        for (int result : insertResults) {
+            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
+        }
+        for (int result : updateResults) {
+            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
         }
 
-    } catch (NumberFormatException e) {
-        message = "Invalid numeric input.";
-        logger.log(Level.SEVERE, "NumberFormatException in update_grades_process.jsp: " + e.getMessage(), e);
+        if (allSuccessful) {
+            conn.commit(); // Commit transaction
+            message = "Grades updated successfully for Course ID: " + courseId;
+        } else {
+            conn.rollback(); // Rollback transaction
+            message = "Failed to update grades for some students. Please check logs.";
+        }
+
     } catch (SQLException e) {
+        try { if (conn != null) conn.rollback(); } catch (SQLException rbex) { /* ignore */ }
         message = "Database error: " + e.getMessage();
-        logger.log(Level.SEVERE, "SQLException in update_grades_process.jsp: " + e.getMessage(), e);
-    } catch (Exception e) {
-        message = "An unexpected error occurred: " + e.getMessage();
-        logger.log(Level.SEVERE, "Exception in update_grades_process.jsp: " + e.getMessage(), e);
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        message = "Invalid input for Course ID.";
+        e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+        message = "Server configuration error: JDBC Driver not found.";
+        e.printStackTrace();
     } finally {
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 
-    // Redirect back to view_grades.jsp with status and message
-    response.sendRedirect("view_grades.jsp?studentId=" + studentId + "&status=" + status + "&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
+    session.setAttribute("message", message);
+    response.sendRedirect("teacher_dashboard.jsp");
 %>

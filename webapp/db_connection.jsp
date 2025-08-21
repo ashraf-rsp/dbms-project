@@ -1,13 +1,30 @@
 <%@ page import="java.sql.Connection" %>
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.SQLException" %>
-<%!
-    private static final String DB_URL = "jdbc:mariadb://localhost:3306/academic_center_db";
-    private static final String DB_USER = "academic_user";
-    private static final String DB_PASSWORD = "ashraf";
+<%
+    // Database credentials
+    String dbUrl = "jdbc:mariadb://localhost:3306/academic_center_db";
+    String dbUser = "academic_user";
+    String dbPassword = "ashraf";
 
-    public Connection getConnection() throws SQLException, ClassNotFoundException {
+    Connection conn = null;
+    try {
         Class.forName("org.mariadb.jdbc.Driver");
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+    } catch (SQLException e) {
+        // Log the exception or handle it as needed
+        System.err.println("Database connection error: " + e.getMessage());
+        // Optionally, redirect to an error page or display a message
+        // response.sendRedirect("error.jsp?message=Database connection failed");
+    } catch (ClassNotFoundException e) {
+        System.err.println("JDBC Driver not found: " + e.getMessage());
+    } finally {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database connection: " + e.getMessage());
+            }
+        }
     }
 %>

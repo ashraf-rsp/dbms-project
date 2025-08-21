@@ -6,17 +6,15 @@
 <%@ include file="includes/auth_check.jspf" %>
 <% 
     // Ensure appropriate roles can access this page
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
+    
+    
 
     if (!"Student".equals(userRole) && !"Parent".equals(userRole) && !"Teacher".equals(userRole) && !"Admin".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    
 
     int studentId = -1;
     String studentName = "";
@@ -24,27 +22,43 @@
     String message = request.getParameter("message");
 
     try {
-        conn = getConnection();
+        
 
         // Determine studentId based on userRole or request parameter
         if ("Student".equals(userRole)) {
             studentId = userId; // Assumption: UserID is StudentID for Student users
         } else if ("Parent".equals(userRole)) {
+            // Get all students linked to this parent
+            List<Integer> linkedStudentIds = new ArrayList<>();
+            String sqlAllLinkedStudents = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ?";
+            pstmt = conn.prepareStatement(sqlAllLinkedStudents);
+            pstmt.setInt(1, userId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                linkedStudentIds.add(rs.getInt("StudentID"));
+            }
+            rs.close();
+            pstmt.close();
+
+            if (linkedStudentIds.isEmpty()) {
+                out.println("<p>No students linked to your account.</p>");
+                return; // Exit if no students are linked
+            }
+
             String paramStudentId = request.getParameter("studentId");
             if (paramStudentId != null && !paramStudentId.isEmpty()) {
-                studentId = Integer.parseInt(paramStudentId);
-                // IMPORTANT: Add logic here to verify this studentId is linked to the logged-in parent
-            } else {
-                // If no studentId param, try to get the first linked student for this parent
-                String sqlParentLinkedStudent = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ? LIMIT 1";
-                pstmt = conn.prepareStatement(sqlParentLinkedStudent);
-                pstmt.setInt(1, userId);
-                rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    studentId = rs.getInt("StudentID");
+                int requestedStudentId = Integer.parseInt(paramStudentId);
+                if (linkedStudentIds.contains(requestedStudentId)) {
+                    studentId = requestedStudentId;
+                } else {
+                    // Requested student is not linked to this parent, redirect or show error
+                    session.setAttribute("message", "You do not have access to this student's attendance records.");
+                    response.sendRedirect("student_profile.jsp"); // Redirect to student profile
+                    return;
                 }
-                rs.close();
-                pstmt.close();
+            } else {
+                // Default to the first linked student if no specific studentId is requested
+                studentId = linkedStudentIds.get(0);
             }
         } else if ("Teacher".equals(userRole) || "Admin".equals(userRole)) {
             String paramStudentId = request.getParameter("studentId");

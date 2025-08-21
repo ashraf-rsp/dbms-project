@@ -1,73 +1,89 @@
-# Backend Development Plan: Academic Center Management System
+# Backend Implementation Plan for Academic Center Management System
 
-**Constraint:** All backend logic will be implemented directly within JSP files using scriptlets (`<% %>`) or included JSP fragments (`.jspf`). No separate `.java` files will be created for Servlets, DAOs, or POJOs.
+This document outlines the plan for implementing the backend for the Academic Center Management System using MariaDB.
 
----
+## 1. User Roles and Permissions
 
-## Core Principles:
-*   All Java code will reside within JSP files using scriptlets (`<% %>`) or within included JSP fragments (`.jspf`).
-*   `webapp/db_connection.jsp` will be the central point for establishing database connections.
-*   `PreparedStatement` will be used for all SQL queries to prevent SQL injection.
-*   Each JSP will largely act as its own controller, processing requests and rendering views.
+We will have three user roles with the following permissions:
 
----
+*   **Admin:**
+    *   Manage users (add, edit, delete teachers and parents).
+    *   Manage courses (add, edit, delete courses).
+    *   Assign teachers to courses.
+    *   View all system data (students, parents, teachers, courses, attendance, grades, payments).
+    *   Manage announcements and system-wide messages.
+    *   Handle payment updates and view financial reports.
 
-## Roadmap by Feature/Module:
+*   **Teacher:**
+    *   View their assigned courses and student lists.
+    *   Mark student attendance.
+    *   Update student grades.
+    *   Send messages to parents of their students.
+    *   View announcements.
 
-### 1. Database Connection & Initial Setup
-*   **Status:** `webapp/db_connection.jsp` is ready.
-*   **Action:** Ensure your MariaDB database (`academic_center_db`) and necessary tables (e.g., `Users` with `user_id`, `username`, `password`, `role`) are created and populated for testing.
+*   **Parent:**
+    *   View their child's profile, attendance, and grades.
+    *   View their child's class schedule.
+    *   Communicate with their child's teachers.
+    *   View announcements and messages.
+    *   View and manage their payment status.
 
-### 2. User Authentication & Session Management
-*   **Status:** Login flow (`login.jsp`, `login_process.jsp`) is implemented.
-*   **Action:**
-    *   **Logout:** Create `webapp/logout.jsp` to invalidate the user's session and redirect to `login.jsp`.
-    *   **Basic Authorization:** Implement an `includes/auth_check.jspf` to be included at the top of protected JSPs. This fragment will check if a user is logged in and, optionally, if they have the required role for the page. If not authorized, it will redirect to `login.jsp` or an access denied page.
+## 2. Database Schema
 
-### 3. Dashboard (`webapp/dashboard.jsp`)
-*   **Action:** Fetch and display dynamic content relevant to the logged-in user's role (e.g., recent announcements, upcoming classes, quick links). This will involve direct database queries within `dashboard.jsp` or an included `.jspf`.
+The existing `schema.sql` provides a good foundation. We will use it as is, with the following considerations:
 
-### 4. Student Profile Management (`webapp/student_profile.jsp`)
-*   **Action:**
-    *   Fetch and display the logged-in student's profile details from the database.
-    *   Create `webapp/student_profile_process.jsp` to handle form submissions for updating student information.
+*   **Users Table:** The `Users` table will be central to authentication. We will need to ensure the `PasswordHash` field stores securely hashed passwords (e.g., using bcrypt or Argon2). The `UserType` will be used to enforce role-based access control.
+*   **Relationships:** The existing relationships between tables seem appropriate. We will leverage these relationships to retrieve and manipulate data efficiently.
 
-### 5. Course Management (`webapp/course_management.jsp`)
-*   **Action:**
-    *   Display a list of all courses (for teachers/admins).
-    *   Implement functionality to add, edit, and delete courses. This will likely involve a `webapp/course_management_process.jsp` to handle form submissions.
+## 3. Backend API Endpoints
 
-### 6. Grades Management (`webapp/view_grades.jsp`)
-*   **Action:**
-    *   For students: Fetch and display their grades for enrolled courses.
-    *   For teachers: Fetch and display grades for their students in their courses, with options to input/update grades. This will require a `webapp/update_grades_process.jsp`.
+We will create a set of API endpoints to handle the application's business logic. These endpoints will be implemented as JSP pages that process requests and return data in JSON format where appropriate.
 
-### 7. Attendance Management (`webapp/view_attendance.jsp`, `webapp/mark_absent.jsp`)
-*   **Action:**
-    *   For students: View their attendance records.
-    *   For teachers: Mark attendance for their classes. This will involve a `webapp/mark_attendance_process.jsp`.
+### 3.1. Authentication
 
-### 8. Announcements (`webapp/announcements.jsp`)
-*   **Action:**
-    *   Fetch and display all announcements.
-    *   Implement functionality for admins/teachers to create, edit, and delete announcements. This will require a `webapp/announcements_process.jsp`.
+*   **`POST /login_process.jsp`:** Authenticates users and creates a session.
+*   **`GET /logout.jsp`:** Logs out the user and destroys the session.
 
-### 9. Messages (`webapp/messages.jsp`)
-*   **Action:**
-    *   Implement an internal messaging system (send/receive messages).
-    *   Fetch and display messages for the logged-in user.
-    *   Implement `webapp/send_message_process.jsp`.
+### 3.2. Admin Endpoints
 
-### 10. Teacher List (`webapp/teacher_list.jsp`)
-*   **Action:** Fetch and display a list of all teachers.
+*   **`GET /api/users`:** Get a list of all users.
+*   **`POST /api/users`:** Create a new user.
+*   **`PUT /api/users/{userId}`:** Update a user's information.
+*   **`DELETE /api/users/{userId}`:** Delete a user.
+*   **`GET /api/courses`:** Get a list of all courses.
+*   **`POST /api/courses`:** Create a new course.
+*   **`PUT /api/courses/{courseId}`:** Update a course's information.
+*   **`DELETE /api/courses/{courseId}`:** Delete a course.
+*   **`POST /api/courses/{courseId}/assign-teacher`:** Assign a teacher to a course.
 
-### 11. Class Schedule (`webapp/class_schedule.jsp`)
-*   **Action:** Fetch and display class schedules based on the user's role (student's schedule, teacher's schedule).
+### 3.3. Teacher Endpoints
 
----
+*   **`GET /api/teacher/courses`:** Get the courses assigned to the logged-in teacher.
+*   **`GET /api/teacher/courses/{courseId}/students`:** Get the list of students in a course.
+*   **`POST /api/attendance`:** Mark student attendance.
+*   **`POST /api/grades`:** Update student grades.
+*   **`POST /api/messages`:** Send a message to a parent.
 
-## General Considerations Across All Modules:
-*   **Error Handling:** Implement consistent error display and logging within JSPs.
-*   **Input Validation:** Perform server-side input validation within JSPs for all form submissions.
-*   **Security:** Always use `PreparedStatement` for database interactions. Be mindful of Cross-Site Scripting (XSS) by properly escaping all user-generated or database-fetched output displayed on pages.
-*   **Reusability:** Maximize the use of `<%@ include file="..." %>` for common code snippets (e.g., database connection, authorization checks, utility functions).
+### 3.4. Parent Endpoints
+
+*   **`GET /api/parent/children`:** Get the logged-in parent's children.
+*   **`GET /api/student/{studentId}/profile`:** Get a student's profile.
+*   **`GET /api/student/{studentId}/attendance`:** Get a student's attendance.
+*   **`GET /api/student/{studentId}/grades`:** Get a student's grades.
+*   **`GET /api/student/{studentId}/schedule`:** Get a student's class schedule.
+*   **`GET /api/messages`:** Get messages for the logged-in parent.
+*   **`GET /api/payments`:** Get the payment status for the logged-in parent.
+
+## 4. Authentication and Authorization
+
+*   **Authentication:** User authentication will be handled by the `login_process.jsp` page. Upon successful login, a session will be created for the user, and their `userId` and `userRole` will be stored in the session.
+*   **Authorization:** For each API endpoint, we will check the user's session and their `userRole` to ensure they have the necessary permissions to perform the requested action. This will be implemented using a filter or by including a check at the beginning of each restricted JSP page.
+
+## 5. Technologies
+
+*   **Backend:** Java Servlets and JSP
+*   **Database:** MariaDB
+*   **Authentication:** Session-based authentication
+*   **API Format:** JSON for data exchange between the frontend and backend.
+
+This plan provides a roadmap for the backend implementation. The next step is to start implementing the API endpoints as defined in this document.

@@ -28,6 +28,7 @@
     double totalPaid = 350.0;
     double outstandingBalance = totalFee - totalPaid;
 %>
+<%@ include file="includes/auth_check.jspf" %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
 <head>

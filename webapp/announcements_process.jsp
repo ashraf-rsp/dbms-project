@@ -8,7 +8,7 @@
     PreparedStatement pstmt = null;
 
     // Ensure only Admin or Teacher can access this page
-    String userRole = (String) session.getAttribute("userRole");
+    
     if (!"Admin".equals(userRole) && !"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
@@ -19,7 +19,7 @@
     String message = "An unknown error occurred.";
 
     try {
-        conn = getConnection();
+        
 
         if ("add".equals(action)) {
             String title = request.getParameter("title");

@@ -5,19 +5,17 @@
 <%@ include file="includes/auth_check.jspf" %>
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    
 
     // This page is accessible by all logged-in users.
-    Integer userId = (Integer) session.getAttribute("userId");
+    
 
     String messageContent = "Error: Message not found or unauthorized access.";
 
     try {
         int messageId = Integer.parseInt(request.getParameter("messageId"));
 
-        conn = getConnection();
+        
 
         // Fetch message content, ensuring it belongs to the logged-in user
         String sql = "SELECT Content FROM Messages WHERE MessageID = ? AND ReceiverUserID = ?";

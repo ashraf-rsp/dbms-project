@@ -8,8 +8,8 @@
 <%@ include file="includes/auth_check.jspf" %>
 <% 
     // This page is accessible by all logged-in users.
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
+    
+    
 
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -26,7 +26,7 @@
     String[] timeSlots = {"09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00"}; // Example time slots
 
     try {
-        conn = getConnection();
+        
 
         // Determine studentId or teacherId based on userRole
         if ("Student".equals(userRole)) {
@@ -41,16 +41,38 @@
             rs.close();
             pstmt.close();
         } else if ("Parent".equals(userRole)) {
-            // Get the first linked student for this parent
-            String sqlParentLinkedStudent = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ? LIMIT 1";
-            pstmt = conn.prepareStatement(sqlParentLinkedStudent);
+            // Get all students linked to this parent
+            List<Integer> linkedStudentIds = new ArrayList<>();
+            String sqlAllLinkedStudents = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ?";
+            pstmt = conn.prepareStatement(sqlAllLinkedStudents);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
-            if (rs.next()) {
-                studentId = rs.getInt("StudentID");
+            while (rs.next()) {
+                linkedStudentIds.add(rs.getInt("StudentID"));
             }
             rs.close();
             pstmt.close();
+
+            if (linkedStudentIds.isEmpty()) {
+                out.println("<p>No students linked to your account.</p>");
+                return; // Exit if no students are linked
+            }
+
+            String paramStudentId = request.getParameter("studentId");
+            if (paramStudentId != null && !paramStudentId.isEmpty()) {
+                int requestedStudentId = Integer.parseInt(paramStudentId);
+                if (linkedStudentIds.contains(requestedStudentId)) {
+                    studentId = requestedStudentId;
+                } else {
+                    // Requested student is not linked to this parent, redirect or show error
+                    session.setAttribute("message", "You do not have access to this student's schedule.");
+                    response.sendRedirect("student_profile.jsp"); // Redirect to student profile
+                    return;
+                }
+            } else {
+                // Default to the first linked student if no specific studentId is requested
+                studentId = linkedStudentIds.get(0);
+            }
 
             if (studentId != -1) {
                 String sqlStudentName = "SELECT FirstName, LastName FROM Students WHERE StudentID = ?";
@@ -133,6 +155,41 @@
 <%@ include file="WEB-INF/jspf/header.jspf" %>
 <main class="container">
     <h1>Class Schedule</h1>
+    <% if ("Parent".equals(userRole) && linkedStudentIds != null && linkedStudentIds.size() > 1) { %>
+    <div class="student-selection-dropdown">
+        <label for="selectStudent">Select Child:</label>
+        <select id="selectStudent" onchange="window.location.href='class_schedule.jsp?studentId=' + this.value;">
+            <%
+                for (Integer sId : linkedStudentIds) {
+                    String studentNameOption = "Student ID: " + sId; // Fallback
+                    // Fetch student name for dropdown
+                    Connection connDropdown = null;
+                    PreparedStatement pstmtDropdown = null;
+                    ResultSet rsDropdown = null;
+                    try {
+                        
+                        String sqlDropdown = "SELECT FirstName, LastName FROM Students WHERE StudentID = ?";
+                        pstmtDropdown = connDropdown.prepareStatement(sqlDropdown);
+                        pstmtDropdown.setInt(1, sId);
+                        rsDropdown = pstmtDropdown.executeQuery();
+                        if (rsDropdown.next()) {
+                            studentNameOption = rsDropdown.getString("FirstName") + " " + rsDropdown.getString("LastName");
+                        }
+                    } catch (SQLException e) {
+                        System.err.println("Error fetching student name for dropdown: " + e.getMessage());
+                    } finally {
+                        if (rsDropdown != null) try { rsDropdown.close(); } catch (SQLException e) { /* ignore */ }
+                        if (pstmtDropdown != null) try { pstmtDropdown.close(); } catch (SQLException e) { /* ignore */ }
+                        if (connDropdown != null) try { connDropdown.close(); } catch (SQLException e) { /* ignore */ }
+                    }
+            %>
+            <option value="<%= sId %>" <%= (sId == studentId) ? "selected" : "" %>><%= studentNameOption %></option>
+            <%
+                }
+            %>
+        </select>
+    </div>
+    <% } %>
     <section class="schedule-section">
         <h2>Schedule for 
             <% 

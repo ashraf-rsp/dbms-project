@@ -1,8 +1,9 @@
 <%@ page import="java.util.logging.Logger" %>
 <%@ page import="java.util.logging.Level" %>
 <%
-    // This fragment should be included at the top of any protected JSP page.
-    // It checks if a user is logged in and, optionally, if they have a required role.
+    // Use a flag to ensure variables are only declared once
+    Boolean authVariablesDefined = (Boolean) request.getAttribute("authVariablesDefined");
+    if (authVariablesDefined == null || !authVariablesDefined) {
 
     Logger authLogger = Logger.getLogger("AuthCheck");
 
@@ -29,4 +30,6 @@
     }
 
     // If execution reaches here, the user is logged in and authorized.
+    request.setAttribute("authVariablesDefined", true);
+    }
 %>

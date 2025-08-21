@@ -2,3 +2,4 @@
 Screenshot_*.jpg
 *.war
 webapp/WEB-INF/lib/
+webapp/WEB-INF/db.properties

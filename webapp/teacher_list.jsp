@@ -5,16 +5,16 @@
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    // This page is accessible by all logged-in users.
-    String userRole = (String) session.getAttribute("userRole");
-    Integer userId = (Integer) session.getAttribute("userId");
-
-    Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
+    // This page is accessible by all logged-in users.
+    
+    
+
+    
 
 %>
-<%@ include file="WEB-INF/jspf/header.jspf" %>
+<%@ include file="includes/header.jsp" %>
 <main class="container">
     <h1>Teacher List</h1>
     <section class="teacher-list-section">
@@ -22,7 +22,7 @@
         <div class="teacher-grid">
             <%
                 try {
-                    conn = getConnection();
+                    
                     String sql = "SELECT UserID, Username FROM Users WHERE UserType = 'Teacher' ORDER BY Username";
                     pstmt = conn.prepareStatement(sql);
                     rs = pstmt.executeQuery();
@@ -54,4 +54,4 @@
         </div>
     </section>
 </main>
-<%@ include file="WEB-INF/jspf/footer.jspf" %>
+<%@ include file="includes/footer.jsp" %>

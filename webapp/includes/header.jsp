@@ -1,6 +1,10 @@
 <%
+    // Get theme from session or set a default
+    // We will directly use session.getAttribute("theme") in the HTML below
+    // and handle the default value there.
+
     String parentName = (String) session.getAttribute("parentName");
-    String studentName = (String) session.getAttribute("studentName");
+    
     boolean hasNotifications = true; // Dynamic logic here
 %>
 
@@ -13,8 +17,8 @@
         <div class="header-actions">
                         <div class="theme-selector">
                 <select id="themeSelect" class="theme-dropdown">
-                    <option value="ocean" <%= theme.equals("ocean") ? "selected" : "" %>>Ocean Academic</option>
-                    <option value="dark" <%= theme.equals("dark") ? "selected" : "" %>>Modern Dark</option>
+                    <option value="ocean" <%= "ocean".equals((String) session.getAttribute("theme")) || session.getAttribute("theme") == null || ((String) session.getAttribute("theme")).isEmpty() ? "selected" : "" %>>Ocean Academic</option>
+                    <option value="dark" <%= "dark".equals((String) session.getAttribute("theme")) ? "selected" : "" %>>Modern Dark</option>
                 </select>
             </div>
             <% if (hasNotifications) { %>

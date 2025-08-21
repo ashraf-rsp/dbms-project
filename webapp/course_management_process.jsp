@@ -1,26 +1,22 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.logging.Logger" %>
-<%@ page import="java.util.logging.Level" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    Logger logger = Logger.getLogger(this.getClass().getName());
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-
-    // Ensure only Admin or Teacher can access this page
-    String userRole = (String) session.getAttribute("userRole");
-    if (!"Admin".equals(userRole) && !"Teacher".equals(userRole)) {
+    // Check if the logged-in user is an Admin
+    
+    if (userRole == null || !userRole.equals("Admin")) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
     String action = request.getParameter("action");
-    String status = "error";
-    String message = "An unknown error occurred.";
+    String message = "";
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
 
     try {
-        conn = getConnection();
+        
 
         if ("add".equals(action)) {
             String courseName = request.getParameter("courseName");
@@ -35,14 +31,10 @@
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                status = "success";
-                message = "Course added successfully!";
-                logger.log(Level.INFO, "Course added: {0}", courseName);
+                message = "Course '" + courseName + "' added successfully.";
             } else {
                 message = "Failed to add course.";
-                logger.log(Level.WARNING, "Failed to add course: {0}", courseName);
             }
-
         } else if ("edit".equals(action)) {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             String courseName = request.getParameter("courseName");
@@ -58,14 +50,10 @@
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                status = "success";
-                message = "Course updated successfully!";
-                logger.log(Level.INFO, "Course updated: {0}", courseId);
+                message = "Course '" + courseName + "' updated successfully.";
             } else {
-                message = "No changes made or course not found.";
-                logger.log(Level.WARNING, "Course update failed or no changes for CourseID: {0}", courseId);
+                message = "Failed to update course.";
             }
-
         } else if ("delete".equals(action)) {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
 
@@ -75,33 +63,25 @@
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                status = "success";
-                message = "Course deleted successfully!";
-                logger.log(Level.INFO, "Course deleted: {0}", courseId);
+                message = "Course deleted successfully.";
             } else {
-                message = "Course not found or failed to delete.";
-                logger.log(Level.WARNING, "Course deletion failed for CourseID: {0}", courseId);
+                message = "Failed to delete course.";
             }
-
-        } else {
-            message = "Invalid action.";
-            logger.log(Level.WARNING, "Invalid action received: {0}", action);
         }
-
-    } catch (NumberFormatException e) {
-        message = "Invalid numeric input.";
-        logger.log(Level.SEVERE, "NumberFormatException in course_management_process.jsp: " + e.getMessage(), e);
     } catch (SQLException e) {
         message = "Database error: " + e.getMessage();
-        logger.log(Level.SEVERE, "SQLException in course_management_process.jsp: " + e.getMessage(), e);
-    } catch (Exception e) {
-        message = "An unexpected error occurred: " + e.getMessage();
-        logger.log(Level.SEVERE, "Exception in course_management_process.jsp: " + e.getMessage(), e);
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        message = "Invalid input for Course Fee or Course ID.";
+        e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+        message = "Server configuration error: JDBC Driver not found.";
+        e.printStackTrace();
     } finally {
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 
-    // Redirect back to course_management.jsp with status and message
-    response.sendRedirect("course_management.jsp?status=" + status + "&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
+    session.setAttribute("message", message);
+    response.sendRedirect("course_management.jsp");
 %>
