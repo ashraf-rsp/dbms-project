@@ -11,7 +11,7 @@
 <header class="main-header">
     <div class="header-content">
         <div class="logo-section">
-            <h1><i class="fas fa-graduation-cap"></i> Academic Center</h1>
+            <h1><i class="fas fa-graduation-cap"></i> ThinkSpire Academy</h1>
         </div>
         
         <div class="header-actions">
