@@ -25,6 +25,7 @@
                 </div>
             <% } %>
             
+            <% if (session.getAttribute("loggedInUser") != null) { %>
             <div class="user-menu dropdown-toggle" id="user-menu-toggle">
                 <span class="welcome-text">Welcome, <%= session.getAttribute("loggedInUser") != null ? session.getAttribute("loggedInUser") : "User" %></span>
                 <img src="assets/images/placeholder-<%= session.getAttribute("userRole") != null ? session.getAttribute("userRole").toString().toLowerCase() : "student" %>.png" alt="User Avatar" class="user-avatar">
@@ -34,6 +35,7 @@
                     <a href="logout.jsp" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
+            <% } %>
         </div>
         
         <button class="mobile-menu-toggle" id="mobileMenuToggle">
