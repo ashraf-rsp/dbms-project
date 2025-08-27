@@ -92,6 +92,49 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative; /* For dropdown positioning */
+    cursor: pointer;
+}
+
+.user-menu .dropdown-menu {
+    position: absolute;
+    top: 100%; /* Position below the user menu */
+    right: 0;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    min-width: 180px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.user-menu .dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: var(--gray-700);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.user-menu .dropdown-item:hover {
+    background: var(--gray-100);
+    color: var(--primary-600);
+}
+
+.user-menu .dropdown-item i {
+    margin-right: 10px;
+    font-size: 1rem;
 }
 
 .main-header .user-avatar {

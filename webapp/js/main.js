@@ -44,6 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
         updateThemeIcon(initialTheme);
     }
 
+    // User menu dropdown toggle
+    const userMenuToggle = document.getElementById('user-menu-toggle');
+    const userDropdownMenu = document.getElementById('user-dropdown-menu');
+
+    if (userMenuToggle && userDropdownMenu) {
+        userMenuToggle.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent document click from immediately closing
+            userDropdownMenu.classList.toggle('active');
+        });
+
+        // Close dropdown if clicked outside
+        document.addEventListener('click', function(event) {
+            if (!userMenuToggle.contains(event.target) && !userDropdownMenu.contains(event.target)) {
+                userDropdownMenu.classList.remove('active');
+            }
+        });
+    }
 
     // Mobile menu toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
