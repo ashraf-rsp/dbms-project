@@ -18,13 +18,5 @@
         // response.sendRedirect("error.jsp?message=Database connection failed");
     } catch (ClassNotFoundException e) {
         System.err.println("JDBC Driver not found: " + e.getMessage());
-    } finally {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                System.err.println("Error closing database connection: " + e.getMessage());
-            }
-        }
     }
 %>

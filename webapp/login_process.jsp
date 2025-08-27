@@ -1,6 +1,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.logging.Logger" %>
 <%@ page import="java.util.logging.Level" %>
+<%@ page import="at.favre.lib.PasswordUtil" %>
 
 <%@ include file="db_connection.jsp" %>
 <%
@@ -22,7 +23,7 @@
         if (rs.next()) {
             String storedHashedPassword = rs.getString("PasswordHash");
             // Verify the password
-            if (password.equals(storedHashedPassword)) {
+            if (PasswordUtil.verifyPassword(password, storedHashedPassword)) {
                 // Login successful
                 session.setAttribute("loggedInUser", rs.getString("Username"));
                 session.setAttribute("userId", rs.getInt("UserID"));
@@ -50,6 +51,5 @@
         // Close resources
         if (rs != null) try { rs.close(); } catch (SQLException e) { logger.log(Level.WARNING, "Error closing ResultSet", e); }
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { logger.log(Level.WARNING, "Error closing PreparedStatement", e); }
-        if (conn != null) try { conn.close(); } catch (SQLException e) { logger.log(Level.WARNING, "Error closing Connection", e); }
     }
 %>
