@@ -51,6 +51,27 @@ body {
     gap: 20px;
 }
 
+.theme-toggle-button {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.theme-toggle-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle-button i {
+    font-size: 1.2rem;
+}
+
 .main-header .notification-icon {
     position: relative;
     cursor: pointer;

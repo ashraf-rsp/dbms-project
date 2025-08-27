@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const themeSelect = document.getElementById('themeSelect');
+    const themeToggleButton = document.getElementById('theme-toggle-button');
     const htmlElement = document.documentElement;
 
-    // Function to apply theme
+    // Function to apply theme and update icon
     function applyTheme(theme) {
         htmlElement.setAttribute('data-theme', theme);
+        updateThemeIcon(theme);
         // Send theme preference to server to persist in session
         fetch('setTheme.jsp?theme=' + theme)
             .then(response => {
@@ -15,13 +16,34 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error setting theme:', error));
     }
 
-    // Set initial theme based on select value (which is set by JSP from session)
-    if (themeSelect) {
-        applyTheme(themeSelect.value);
-        themeSelect.addEventListener('change', function() {
-            applyTheme(this.value);
+    // Function to update the theme icon
+    function updateThemeIcon(theme) {
+        const icon = themeToggleButton.querySelector('i');
+        if (theme === 'dark') {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    }
+
+    // Event listener for the theme toggle button
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'ocean' : 'dark';
+            applyTheme(newTheme);
         });
     }
+
+    // Set initial icon based on the theme from the session (set on the html tag by JSP)
+    const initialTheme = htmlElement.getAttribute('data-theme');
+    if (initialTheme) {
+        updateThemeIcon(initialTheme);
+    }
+
 
     // Mobile menu toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');

@@ -33,6 +33,7 @@
                         <input type="password" id="password" name="password" class="input-field" required>
                         <button type="submit" class="button">Login</button>
                     </form>
+                    <p>Don't have an account? <a href="register.jsp">Register here</a></p>
                 </div>
             </div>
         </main>

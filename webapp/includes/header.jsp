@@ -15,12 +15,9 @@
         </div>
         
         <div class="header-actions">
-                        <div class="theme-selector">
-                <select id="themeSelect" class="theme-dropdown">
-                    <option value="ocean" <%= "ocean".equals((String) session.getAttribute("theme")) || session.getAttribute("theme") == null || ((String) session.getAttribute("theme")).isEmpty() ? "selected" : "" %>>Ocean Academic</option>
-                    <option value="dark" <%= "dark".equals((String) session.getAttribute("theme")) ? "selected" : "" %>>Modern Dark</option>
-                </select>
-            </div>
+                        <a href="#" id="theme-toggle-button" class="theme-toggle-button">
+                <i class="fas fa-moon"></i>
+            </a>
             <% if (hasNotifications) { %>
                 <div class="notification-icon">
                     <i class="fas fa-bell"></i>
