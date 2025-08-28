@@ -8,6 +8,8 @@
     String userRole = (String) session.getAttribute("userRole");
     String loggedInUser = (String) session.getAttribute("loggedInUser");
     int userId = (Integer) session.getAttribute("userId");
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
 
     if (!"Student".equals(userRole) && !"Parent".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
@@ -114,8 +116,24 @@
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 %>
-<%@ include file="includes/header.jsp" %>
-<main class="container">
+<!DOCTYPE html>
+<html lang="en" data-theme="<%= theme %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Parent-First Academic Center Management">
+    <title>Student Profile - Academic Center</title>
+    <link rel="stylesheet" href="/academic-center/css/themes.css">
+    <link rel="stylesheet" href="/academic-center/css/components.css">
+    <link rel="stylesheet" href="/academic-center/css/style.css">
+    <link rel="stylesheet" href="/academic-center/css/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <% request.setAttribute("title", "Student Profile"); %>
+    <%@ include file="includes/header.jsp" %>
+    <main class="container">
     <h1>Student Profile</h1>
     
     <section class="profile-card">
