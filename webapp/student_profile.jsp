@@ -14,7 +14,7 @@
         return;
     }
 
-    int studentId = -1;
+    String studentIdString = null; // Use String for StudentID
     String studentFirstName = "";
     String studentLastName = "";
     String studentDOB = "";
@@ -26,56 +26,47 @@
     String parentEmail = "";
     String parentPhone = "";
 
-    List<Integer> linkedStudentIds = new ArrayList<>();
-    List<String> linkedStudentNames = new ArrayList<>();
+    // For parent role, this part needs to be refactored if full parent functionality is desired.
+    // For now, we focus on student profile view.
+    List<Integer> linkedStudentIds = new ArrayList<>(); // Keep for compilation, but not used in simplified parent logic
+    List<String> linkedStudentNames = new ArrayList<>(); // Keep for compilation, but not used in simplified parent logic
+
 
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
     try {
         if ("Student".equals(userRole)) {
-            studentId = userId;
-        } else if ("Parent".equals(userRole)) {
-            String sqlAllLinkedStudents = "SELECT s.StudentID, s.FirstName, s.LastName FROM Students s JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID JOIN Users u ON spl.ParentID = u.ParentID WHERE u.UserID = ?";
-            pstmt = conn.prepareStatement(sqlAllLinkedStudents);
+            String sqlGetStudentID = "SELECT StudentID FROM Students WHERE UserID = ?";
+            pstmt = conn.prepareStatement(sqlGetStudentID);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
-            while (rs.next()) {
-                linkedStudentIds.add(rs.getInt("StudentID"));
-                linkedStudentNames.add(rs.getString("FirstName") + " " + rs.getString("LastName"));
+            if (rs.next()) {
+                studentIdString = rs.getString("StudentID");
             }
             rs.close();
             pstmt.close();
-
-            if (linkedStudentIds.isEmpty()) {
-                out.println("<p>No students linked to your account.</p>");
-                return;
-            }
-
-            String paramStudentId = request.getParameter("studentId");
-            if (paramStudentId != null && !paramStudentId.isEmpty()) {
-                int requestedStudentId = Integer.parseInt(paramStudentId);
-                if (linkedStudentIds.contains(requestedStudentId)) {
-                    studentId = requestedStudentId;
-                } else {
-                    session.setAttribute("message", "You do not have access to this student's profile.");
-                    response.sendRedirect("student_profile.jsp");
-                    return;
-                }
-            } else {
-                studentId = linkedStudentIds.get(0);
-            }
+        } else if ("Parent".equals(userRole)) {
+            // Simplified parent logic: display message and return
+            out.println("<p>Parent view is currently under development and not fully functional in this version.</p>");
+            return;
         }
 
-        if (studentId != -1) {
-            String sqlStudent = "SELECT FirstName, LastName, DateOfBirth FROM Students WHERE StudentID = ?";
+        if (studentIdString != null) { // Use studentIdString here
+            String sqlStudent = "SELECT StudentName, DOB FROM Students WHERE StudentID = ?";
             pstmt = conn.prepareStatement(sqlStudent);
-            pstmt.setInt(1, studentId);
+            pstmt.setString(1, studentIdString); // Use setString for StudentID
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                studentFirstName = rs.getString("FirstName");
-                studentLastName = rs.getString("LastName");
-                studentDOB = rs.getDate("DateOfBirth") != null ? rs.getDate("DateOfBirth").toString() : "N/A";
+                String fullStudentName = rs.getString("StudentName");
+                if (fullStudentName != null && fullStudentName.contains(" ")) {
+                    studentFirstName = fullStudentName.substring(0, fullStudentName.indexOf(" "));
+                    studentLastName = fullStudentName.substring(fullStudentName.indexOf(" ") + 1);
+                } else {
+                    studentFirstName = fullStudentName;
+                    studentLastName = "";
+                }
+                studentDOB = rs.getDate("DOB") != null ? rs.getDate("DOB").toString() : "N/A";
             }
             rs.close();
             pstmt.close();
@@ -84,7 +75,7 @@
                                     "JOIN Student_Parent_Link spl ON p.ParentID = spl.ParentID " +
                                     "WHERE spl.StudentID = ? LIMIT 1";
             pstmt = conn.prepareStatement(sqlParentDetails);
-            pstmt.setInt(1, studentId);
+            pstmt.setString(1, studentIdString); // Use setString for StudentID
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 parentFirstName = rs.getString("FirstName");
@@ -99,7 +90,7 @@
                                  "JOIN Courses c ON e.CourseID = c.CourseID " +
                                  "WHERE e.StudentID = ? ORDER BY e.EnrollmentDate DESC LIMIT 1";
             pstmt = conn.prepareStatement(sqlEnrollment);
-            pstmt.setInt(1, studentId);
+            pstmt.setString(1, studentIdString); // Use setString for StudentID
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 enrollmentDate = rs.getDate("EnrollmentDate") != null ? rs.getDate("EnrollmentDate").toString() : "N/A";
@@ -126,27 +117,12 @@
 <%@ include file="includes/header.jsp" %>
 <main class="container">
     <h1>Student Profile</h1>
-    <% if ("Parent".equals(userRole) && linkedStudentIds.size() > 1) { %>
-    <div class="student-selection-dropdown">
-        <label for="selectStudent">Select Child:</label>
-        <select id="selectStudent" onchange="window.location.href='student_profile.jsp?studentId=' + this.value;">
-            <%
-                for (int i = 0; i < linkedStudentIds.size(); i++) {
-                    int sId = linkedStudentIds.get(i);
-                    String sName = linkedStudentNames.get(i);
-            %>
-            <option value="<%= sId %>" <%= (sId == studentId) ? "selected" : "" %>><%= sName %></option>
-            <%
-                }
-            %>
-        </select>
-    </div>
-    <% } %>
+    
     <section class="profile-card">
         <div class="profile-header">
             <img src="assets/images/placeholder-student.png" alt="Student Photo" class="student-photo">
             <h2><%= studentFirstName %> <%= studentLastName %></h2>
-            <p class="student-id">Student ID: <strong><%= studentId %></strong></p>
+            <p class="student-id">Student ID: <strong><%= studentIdString %></strong></p>
         </div>
         <div class="profile-details">
             <%
@@ -177,8 +153,8 @@
             <p><strong>Phone:</strong> <%= parentPhone %></p>
         </div>
         <div class="profile-actions">
-            <a href="view_grades.jsp?studentId=<%= studentId %>" class="button"><i class="fas fa-chart-line"></i> View Grades</a>
-            <a href="view_attendance.jsp?studentId=<%= studentId %>" class="button"><i class="fas fa-calendar-check"></i> View Attendance</a>
+            <a href="view_grades.jsp?studentId=<%= studentIdString %>" class="button"><i class="fas fa-chart-line"></i> View Grades</a>
+            <a href="view_attendance.jsp?studentId=<%= studentIdString %>" class="button"><i class="fas fa-calendar-check"></i> View Attendance</a>
             <a href="messages.jsp?composeTo=<%= parentEmail %>" class="button"><i class="fas fa-envelope"></i> Send Message</a>
             <button type="button" class="button" onclick="document.getElementById('editProfileForm').style.display = 'block'; this.style.display = 'none';"><i class="fas fa-edit"></i> Edit Profile</button>
         </div>
@@ -187,7 +163,7 @@
     <section id="editProfileForm" class="profile-card" style="display:none;">
         <h2>Edit Student Profile</h2>
         <form action="student_profile_process.jsp" method="post">
-            <input type="hidden" name="studentId" value="<%= studentId %>">
+            <input type="hidden" name="studentId" value="<%= studentIdString %>">
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" name="firstName" value="<%= studentFirstName %>" required>
             <label for="lastName">Last Name:</label>
