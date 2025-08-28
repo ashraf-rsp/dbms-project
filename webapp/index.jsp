@@ -5,6 +5,19 @@
 
     // Mock data for Dashboard
     
+    String parentName = "Guest"; // Default value
+    if (session.getAttribute("loggedInUser") != null) {
+        // Assuming parentName is stored in session after login
+        // You might need to adjust this based on how parentName is actually stored
+        Object nameObj = session.getAttribute("parentName"); 
+        if (nameObj != null) {
+            parentName = nameObj.toString();
+        } else {
+            // Fallback if parentName is not explicitly set but user is logged in
+            parentName = (String) session.getAttribute("loggedInUser");
+        }
+    }
+    
 
     // Recent Attendance Mock Data
     String[][] recentAttendance = {

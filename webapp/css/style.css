@@ -87,3 +87,22 @@ table th {
         font-size: 1.8rem;
     }
 }
+
+/* Hide desktop header actions on mobile */
+@media (max-width: 768px) {
+    .desktop-header-actions {
+        display: none;
+    }
+}
+
+/* Hide mobile menu toggle on desktop */
+.mobile-menu-toggle {
+    display: none; /* Hidden by default on desktop */
+}
+
+/* Show mobile menu toggle on mobile */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block; /* Show on mobile */
+    }
+}
