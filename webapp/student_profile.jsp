@@ -5,9 +5,8 @@
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    String userRole = (String) session.getAttribute("userRole");
-    String loggedInUser = (String) session.getAttribute("loggedInUser");
-    int userId = (Integer) session.getAttribute("userId");
+    // userRole and loggedInUser are already available from auth_check.jspf
+    int userId = (Integer) session.getAttribute("userId"); // userId is needed
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean"; // Default theme
 

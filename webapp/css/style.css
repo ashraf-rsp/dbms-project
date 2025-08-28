@@ -73,7 +73,7 @@ table th {
     nav ul li {
         display: block; /* Stack navigation items */
         margin-right: 0;
-        margin-bottom: 10px;
+        margin-bottom: 5px; /* Reduced margin to lessen gaps */
     }
 
     .container {

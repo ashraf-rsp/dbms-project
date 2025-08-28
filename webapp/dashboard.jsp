@@ -5,8 +5,7 @@
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    String userRole = (String) session.getAttribute("userRole");
-    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    // userRole and loggedInUser are already available from auth_check.jspf
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean";
 %>
@@ -20,9 +19,11 @@
     <%@ include file="includes/header.jsp" %>
 
     <div class="main-container">
-        <jsp:include page="includes/sidebar.jsp">
-            <jsp:param name="activePage" value="dashboard" />
-        </jsp:include>
+        <%
+            request.setAttribute("activePage", "dashboard");
+            request.setAttribute("userRole", userRole); // userRole is already available in dashboard.jsp
+        %>
+        <jsp:include page="includes/sidebar.jsp" />
 
         <main class="content-area">
             <div class="container">

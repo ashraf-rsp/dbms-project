@@ -9,8 +9,8 @@
     ResultSet rs_parent = null;
 
     try {
-        // Get parentId from Users table
-        String sqlParentId = "SELECT ParentID FROM Users WHERE UserID = ?";
+        // Get parentId from Parents table linked by UserID
+        String sqlParentId = "SELECT ParentID FROM Parents WHERE UserID = ?";
         pstmt_parent = conn.prepareStatement(sqlParentId);
         pstmt_parent.setInt(1, (Integer) session.getAttribute("userId"));
         rs_parent = pstmt_parent.executeQuery();
