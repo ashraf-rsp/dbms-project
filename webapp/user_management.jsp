@@ -32,6 +32,9 @@
     String formTitle = "Add New User";
     String submitButtonText = "Add User";
 
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
     if ("edit".equals(action) && userId != -1) {
         formTitle = "Edit User";
         submitButtonText = "Update User";
@@ -61,7 +64,6 @@
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
             if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
         }
     }
 
@@ -134,13 +136,11 @@
                             </thead>
                             <tbody>
                                 <% 
-                                    Connection connList = null;
                                     PreparedStatement pstmtList = null;
                                     ResultSet rsList = null;
                                     try {
-                                        
                                         String sqlList = "SELECT UserID, Username, UserType, ParentID FROM Users ORDER BY UserID";
-                                        pstmtList = connList.prepareStatement(sqlList);
+                                        pstmtList = conn.prepareStatement(sqlList);
                                         rsList = pstmtList.executeQuery();
                                         while (rsList.next()) {
                                 %>
@@ -161,7 +161,6 @@
                                     } finally {
                                         if (rsList != null) try { rsList.close(); } catch (SQLException e) { /* ignore */ }
                                         if (pstmtList != null) try { pstmtList.close(); } catch (SQLException e) { /* ignore */ }
-                                        if (connList != null) try { connList.close(); } catch (SQLException e) { /* ignore */ }
                                     }
                                 %>
                             </tbody>

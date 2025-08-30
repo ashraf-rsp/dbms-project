@@ -1,0 +1,8 @@
+<div class="form-group">
+    <label for="teacherName">Teacher Name:</label>
+    <input type="text" id="teacherName" name="teacherName" value="<%= profileName %>" required>
+</div>
+<div class="form-group">
+    <label for="profilePhoto">Profile Photo:</label>
+    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
+</div>

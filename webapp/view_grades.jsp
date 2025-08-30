@@ -1,102 +1,92 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.List" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.*" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    String userRole = (String) session.getAttribute("userRole");
-    String loggedInUser = (String) session.getAttribute("loggedInUser");
-    int userId = (Integer) session.getAttribute("userId");
-
-    if (!"Student".equals(userRole) && !"Parent".equals(userRole) && !"Teacher".equals(userRole) && !"Admin".equals(userRole)) {
+    // Ensure only Parent can access this page
+    if (!"Parent".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    int studentId = -1;
-    String studentName = "";
-    String status = request.getParameter("status");
-    String message = request.getParameter("message");
+    Integer userId = (Integer) session.getAttribute("userId");
+    Integer parentId = null;
 
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-
-    try {
-        if ("Student".equals(userRole)) {
-            studentId = userId;
-        } else if ("Parent".equals(userRole)) {
-            String paramStudentId = request.getParameter("studentId");
-            if (paramStudentId != null && !paramStudentId.isEmpty()) {
-                studentId = Integer.parseInt(paramStudentId);
-            } else {
-                String sqlParentLinkedStudent = "SELECT spl.StudentID FROM Users u JOIN Student_Parent_Link spl ON u.ParentID = spl.ParentID WHERE u.UserID = ? LIMIT 1";
-                pstmt = conn.prepareStatement(sqlParentLinkedStudent);
-                pstmt.setInt(1, userId);
-                rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    studentId = rs.getInt("StudentID");
-                }
-                rs.close();
-                pstmt.close();
+    if (userId != null) {
+        try {
+            String sqlParentId = "SELECT ParentID FROM Users WHERE UserID = ?";
+            PreparedStatement pstmt_parent = conn.prepareStatement(sqlParentId);
+            pstmt_parent.setInt(1, userId);
+            ResultSet rs_parent = pstmt_parent.executeQuery();
+            if (rs_parent.next()) {
+                parentId = rs_parent.getInt("ParentID");
             }
-        } else if ("Teacher".equals(userRole) || "Admin".equals(userRole)) {
-            String paramStudentId = request.getParameter("studentId");
-            if (paramStudentId != null && !paramStudentId.isEmpty()) {
-                studentId = Integer.parseInt(paramStudentId);
-            } else {
-                session.setAttribute("message", "Please select a student to view grades.");
-                response.sendRedirect("teacher_dashboard.jsp"); // Or a student selection page
-                return;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        if (studentId != -1) {
-            String sqlStudentName = "SELECT FirstName, LastName FROM Students WHERE StudentID = ?";
-            pstmt = conn.prepareStatement(sqlStudentName);
-            pstmt.setInt(1, studentId);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                studentName = rs.getString("FirstName") + " " + rs.getString("LastName");
-            }
-            rs.close();
-            pstmt.close();
-        } else {
-            out.println("<p>No student selected or found.</p>");
-            return;
-        }
-
-    } catch (Exception e) {
-        System.err.println("Error in view_grades.jsp: " + e.getMessage());
-        out.println("<p>Error loading grades. Please try again.</p>");
-        return;
-    
-%>
-
-<p>Student ID: <%= studentId %></p>
-<p>Student Name: <%= studentName %></p>
-
-<% 
-    try {
-        String sqlGrades = "SELECT c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID WHERE e.StudentID = ? ORDER BY g.GradeDate DESC";
-        out.println("SQL Query: " + sqlGrades + "<br>");
-        out.println("studentId for query: " + studentId + "<br>");
-        pstmt = conn.prepareStatement(sqlGrades);
-        pstmt.setInt(1, studentId);
-        rs = pstmt.executeQuery();
-        if (!rs.isBeforeFirst()) {
-            out.println("No grades found for this student.<br>");
-        } else {
-            while (rs.next()) {
-                out.println("Course: " + rs.getString("CourseName") + ", Grade: " + rs.getString("GradePercentage") + ", Letter: " + rs.getString("GradeLetter") + ", GradedBy: " + rs.getString("GradedBy") + ", Date: " + rs.getDate("GradeDate") + "<br>");
-            }
-        }
-    } catch (SQLException e) {
-        System.err.println("Error loading grades: " + e.getMessage());
-        out.println("Error loading grades: " + e.getMessage() + "<br>");
-        e.printStackTrace();
-    } finally {
-        if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
-        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
     }
 %>
+<%@ include file="includes/meta.jsp" %>
+<html lang="en">
+<head>
+    <title>View Grades - Academic Center</title>
+</head>
+<body>
+    <%@ include file="includes/header.jsp" %>
+    <div class="main-container">
+        <jsp:include page="includes/sidebar.jsp">
+            <jsp:param name="activePage" value="view_grades" />
+        </jsp:include>
+        <main class="container">
+            <h1>View Grades</h1>
+            <section class="view-grades-section">
+                <div class="data-table-container">
+                    <div class="responsive-table">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Grade (%)</th>
+                                    <th>Grade (Letter)</th>
+                                    <th>Graded By</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    if (parentId != null) {
+                                        PreparedStatement pstmt_grades = null;
+                                        ResultSet rs_grades = null;
+                                        try {
+                                            String sqlGrades = "SELECT s.StudentName, c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID WHERE spl.ParentID = ? ORDER BY g.GradeDate DESC";
+                                            pstmt_grades = conn.prepareStatement(sqlGrades);
+                                            pstmt_grades.setInt(1, parentId);
+                                            rs_grades = pstmt_grades.executeQuery();
+                                            while (rs_grades.next()) {
+                                %>
+                                <tr>
+                                    <td><%= rs_grades.getString("StudentName") %></td>
+                                    <td><%= rs_grades.getString("CourseName") %></td>
+                                    <td><%= rs_grades.getDouble("GradePercentage") %></td>
+                                    <td><%= rs_grades.getString("GradeLetter") %></td>
+                                    <td><%= rs_grades.getString("GradedBy") %></td>
+                                    <td><%= rs_grades.getDate("GradeDate") %></td>
+                                </tr>
+                                <%
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <%@ include file="includes/footer.jsp" %>
+</body>
+</html>

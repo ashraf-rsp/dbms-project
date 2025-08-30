@@ -1,130 +1,70 @@
-<%@ page import="java.sql.*" %>
-<%@ page import="java.time.LocalDate" %>
-<%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
+<%@ page import="java.sql.*, java.util.*" %>
+
+<%@ include file="../db_connection.jsp" %>
+
 <%
     // Ensure only Teacher can access this page
-    
-    
-
-    if (userRole == null || !userRole.equals("Teacher") || teacherUserId == null) {
+    if (!"Teacher".equals((String) session.getAttribute("userRole"))) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    String message = "";
-    
+    Integer teacherId = (Integer) session.getAttribute("userId");
 
     try {
-        
-        conn.setAutoCommit(false); // Start transaction
-
         int courseId = Integer.parseInt(request.getParameter("courseId"));
-        int gradedByUserId = Integer.parseInt(request.getParameter("gradedByUserId"));
-        Date gradeDate = Date.valueOf(LocalDate.now());
 
-        // Get all enrollment IDs for the given course
-        String sqlEnrollments = "SELECT EnrollmentID FROM Enrollments WHERE CourseID = ?";
-        pstmt = conn.prepareStatement(sqlEnrollments);
-        pstmt.setInt(1, courseId);
-        ResultSet rsEnrollments = pstmt.executeQuery();
+        // Get all students enrolled in the course
+        String studentsSql = "SELECT e.EnrollmentID, s.StudentID FROM Enrollments e JOIN Students s ON e.StudentID = s.StudentID WHERE e.CourseID = ?";
+        PreparedStatement psStudents = conn.prepareStatement(studentsSql);
+        psStudents.setInt(1, courseId);
+        ResultSet rsStudents = psStudents.executeQuery();
 
-        // Prepare for batch insert/update
-        String sqlInsertGrade = "INSERT INTO Grades (EnrollmentID, GradePercentage, GradeLetter, GradedByUserID, GradeDate) VALUES (?, ?, ?, ?, ?)";
-        String sqlUpdateGrade = "UPDATE Grades SET GradePercentage = ?, GradeLetter = ?, GradedByUserID = ?, GradeDate = ? WHERE EnrollmentID = ?";
+        while (rsStudents.next()) {
+            int enrollmentId = rsStudents.getInt("EnrollmentID");
+            String studentId = rsStudents.getString("StudentID");
+            String gradeStr = request.getParameter("grade_" + studentId);
 
-        PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsertGrade);
-        PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdateGrade);
+            if (gradeStr != null && !gradeStr.isEmpty()) {
+                double gradePercentage = Double.parseDouble(gradeStr);
+                String gradeLetter = ""; // You can add logic here to determine the letter grade
 
-        boolean allSuccessful = true;
+                // Check if a grade record already exists
+                String checkSql = "SELECT GradeID FROM Grades WHERE EnrollmentID = ?";
+                PreparedStatement psCheck = conn.prepareStatement(checkSql);
+                psCheck.setInt(1, enrollmentId);
+                ResultSet rsCheck = psCheck.executeQuery();
 
-        while (rsEnrollments.next()) {
-            int enrollmentId = rsEnrollments.getInt("EnrollmentID");
-            String gradePercentageStr = request.getParameter("grade_" + enrollmentId);
-            String gradeLetter = request.getParameter("gradeLetter_" + enrollmentId);
-
-            Double gradePercentage = null;
-            if (gradePercentageStr != null && !gradePercentageStr.isEmpty()) {
-                try {
-                    gradePercentage = Double.parseDouble(gradePercentageStr);
-                } catch (NumberFormatException e) {
-                    // Handle invalid number format, perhaps set to null or skip
-                    gradePercentage = null;
+                if (rsCheck.next()) {
+                    // Update existing record
+                    String updateSql = "UPDATE Grades SET GradePercentage = ?, GradeLetter = ?, GradedByUserID = ?, GradeDate = CURDATE() WHERE GradeID = ?";
+                    PreparedStatement psUpdate = conn.prepareStatement(updateSql);
+                    psUpdate.setDouble(1, gradePercentage);
+                    psUpdate.setString(2, gradeLetter);
+                    psUpdate.setInt(3, teacherId);
+                    psUpdate.setInt(4, rsCheck.getInt("GradeID"));
+                    psUpdate.executeUpdate();
+                } else {
+                    // Insert new record
+                    String insertSql = "INSERT INTO Grades (EnrollmentID, GradePercentage, GradeLetter, GradedByUserID, GradeDate) VALUES (?, ?, ?, ?, CURDATE())";
+                    PreparedStatement psInsert = conn.prepareStatement(insertSql);
+                    psInsert.setInt(1, enrollmentId);
+                    psInsert.setDouble(2, gradePercentage);
+                    psInsert.setString(3, gradeLetter);
+                    psInsert.setInt(4, teacherId);
+                    psInsert.executeUpdate();
                 }
             }
-
-            // Check if grade record already exists for this enrollment
-            String sqlCheck = "SELECT COUNT(*) FROM Grades WHERE EnrollmentID = ?";
-            PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck);
-            pstmtCheck.setInt(1, enrollmentId);
-            ResultSet rsCheck = pstmtCheck.executeQuery();
-            rsCheck.next();
-            int count = rsCheck.getInt(1);
-            rsCheck.close();
-            pstmtCheck.close();
-
-            if (count > 0) {
-                // Update existing record
-                if (gradePercentage != null) {
-                    pstmtUpdate.setDouble(1, gradePercentage);
-                } else {
-                    pstmtUpdate.setNull(1, java.sql.Types.DECIMAL);
-                }
-                pstmtUpdate.setString(2, gradeLetter);
-                pstmtUpdate.setInt(3, gradedByUserId);
-                pstmtUpdate.setDate(4, gradeDate);
-                pstmtUpdate.setInt(5, enrollmentId);
-                pstmtUpdate.addBatch();
-            } else if (gradePercentage != null || (gradeLetter != null && !gradeLetter.isEmpty())) {
-                // Insert new record only if there's actual grade data
-                if (gradePercentage != null) {
-                    pstmtInsert.setDouble(1, gradePercentage);
-                } else {
-                    pstmtInsert.setNull(1, java.sql.Types.DECIMAL);
-                }
-                pstmtInsert.setString(2, gradeLetter);
-                pstmtInsert.setInt(3, enrollmentId);
-                pstmtInsert.setInt(4, gradedByUserId);
-                pstmtInsert.setDate(5, gradeDate);
-                pstmtInsert.addBatch();
-            }
-        }
-        rsEnrollments.close();
-        pstmt.close();
-
-        int[] insertResults = pstmtInsert.executeBatch();
-        int[] updateResults = pstmtUpdate.executeBatch();
-
-        for (int result : insertResults) {
-            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
-        }
-        for (int result : updateResults) {
-            if (result == PreparedStatement.EXECUTE_FAILED) allSuccessful = false;
         }
 
-        if (allSuccessful) {
-            conn.commit(); // Commit transaction
-            message = "Grades updated successfully for Course ID: " + courseId;
-        } else {
-            conn.rollback(); // Rollback transaction
-            message = "Failed to update grades for some students. Please check logs.";
-        }
+        session.setAttribute("message", "Grades updated successfully.");
+        session.setAttribute("status", "success");
 
-    } catch (SQLException e) {
-        try { if (conn != null) conn.rollback(); } catch (SQLException rbex) { /* ignore */ }
-        message = "Database error: " + e.getMessage();
+    } catch (Exception e) {
+        session.setAttribute("message", "An error occurred: " + e.getMessage());
+        session.setAttribute("status", "error");
         e.printStackTrace();
-    } catch (NumberFormatException e) {
-        message = "Invalid input for Course ID.";
-        e.printStackTrace();
-    } catch (ClassNotFoundException e) {
-        message = "Server configuration error: JDBC Driver not found.";
-        e.printStackTrace();
-    } finally {
-        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-        if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
 
-    session.setAttribute("message", message);
-    response.sendRedirect("teacher_dashboard.jsp");
+    response.sendRedirect("update_grades.jsp");
 %>

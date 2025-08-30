@@ -1,0 +1,316 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ include file="db_connection.jsp" %>
+<%@ include file="includes/auth_check.jspf" %>
+<%
+    // Get logged-in user's info from session
+    String sessionUserRole = (String) session.getAttribute("userRole");
+    int sessionUserId = (Integer) session.getAttribute("userId");
+
+    // Determine which user profile to display
+    String paramUserId = request.getParameter("userId");
+    int profileUserId = sessionUserId; // Default to own profile
+    String profileRole = sessionUserRole; // Default to own role
+
+    // Variables to hold profile data
+    String profileName = "";
+    String profileEmail = "";
+    // Add more variables for other profile data as needed
+
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    String requestedUserRole = null; // Declare here
+
+    try {
+        if (paramUserId != null && !paramUserId.isEmpty()) {
+            int requestedUserId = Integer.parseInt(paramUserId);
+
+            // Get the role of the requested user
+            String sqlRequestedRole = "SELECT UserType FROM Users WHERE UserID = ?";
+            pstmt = conn.prepareStatement(sqlRequestedRole);
+            pstmt.setInt(1, requestedUserId);
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                requestedUserRole = rs.getString("UserType");
+            }
+            rs.close();
+            pstmt.close();
+
+            boolean authorized = false;
+
+            // Permission checks
+            if (sessionUserRole.equals("Admin")) {
+                authorized = true;
+            } else if (sessionUserRole.equals("Teacher") && requestedUserRole.equals("Student")) {
+                // Teachers can view student profiles
+                authorized = true;
+            } else if (sessionUserRole.equals("Parent")) {
+                // Parents can view their linked children's profiles
+                String sqlCheckLink = "SELECT 1 FROM Student_Parent_Link WHERE StudentID = (SELECT StudentID FROM Students WHERE UserID = ?) AND ParentID = (SELECT ParentID FROM Parents WHERE UserID = ?)";
+                System.out.println("DEBUG: sqlCheckLink: " + sqlCheckLink);
+                System.out.println("DEBUG: requestedUserId for StudentID subquery: " + requestedUserId);
+                System.out.println("DEBUG: sessionUserId for ParentID subquery: " + sessionUserId);
+                pstmt = conn.prepareStatement(sqlCheckLink);
+                pstmt.setInt(1, requestedUserId);
+                pstmt.setInt(2, sessionUserId);
+                rs = pstmt.executeQuery();
+                boolean hasRow = rs.next();
+                <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ include file="db_connection.jsp" %>
+<%@ include file="includes/auth_check.jspf" %>
+<%
+    // Get logged-in user's info from session
+    String sessionUserRole = (String) session.getAttribute("userRole");
+    int sessionUserId = (Integer) session.getAttribute("userId");
+
+    // Determine which user profile to display
+    String paramUserId = request.getParameter("userId");
+    int profileUserId = sessionUserId; // Default to own profile
+    String profileRole = sessionUserRole; // Default to own role
+
+    // Variables to hold profile data
+    String profileName = "";
+    String profileEmail = "";
+
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    String requestedUserRole = null;
+
+    try {
+        if (paramUserId != null && !paramUserId.isEmpty()) {
+            int requestedUserId = Integer.parseInt(paramUserId);
+
+            String sqlRequestedRole = "SELECT UserType FROM Users WHERE UserID = ?";
+            pstmt = conn.prepareStatement(sqlRequestedRole);
+            pstmt.setInt(1, requestedUserId);
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                requestedUserRole = rs.getString("UserType");
+            }
+            rs.close();
+            pstmt.close();
+
+            boolean authorized = false;
+
+            if (sessionUserRole.equals("Admin")) {
+                authorized = true;
+            } else if (sessionUserRole.equals("Teacher") && requestedUserRole.equals("Student")) {
+                authorized = true;
+            } else if (sessionUserRole.equals("Parent")) {
+                String sqlCheckLink = "SELECT 1 FROM Student_Parent_Link WHERE StudentID = (SELECT StudentID FROM Students WHERE UserID = ?) AND ParentID = (SELECT ParentID FROM Parents WHERE UserID = ?)";
+                pstmt = conn.prepareStatement(sqlCheckLink);
+                pstmt.setInt(1, requestedUserId);
+                pstmt.setInt(2, sessionUserId);
+                rs = pstmt.executeQuery();
+                boolean hasRow = rs.next();
+                if(hasRow){
+                    authorized = true;
+                }
+                rs.close();
+                pstmt.close();
+            }
+
+            if (authorized) {
+                profileUserId = requestedUserId;
+                profileRole = requestedUserRole;
+            } else {
+                response.sendRedirect("access_denied.jsp");
+                return;
+            }
+        }
+
+        switch (profileRole) {
+            case "Student":
+                String sqlStudent = "SELECT s.StudentName, s.Email, s.DOB, s.PhotoURL FROM Students s WHERE s.UserID = ?";
+                pstmt = conn.prepareStatement(sqlStudent);
+                pstmt.setInt(1, profileUserId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    profileName = rs.getString("StudentName");
+                    profileEmail = rs.getString("Email");
+                    String studentDOB = rs.getString("DOB");
+                    String studentPhotoURL = rs.getString("PhotoURL");
+                    request.setAttribute("studentDOB", studentDOB);
+                    request.setAttribute("studentPhotoURL", studentPhotoURL);
+                }
+                break;
+            case "Parent":
+                String sqlParent = "SELECT p.FirstName, p.LastName, p.Email FROM Parents p WHERE p.UserID = ?";
+                pstmt = conn.prepareStatement(sqlParent);
+                pstmt.setInt(1, profileUserId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    profileName = rs.getString("FirstName") + " " + rs.getString("LastName");
+                    profileEmail = rs.getString("Email");
+                    String parentFirstName = rs.getString("FirstName");
+                    String parentLastName = rs.getString("LastName");
+                    request.setAttribute("parentFirstName", parentFirstName);
+                    request.setAttribute("parentLastName", parentLastName);
+                }
+                break;
+            case "Teacher":
+                String sqlTeacher = "SELECT t.TeacherName, t.Email, t.PhotoURL FROM Teachers t WHERE t.UserID = ?";
+                pstmt = conn.prepareStatement(sqlTeacher);
+                pstmt.setInt(1, profileUserId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    profileName = rs.getString("TeacherName");
+                    profileEmail = rs.getString("Email");
+                    String teacherPhotoURL = rs.getString("PhotoURL");
+                    request.setAttribute("teacherPhotoURL", teacherPhotoURL);
+                }
+                break;
+            case "Admin":
+                String sqlAdmin = "SELECT Username, Email FROM Users WHERE UserID = ?";
+                pstmt = conn.prepareStatement(sqlAdmin);
+                pstmt.setInt(1, profileUserId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    profileName = rs.getString("Username");
+                    profileEmail = rs.getString("Email");
+                }
+                break;
+        }
+    } catch (Exception e) {
+        e.printStackTrace(new java.io.PrintWriter(out));
+    }
+%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <%@ include file="includes/meta.jsp" %>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <%@ include file="includes/header.jsp" %>
+    <main class="container">
+        <h1><%= profileName %>'s Profile</h1>
+        <section class="profile-card">
+            <div class="profile-header">
+                <h2><%= profileName %></h2>
+                <p>Role: <%= profileRole %></p>
+            </div>
+            <div class="profile-details">
+                <p><strong>Email:</strong> <%= profileEmail %></p>
+                <%-- Include role-specific profile details --%>
+                <% if (profileRole.equals("Student")) { %>
+                    <%@ include file="includes/student_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Parent")) { %>
+                    <%@ include file="includes/parent_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Teacher")) { %>
+                    <%@ include file="includes/teacher_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Admin")) { %>
+                    <%@ include file="includes/admin_profile_details.jspf" %>
+                <% } %>
+            </div>
+        </section>
+
+        <section class="profile-edit-form">
+            <h2>Edit Profile</h2>
+            <form action="profile_process.jsp" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="userId" value="<%= profileUserId %>">
+                <input type="hidden" name="userRole" value="<%= profileRole %>">
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<%= profileEmail %>" required>
+                </div>
+
+                <%-- Role-specific fields will be included here via JSP fragments --%>
+                <% if (profileRole.equals("Student")) { %>
+                    <%@ include file="includes/student_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Parent")) { %>
+                    <%@ include file="includes/parent_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Teacher")) { %>
+                    <%@ include file="includes/teacher_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Admin")) { %>
+                    <%@ include file="includes/admin_profile_edit_fields.jspf" %>
+                <% } %>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </section>
+    </main>
+    <%@ include file="includes/footer.jsp" %>
+</body>
+</html>
+%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <%@ include file="includes/meta.jsp" %>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <% System.out.println("DEBUG: Before main tag."); %>
+    <%@ include file="includes/header.jsp" %>
+    <main class="container">
+        <h1><%= profileName %>'s Profile</h1>
+        <section class="profile-card">
+            <div class="profile-header">
+                <h2><%= profileName %></h2>
+                <p>Role: <%= profileRole %></p>
+            </div>
+            <div class="profile-details">
+                <p><strong>Email:</strong> <%= profileEmail %></p>
+                <%-- Include role-specific profile details --%>
+                <% if (profileRole.equals("Student")) { %>
+                    <%@ include file="includes/student_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Parent")) { %>
+                    <%@ include file="includes/parent_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Teacher")) { %>
+                    <%@ include file="includes/teacher_profile_details.jspf" %>
+                <% } else if (profileRole.equals("Admin")) { %>
+                    <%@ include file="includes/admin_profile_details.jspf" %>
+                <% } %>
+            </div>
+        </section>
+
+        <section class="profile-edit-form">
+            <h2>Edit Profile</h2>
+            <form action="profile_process.jsp" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="userId" value="<%= profileUserId %>">
+                <input type="hidden" name="userRole" value="<%= profileRole %>">
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<%= profileEmail %>" required>
+                </div>
+
+                <%-- Role-specific fields will be included here via JSP fragments --%>
+                <% if (profileRole.equals("Student")) { %>
+                    <%@ include file="includes/student_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Parent")) { %>
+                    <%@ include file="includes/parent_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Teacher")) { %>
+                    <%@ include file="includes/teacher_profile_edit_fields.jspf" %>
+                <% } else if (profileRole.equals("Admin")) { %>
+                    <%@ include file="includes/admin_profile_edit_fields.jspf" %>
+                <% } %>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </section>
+    </main>
+    <%@ include file="includes/footer.jsp" %>
+</body>
+</html>
+include file="includes/footer.jsp" %>
+</body>
+</html>
+</html>          <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </section>
+    </main>
+    <%@ include file="includes/footer.jsp" %>
+</body>
+</html>
+include file="includes/footer.jsp" %>
+</body>
+</html>
+</html>

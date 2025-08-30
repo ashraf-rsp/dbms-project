@@ -1,0 +1,212 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.io.*, java.util.logging.*" %>
+<%@ page import="org.apache.commons.fileupload.*, org.apache.commons.fileupload.disk.*, org.apache.commons.fileupload.servlet.*" %>
+<%@ page import="java.util.List" %>
+<%@ include file="db_connection.jsp" %>
+<%@ include file="includes/auth_check.jspf" %>
+<%
+    Logger logger = Logger.getLogger(this.getClass().getName());
+
+    // --- Authorization Check ---
+    String userRole = (String) session.getAttribute("userRole");
+    int loggedInUserId = (Integer) session.getAttribute("userId");
+    if (!"Student".equals(userRole) && !"Parent".equals(userRole)) {
+        response.sendRedirect("access_denied.jsp");
+        return;
+    }
+
+    String studentIdStr = null;
+    String studentName = null;
+    String email = null;
+    String dateOfBirth = null;
+    FileItem photoItem = null;
+
+    String status = "error";
+    String message = "An unknown error occurred.";
+
+    // --- File Upload Processing ---
+    if (!ServletFileUpload.isMultipartContent(request)) {
+        message = "Form must be multipart/form-data.";
+    } else {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            List<FileItem> formItems = upload.parseRequest(request);
+            if (formItems != null && formItems.size() > 0) {
+                for (FileItem item : formItems) {
+                    if (item.isFormField()) {
+                        // Process regular form fields
+                        switch (item.getFieldName()) {
+                            case "studentId": studentIdStr = item.getString(); break;
+                            case "studentName": studentName = item.getString(); break;
+                            case "email": email = item.getString(); break;
+                            case "dateOfBirth": dateOfBirth = item.getString(); break;
+                        }
+                    } else {
+                        // Process uploaded file
+                        if (item.getFieldName().equals("profilePhoto") && item.getSize() > 0) {
+                            photoItem = item;
+                        }
+                    }
+                }
+            }
+        } catch (FileUploadException e) {
+            message = "Error parsing uploaded file: " + e.getMessage();
+            logger.log(Level.SEVERE, "FileUploadException", e);
+        }
+    }
+
+    // --- Validation and Database Update ---
+    if (studentIdStr != null) {
+        int studentId = Integer.parseInt(studentIdStr);
+
+        // Security Check: Verify user has permission to edit this profile
+        boolean canEdit = false;
+        try {
+            if ("Student".equals(userRole)) {
+                PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM Students WHERE StudentID = ? AND UserID = ?");
+                ps.setInt(1, studentId);
+                ps.setInt(2, loggedInUserId);
+                canEdit = ps.executeQuery().next();
+            } else if ("Parent".equals(userRole)) {
+                PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM Student_Parent_Link WHERE StudentID = ? AND ParentID = (SELECT ParentID FROM Users WHERE UserID = ?)");
+                ps.setInt(1, studentId);
+                ps.setInt(2, loggedInUserId);
+                canEdit = ps.executeQuery().next();
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Security check failed", e);
+        }
+
+        if (canEdit) {
+            StringBuilder sqlUpdate = new StringBuilder("UPDATE Students s JOIN Users u ON s.UserID = u.UserID SET ");
+            List<Object> params = new ArrayList<>();
+            
+            sqlUpdate.append("s.StudentName = ?, s.DOB = ?, u.Email = ? ");
+            params.add(studentName);
+            params.add(dateOfBirth.isEmpty() ? null : dateOfBirth);
+            params.add(email);
+
+            // Handle photo upload
+            String photoURL = null;
+            if (photoItem != null) {
+                String fileName = new File(photoItem.getName()).getName();
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "profile_pics";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
+                
+                String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+                File storeFile = new File(uploadPath + File.separator + uniqueFileName);
+                try {
+                    photoItem.write(storeFile);
+                    photoURL = "uploads/profile_pics/" + uniqueFileName;
+                    sqlUpdate.append(", s.PhotoURL = ?");
+                    params.add(photoURL);
+                } catch (Exception e) {
+                    message = "Error saving uploaded photo.";
+                    logger.log(Level.SEVERE, "File write error", e);
+                }
+            }
+
+            sqlUpdate.append(" WHERE s.StudentID = ?");
+            params.add(studentId);
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate.toString())) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    status = "success";
+                    message = "Profile updated successfully!";
+                    session.setAttribute("message", message);
+                } else {
+                    message = "No changes were made to the profile.";
+                }
+            } catch (SQLException e) {
+                message = "Database error: " + e.getMessage();
+                logger.log(Level.SEVERE, "SQLException on update", e);
+            }
+        } else {
+            message = "You are not authorized to perform this action.";
+        }
+    } else {
+        message = "Invalid request. Student ID was not provided.";
+    }
+
+    // --- Redirect ---
+    session.setAttribute("message", message);
+    response.sendRedirect("profile.jsp?userId=" + targetUserId);
+%>   } else {
+            message = "You are not authorized to perform this action.";
+        }
+    } else {
+        message = "Invalid request. Student ID was not provided.";
+    }
+
+    // --- Redirect ---
+    session.setAttribute("message", message);
+    response.sendRedirect("student_profile.jsp?studentId=" + studentIdStr);
+%>teOfBirth.isEmpty() ? null : dateOfBirth);
+                    params.add(email);
+                    if (photoURL != null) { sqlUpdate.append(", s.PhotoURL = ?"); params.add(photoURL); }
+                    sqlUpdate.append(" WHERE s.UserID = ?");
+                    params.add(targetUserId);
+                    break;
+                case "Parent":
+                    sqlUpdate = new StringBuilder("UPDATE Parents p JOIN Users u ON p.UserID = u.UserID SET p.FirstName = ?, p.LastName = ?, u.Email = ? ");
+                    params.clear();
+                    params.add(request.getParameter("firstName"));
+                    params.add(request.getParameter("lastName"));
+                    params.add(email);
+                    sqlUpdate.append(" WHERE p.UserID = ?");
+                    params.add(targetUserId);
+                    break;
+                case "Teacher":
+                    sqlUpdate = new StringBuilder("UPDATE Teachers t JOIN Users u ON t.UserID = u.UserID SET t.TeacherName = ?, u.Email = ? ");
+                    params.clear();
+                    params.add(request.getParameter("teacherName"));
+                    params.add(email);
+                    if (photoURL != null) { sqlUpdate.append(", t.PhotoURL = ?"); params.add(photoURL); }
+                    sqlUpdate.append(" WHERE t.UserID = ?");
+                    params.add(targetUserId);
+                    break;
+                case "Admin":
+                    sqlUpdate = new StringBuilder("UPDATE Users SET Email = ? ");
+                    params.clear();
+                    params.add(email);
+                    // Admin username update is not handled here, as it's usually not editable via profile
+                    sqlUpdate.append(" WHERE UserID = ?");
+                    params.add(targetUserId);
+                    break;
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate.toString())) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected > 0) {
+                    status = "success";
+                    message = "Profile updated successfully!";
+                    session.setAttribute("message", message);
+                } else {
+                    message = "No changes were made to the profile.";
+                }
+            } catch (SQLException e) {
+                message = "Database error: " + e.getMessage();
+                logger.log(Level.SEVERE, "SQLException on update", e);
+            }
+        } else {
+            message = "You are not authorized to perform this action.";
+        }
+    } else {
+        message = "Invalid request. Student ID was not provided.";
+    }
+
+    // --- Redirect ---
+    session.setAttribute("message", message);
+    response.sendRedirect("student_profile.jsp?studentId=" + studentIdStr);
+%>

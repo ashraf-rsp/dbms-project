@@ -1,10 +1,57 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, java.util.*" %>
+
+<%
+    Integer teacherId = (Integer) session.getAttribute("userId");
+    int totalCourses = 0;
+    int totalStudents = 0;
+
+    // Maps to hold course data
+    Map<String, Integer> courseStudentCount = new LinkedHashMap<>();
+    Map<String, String> courseSchedules = new LinkedHashMap<>();
+
+    if (teacherId != null) {
+        try {
+            // Get courses taught by the teacher and their schedules
+            String coursesSql = "SELECT c.CourseID, c.CourseName, s.DayOfWeek, s.StartTime, s.EndTime FROM Courses c JOIN Schedules s ON c.CourseID = s.CourseID WHERE s.TeacherUserID = ?";
+            PreparedStatement psCourses = conn.prepareStatement(coursesSql);
+            psCourses.setInt(1, teacherId);
+            ResultSet rsCourses = psCourses.executeQuery();
+
+            while (rsCourses.next()) {
+                int courseId = rsCourses.getInt("CourseID");
+                String courseName = rsCourses.getString("CourseName");
+                String dayOfWeek = rsCourses.getString("DayOfWeek");
+                String startTime = rsCourses.getString("StartTime");
+                String endTime = rsCourses.getString("EndTime");
+                String schedule = dayOfWeek + " @ " + startTime + " - " + endTime;
+
+                // Get student count for each course
+                String studentCountSql = "SELECT COUNT(*) FROM Enrollments WHERE CourseID = ?";
+                PreparedStatement psStudentCount = conn.prepareStatement(studentCountSql);
+                psStudentCount.setInt(1, courseId);
+                ResultSet rsStudentCount = psStudentCount.executeQuery();
+                int studentCount = 0;
+                if (rsStudentCount.next()) {
+                    studentCount = rsStudentCount.getInt(1);
+                }
+
+                courseStudentCount.put(courseName, studentCount);
+                courseSchedules.put(courseName, schedule);
+                totalStudents += studentCount;
+            }
+            totalCourses = courseStudentCount.size();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+%>
 
 <div class="summary-cards-grid">
     <div class="summary-card">
         <h3>Teacher Quick Stats</h3>
-        <p><strong>Total Courses:</strong> 4</p>
-        <p><strong>Total Students:</strong> 65</p>
+        <p><strong>Total Courses:</strong> <%= totalCourses %></p>
+        <p><strong>Total Students:</strong> <%= totalStudents %></p>
     </div>
 </div>
 
@@ -22,26 +69,18 @@
                 </tr>
             </thead>
             <tbody>
+                <% for (Map.Entry<String, Integer> entry : courseStudentCount.entrySet()) { %>
                 <tr>
-                    <td>Advanced Mathematics</td>
-                    <td>15</td>
-                    <td>Mon, Wed, Fri @ 10:00 AM</td>
+                    <td><%= entry.getKey() %></td>
+                    <td><%= entry.getValue() %></td>
+                    <td><%= courseSchedules.get(entry.getKey()) %></td>
                 </tr>
+                <% } %>
+                <% if (courseStudentCount.isEmpty()) { %>
                 <tr>
-                    <td>History of Science</td>
-                    <td>20</td>
-                    <td>Tue, Thu @ 1:00 PM</td>
+                    <td colspan="3">You are not currently assigned to any courses.</td>
                 </tr>
-                <tr>
-                    <td>English Literature</td>
-                    <td>18</td>
-                    <td>Mon, Wed @ 2:00 PM</td>
-                </tr>
-                 <tr>
-                    <td>Physics 101</td>
-                    <td>12</td>
-                    <td>Tue, Thu @ 9:00 AM</td>
-                </tr>
+                <% } %>
             </tbody>
         </table>
     </div>

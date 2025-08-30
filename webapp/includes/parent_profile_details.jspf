@@ -1,0 +1,1 @@
+<p><strong>Parent Name:</strong> <%= request.getAttribute("parentFirstName") != null ? request.getAttribute("parentFirstName") : "" %> <%= request.getAttribute("parentLastName") != null ? request.getAttribute("parentLastName") : "" %></p>
