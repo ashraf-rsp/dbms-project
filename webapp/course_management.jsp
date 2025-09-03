@@ -5,9 +5,12 @@
     // AuthFilter handles access control. This page is for Admins.
     String status = request.getParameter("status");
     String message = request.getParameter("message");
+
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Course Management - Academic Center</title>
 </head>

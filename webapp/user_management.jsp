@@ -8,6 +8,9 @@
     // The AuthFilter should handle the redirection if userRole is not Admin.
     // This JSP assumes the AuthFilter has already verified the role.
 
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+
     String action = request.getParameter("action");
     String userIdParam = request.getParameter("userId");
 
@@ -70,7 +73,7 @@
     }
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title><%= formTitle %> - Academic Center</title>
 </head>

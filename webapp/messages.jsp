@@ -16,9 +16,12 @@
 
     String status = request.getParameter("status");
     String message = request.getParameter("message");
+
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en" data-theme="<%= (String) session.getAttribute("theme") %>">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Messages - Academic Center</title>
 </head>

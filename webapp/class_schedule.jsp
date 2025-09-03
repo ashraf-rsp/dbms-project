@@ -11,6 +11,9 @@
         return;
     }
 
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+
     // Prepare variables
     String teacherName = "";
 
@@ -64,7 +67,7 @@
     }
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Class Schedule - Academic Center</title>
 </head>
