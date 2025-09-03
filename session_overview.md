@@ -86,3 +86,21 @@ This session focused on familiarizing myself with the project codebase, debuggin
 4.  **Thorough Access Control Testing:** Once all JSP files are refactored, perform comprehensive tests for all roles and pages to ensure the Servlet Filter is correctly enforcing access control.
 5.  **Refine `web.xml` filter mapping:** Review and refine the filter mapping in `web.xml` to ensure it's optimal and doesn't interfere with static resources.
 6.  **Continue with the project plan:** After access control is fully verified, proceed with building out features as per `project_plan.md`.
+
+**Current Session Updates (as of Thursday, September 4, 2025):**
+
+**1. Admin and Teacher Profile Update Commit:**
+*   **Action:** Staged and committed changes related to enabling profile updates for Admin and Teacher roles.
+*   **Commit Message:** `fix(profile): Enable profile updates for Admin and Teacher roles`
+    *   Refactored `profile_process.jsp` to correctly handle profile updates.
+    *   Removed `Apache Commons FileUpload` dependency.
+    *   Implemented password hashing and corrected SQL/redirection.
+
+**2. Student Profile Update Debugging & Fix:**
+*   **Problem Identified:** Student profile updates were failing with a variety of issues, including silent failures, "Connection refused" errors, `NumberFormatException`, and session invalidation.
+*   **Investigation & Resolution:**
+    *   **Initial Fix:** Corrected the `UPDATE` statement in `profile_process.jsp` to use `StudentID` instead of `UserID`.
+    *   **Database Corruption:** Discovered that previous failed attempts had corrupted the database, setting the `Username` for the student to `NULL`. Restored the username to `abc`.
+    *   **`NumberFormatException`:** Fixed a `NumberFormatException` caused by attempting to parse the `StudentID` (a string) as an integer.
+    *   **Session Invalidation:** The root cause of the session invalidation was identified: `profile_process.jsp` was setting the `loggedInUser` session attribute to `null` because the `username` form field was not present in the student profile form. The fix was to only update the session attribute if the `username` is not null.
+*   **Final Verification:** After multiple rounds of debugging and fixes, the student profile update functionality is now working correctly. The changes were verified by updating a student's name and date of birth and confirming the changes in the database.

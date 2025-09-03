@@ -14,6 +14,11 @@
 
     // Retrieve form fields directly from request parameters
     String targetUserIdStr = request.getParameter("userId");
+    if (targetUserIdStr == null || targetUserIdStr.isEmpty()) {
+        if (loggedInUserId != null) {
+            targetUserIdStr = loggedInUserId.toString();
+        }
+    }
     String userRole = request.getParameter("userRole"); // Role of the profile being edited
     String username = request.getParameter("username");
     String password = request.getParameter("password");
@@ -36,21 +41,31 @@
         }
 
         if (canEdit) {
-            StringBuilder sqlUpdateUser = new StringBuilder("UPDATE Users SET Username = ? ");
+            List<String> setClauses = new ArrayList<>();
             List<Object> paramsUser = new ArrayList<>();
-            paramsUser.add(username);
+
+            if (username != null && !username.isEmpty()) {
+                setClauses.add("Username = ?");
+                paramsUser.add(username);
+            }
 
             if (password != null && !password.isEmpty()) {
-                sqlUpdateUser.append(", PasswordHash = ? ");
+                setClauses.add("PasswordHash = ?");
                 paramsUser.add(PasswordUtil.hashPassword(password));
             }
             // Add email update if email field is present in form
             if (email != null && !email.isEmpty()) {
-                sqlUpdateUser.append(", Email = ? ");
+                setClauses.add("Email = ?");
                 paramsUser.add(email);
             }
-            sqlUpdateUser.append(" WHERE UserID = ?");
-            paramsUser.add(targetUserId);
+
+            StringBuilder sqlUpdateUser = new StringBuilder();
+            if (!setClauses.isEmpty()) {
+                sqlUpdateUser.append("UPDATE Users SET ");
+                sqlUpdateUser.append(String.join(", ", setClauses));
+                sqlUpdateUser.append(" WHERE UserID = ?");
+                paramsUser.add(targetUserId);
+            }
 
             StringBuilder sqlUpdateProfile = new StringBuilder();
             List<Object> paramsProfile = new ArrayList<>();
@@ -65,8 +80,8 @@
                 paramsProfile.add(studentName);
                 paramsProfile.add(dateOfBirth.isEmpty() ? null : dateOfBirth);
                 // if (photoURL != null) { sqlUpdateProfile.append(", PhotoURL = ?"); paramsProfile.add(photoURL); }
-                sqlUpdateProfile.append(" WHERE UserID = ?"); // Assuming UserID in Students table
-                paramsProfile.add(targetUserId);
+                sqlUpdateProfile.append(" WHERE StudentID = ?"); // Use StudentID
+                paramsProfile.add(request.getParameter("studentId")); // Add StudentID from form
             } else if ("Teacher".equals(userRole)) {
                 String teacherName = request.getParameter("teacherName"); // Use request.getParameter
                 
@@ -96,18 +111,20 @@
             boolean userUpdated = false;
             boolean profileUpdated = false;
 
-            try (PreparedStatement psUser = conn.prepareStatement(sqlUpdateUser.toString())) {
-                logger.info("Executing SQL (User): " + sqlUpdateUser.toString());
-                logger.info("Params (User): " + paramsUser.toString());
-                for (int i = 0; i < paramsUser.size(); i++) {
-                    psUser.setObject(i + 1, paramsUser.get(i));
+            if (sqlUpdateUser.length() > 0) { // Only execute if there's a user update
+                try (PreparedStatement psUser = conn.prepareStatement(sqlUpdateUser.toString())) {
+                    logger.info("Executing SQL (User): " + sqlUpdateUser.toString());
+                    logger.info("Params (User): " + paramsUser.toString());
+                    for (int i = 0; i < paramsUser.size(); i++) {
+                        psUser.setObject(i + 1, paramsUser.get(i));
+                    }
+                    int rowsAffected = psUser.executeUpdate();
+                    userUpdated = rowsAffected > 0;
+                    logger.info("User update rows affected: " + rowsAffected + ", userUpdated: " + userUpdated);
+                } catch (SQLException e) {
+                    message = "Database error updating user: " + e.getMessage();
+                    logger.log(Level.SEVERE, "SQLException on user update", e);
                 }
-                int rowsAffected = psUser.executeUpdate();
-                userUpdated = rowsAffected > 0;
-                logger.info("User update rows affected: " + rowsAffected + ", userUpdated: " + userUpdated);
-            } catch (SQLException e) {
-                message = "Database error updating user: " + e.getMessage();
-                logger.log(Level.SEVERE, "SQLException on user update", e);
             }
 
             if (sqlUpdateProfile.length() > 0) { // Only execute if there's a profile-specific update
@@ -126,7 +143,7 @@
                 status = "success";
                 message = "Profile updated successfully!";
                 // Update session username if it was changed
-                if (loggedInUserId != null && loggedInUserId == targetUserId) {
+                if (loggedInUserId != null && loggedInUserId == targetUserId && username != null && !username.isEmpty()) {
                     session.setAttribute("loggedInUser", username);
                 }
             } else {
