@@ -1,14 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
-    int userId = (Integer) session.getAttribute("userId");
+    // AuthFilter provides user attributes
+    Integer userId = (Integer) request.getAttribute("userId");
+    String userRole = (String) request.getAttribute("userRole");
 
-    if (!"Teacher".equals(userRole)) {
+    if (userId == null || !"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
+
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean";
 
     String teacherUsername = "";
     String teacherEmail = ""; // Assuming email might be added to Users table or a linked table later
@@ -53,7 +57,7 @@
     }
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Teacher Profile - Academic Center</title>
 </head>

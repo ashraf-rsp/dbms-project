@@ -1,4 +1,8 @@
 /* General Body Styles */
+html {
+    height: 100%; /* Ensure html takes full height */
+}
+
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
@@ -7,12 +11,16 @@ body {
     background: var(--bg-primary);
     color: var(--gray-700);
     transition: background 0.3s ease, color 0.3s ease;
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
 }
 
 /* Main Container Layout */
 .main-container {
-    display: flex;
-    min-height: 100vh;
+    display: flex; /* Revert to flex layout for sidebar and content */
+    flex-grow: 1; /* Make main-container grow to fill available space */
+    width: 100%; /* Ensure it takes full width */
 }
 
 /* Content Area */
@@ -202,6 +210,8 @@ body {
     text-align: center;
     padding: 1rem 20px;
     box-shadow: var(--shadow-sm);
+    margin-top: auto; /* Push footer to the bottom */
+    clear: both; /* Ensure it clears any preceding floats */
 }
 
 /* Page Header */

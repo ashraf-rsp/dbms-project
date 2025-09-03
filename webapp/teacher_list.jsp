@@ -3,23 +3,34 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
+    // AuthFilter provides user attributes
+    String userRole = (String) request.getAttribute("userRole");
+
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+
     PreparedStatement pstmt = null;
     ResultSet rs = null;
-    // This page is accessible by all logged-in users.
-    
-    
-
-    
-
 %>
-<%@ include file="includes/header.jsp" %>
-<main class="container">
-    <h1>Teacher List</h1>
-    <section class="teacher-list-section">
-        <h2>Our Faculty</h2>
-        <div class="teacher-grid">
+<%@ include file="includes/meta.jsp" %>
+<html lang="en" data-theme="<%= theme %>">
+<head>
+    <title>Teacher List - Academic Center</title>
+</head>
+<body>
+    <%@ include file="includes/header.jsp" %>
+    <div class="main-container">
+        <jsp:include page="includes/sidebar.jsp">
+            <jsp:param name="activePage" value="teacher_list" />
+        </jsp:include>
+        <main class="content-area">
+            <div class="page-header">
+                <h2><i class="fas fa-chalkboard-teacher"></i> Teacher List</h2>
+            </div>
+            <section class="teacher-list-section">
+                <h2>Our Faculty</h2>
+                <div class="teacher-grid">
             <%
                 try {
                     
