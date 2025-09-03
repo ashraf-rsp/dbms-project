@@ -103,9 +103,12 @@
                 sqlUpdateProfile.append(" WHERE UserID = ?"); // Assuming UserID in Parents table
                 paramsProfile.add(targetUserId);
             } else if ("Admin".equals(userRole)) {
-                // Admin profile details (like AdminName) are typically handled directly in Users table
-                // No separate Admins table update needed if only Username/Password/Email are updated
-                // If there were specific admin profile fields, they would go here.
+                String adminName = request.getParameter("adminName");
+                
+                sqlUpdateProfile.append("UPDATE Users SET AdminName = ? ");
+                paramsProfile.add(adminName);
+                sqlUpdateProfile.append(" WHERE UserID = ?");
+                paramsProfile.add(targetUserId);
             }
 
             boolean userUpdated = false;

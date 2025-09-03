@@ -15,6 +15,7 @@
     if (theme == null) theme = "ocean";
 
     String adminUsername = "";
+    String adminName = "";
     String adminEmail = ""; // Assuming email might be added to Users table or a linked table later
 
     PreparedStatement pstmt = null;
@@ -22,12 +23,13 @@
 
     try {
         // Retrieve admin details from the Users table
-        String sqlAdmin = "SELECT Username FROM Users WHERE UserID = ? AND UserType = 'Admin'";
+        String sqlAdmin = "SELECT Username, AdminName FROM Users WHERE UserID = ? AND UserType = 'Admin'";
         pstmt = conn.prepareStatement(sqlAdmin);
         pstmt.setInt(1, userId);
         rs = pstmt.executeQuery();
         if (rs.next()) {
             adminUsername = rs.getString("Username");
+            adminName = rs.getString("AdminName");
             // If an email column is added to Users, retrieve it here
             // adminEmail = rs.getString("Email");
         } else {
@@ -60,7 +62,7 @@
             <section class="profile-card">
                 <div class="profile-header">
                     <div class="admin-photo-fallback student-photo"><%= adminUsername.isEmpty() ? "?" : adminUsername.substring(0, 1).toUpperCase() %></div>
-                    <h2><%= adminUsername %></h2>
+                    <h2><%= (adminName != null && !adminName.isEmpty()) ? adminName : adminUsername %></h2>
                     <p class="admin-id">User ID: <strong><%= userId %></strong></p>
                 </div>
                 <div class="profile-details">
@@ -96,6 +98,8 @@
                 <form action="profile_process.jsp" method="post">
                     <input type="hidden" name="userId" value="<%= userId %>">
                     <input type="hidden" name="userRole" value="Admin">
+                    <label for="adminName">Admin Name:</label>
+                    <input type="text" id="adminName" name="adminName" value="<%= (adminName != null) ? adminName : "" %>" required>
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="<%= adminUsername %>" required>
                     <%-- If email is added to Users table, uncomment below --%>

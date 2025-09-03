@@ -15,6 +15,7 @@
     if (theme == null) theme = "ocean";
 
     String teacherUsername = "";
+    String teacherName = "";
     String teacherEmail = ""; // Assuming email might be added to Users table or a linked table later
     List<String> assignedCourses = new ArrayList<>();
 
@@ -23,12 +24,13 @@
 
     try {
         // Retrieve teacher details from the Users table
-        String sqlTeacher = "SELECT Username FROM Users WHERE UserID = ? AND UserType = 'Teacher'";
+        String sqlTeacher = "SELECT u.Username, t.TeacherName FROM Users u JOIN Teachers t ON u.UserID = t.UserID WHERE u.UserID = ? AND u.UserType = 'Teacher'";
         pstmt = conn.prepareStatement(sqlTeacher);
         pstmt.setInt(1, userId);
         rs = pstmt.executeQuery();
         if (rs.next()) {
             teacherUsername = rs.getString("Username");
+            teacherName = rs.getString("TeacherName");
             // If an email column is added to Users, retrieve it here
             // teacherEmail = rs.getString("Email");
         } else {
@@ -72,7 +74,7 @@
             <section class="profile-card">
                 <div class="profile-header">
                     <div class="teacher-photo-fallback student-photo"><%= teacherUsername.isEmpty() ? "?" : teacherUsername.substring(0, 1).toUpperCase() %></div>
-                    <h2><%= teacherUsername %></h2>
+                    <h2><%= (teacherName != null && !teacherName.isEmpty()) ? teacherName : teacherUsername %></h2>
                     <p class="teacher-id">User ID: <strong><%= userId %></strong></p>
                 </div>
                 <div class="profile-details">
@@ -125,6 +127,8 @@
                 <form action="profile_process.jsp" method="post">
                     <input type="hidden" name="userId" value="<%= userId %>">
                     <input type="hidden" name="userRole" value="Teacher">
+                    <label for="teacherName">Teacher Name:</label>
+                    <input type="text" id="teacherName" name="teacherName" value="<%= (teacherName != null) ? teacherName : "" %>" required>
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="<%= teacherUsername %>" required>
                     <%-- If email is added to Users table, uncomment below --%>
