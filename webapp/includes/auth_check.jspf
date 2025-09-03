@@ -1,33 +1,17 @@
-<%@ page import="java.util.logging.Logger" %>
-<%@ page import="java.util.logging.Level" %>
 <%
-    // Declare variables in a scope that is always accessible
     String loggedInUser = (String) session.getAttribute("loggedInUser");
     String userRole = (String) session.getAttribute("userRole");
 
-    // Use a flag to ensure logic is only executed once
-    Boolean authLogicExecuted = (Boolean) request.getAttribute("authLogicExecuted");
-    if (authLogicExecuted == null || !authLogicExecuted) {
-
-        Logger authLogger = Logger.getLogger("AuthCheck");
-
-        if (loggedInUser == null || loggedInUser.isEmpty()) {
-        authLogger.log(Level.WARNING, "Unauthorized access attempt: User not logged in. Redirecting to login.jsp");
+    if (loggedInUser == null || loggedInUser.isEmpty()) {
         response.sendRedirect("login.jsp");
-        return; // Stop further processing of the page
+        return;
     }
 
-        // Optional: Check for required roles
-        String requiredRole = (String) request.getAttribute("requiredRole");
-        if (requiredRole != null && !requiredRole.isEmpty()) {
-            if (userRole == null || !userRole.equals(requiredRole)) {
-                authLogger.log(Level.WARNING, "Unauthorized access attempt for user {0} with role {1}. Required role: {2}. Redirecting to access_denied.jsp", new Object[]{loggedInUser, userRole, requiredRole});
-                response.sendRedirect("access_denied.jsp");
-                return; // Stop further processing
-            }
+    String requiredRole = (String) request.getAttribute("requiredRole");
+    if (requiredRole != null && !requiredRole.isEmpty()) {
+        if (userRole == null || !userRole.equals(requiredRole)) {
+            response.sendRedirect("access_denied.jsp");
+            return;
         }
-
-        // If execution reaches here, the user is logged in and authorized.
-        request.setAttribute("authLogicExecuted", true);
     }
 %>

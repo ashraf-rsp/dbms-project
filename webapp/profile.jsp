@@ -60,7 +60,7 @@
     } finally {
         if (rs != null) try { rs.close(); } catch (SQLException e) {}
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
-        if (conn != null) try { conn.close(); } catch (SQLException e) {}
+        
     }
 %>
 <!DOCTYPE html>

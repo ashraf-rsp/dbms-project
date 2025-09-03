@@ -8,8 +8,7 @@
     // This page is accessible by all logged-in users.
     // userRole is already defined in auth_check.jspf
     
-
-    
+    int userId = (Integer) session.getAttribute("userId");
 
     String status = request.getParameter("status");
     String message = request.getParameter("message");
@@ -66,11 +65,13 @@
                         </thead>
                         <tbody>
                             <% 
+                                PreparedStatement pstmt = null;
+                                ResultSet rs = null;
+                                String sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
+                                             "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
+                                             "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC"; // Declare and initialize sql here
                                 try {
                                     
-                                    String sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
-                                                 "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
-                                                 "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
                                     pstmt = conn.prepareStatement(sql);
                                     pstmt.setInt(1, userId);
                                     rs = pstmt.executeQuery();
@@ -87,9 +88,9 @@
                                 <td data-label="Actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= rs.getString("SenderUsername") %>" 
-                                            data-subject="<%= rs.getString("Subject") %>" 
-                                            data-timestamp="<%= rs.getTimestamp("Timestamp") %>" 
+                                            data-sender="<%= rs.getString("SenderUsername") %>"
+                                            data-subject="<%= rs.getString("Subject") %>"
+                                            data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
                                         <i class="fas fa-eye"></i> View
                                     </button>
@@ -108,7 +109,6 @@
                                 } finally {
                                     if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
                                     if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-                                    if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
                                 }
                             %>
                         </tbody>
@@ -120,10 +120,6 @@
                     <% 
                         // Re-execute query for mobile cards
                         try {
-                             // Re-establish connection for this block
-                            String sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
-                                         "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
-                                         "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
                             pstmt = conn.prepareStatement(sql);
                             pstmt.setInt(1, userId);
                             rs = pstmt.executeQuery();
@@ -143,9 +139,9 @@
                                 <div class="card-actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= rs.getString("SenderUsername") %>" 
-                                            data-subject="<%= rs.getString("Subject") %>" 
-                                            data-timestamp="<%= rs.getTimestamp("Timestamp") %>" 
+                                            data-sender="<%= rs.getString("SenderUsername") %>"
+                                            data-subject="<%= rs.getString("Subject") %>"
+                                            data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
                                         <i class="fas fa-eye"></i> View
                                     </button>
@@ -165,7 +161,6 @@
                         } finally {
                             if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
                             if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-                            if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
                         }
                     %>
                 </div>
@@ -175,43 +170,27 @@
                 <h2>Compose New Message</h2>
                 <form action="send_message_process.jsp" method="post">
                     <div class="form-group">
-                        <label for="receiverUsername">To (Parent Username):</label>
+                        <label for="receiverUsername">To (Username):</label>
                         <select id="receiverUsername" name="receiverUsername" required>
-                            <option value="">-- Select Parent --</option>
-                            <%
-                                if ("Teacher".equals(userRole)) {
-                                    Connection connParents = null;
-                                    PreparedStatement pstmtParents = null;
-                                    ResultSet rsParents = null;
-                                    try {
-                                        
-                                        String sqlParents = "SELECT DISTINCT u.Username, u.UserID " +
-                                                            "FROM Users u " +
-                                                            "JOIN Parents p ON u.ParentID = p.ParentID " +
-                                                            "JOIN Student_Parent_Link spl ON p.ParentID = spl.ParentID " +
-                                                            "JOIN Enrollments e ON spl.StudentID = e.StudentID " +
-                                                            "JOIN Schedules s ON e.CourseID = s.CourseID " +
-                                                            "WHERE s.TeacherUserID = ? AND u.UserType = 'Parent' " +
-                                                            "ORDER BY u.Username";
-                                        pstmtParents = connParents.prepareStatement(sqlParents);
-                                        pstmtParents.setInt(1, userId); // Logged-in teacher's UserID
-                                        rsParents = pstmtParents.executeQuery();
-                                        while (rsParents.next()) {
+                            <option value="">-- Select User --</option>
+                            <% 
+                                PreparedStatement pstmtUsers = null;
+                                ResultSet rsUsers = null;
+                                try {
+                                    String sqlUsers = "SELECT UserID, Username FROM Users WHERE UserID != ? ORDER BY Username";
+                                    pstmtUsers = conn.prepareStatement(sqlUsers);
+                                    pstmtUsers.setInt(1, userId);
+                                    rsUsers = pstmtUsers.executeQuery();
+                                    while (rsUsers.next()) {
                             %>
-                                <option value="<%= rsParents.getString("Username") %>"><%= rsParents.getString("Username") %></option>
-                            <%
-                                        }
-                                    } catch (SQLException e) {
-                                        System.err.println("Error loading parents for teacher: " + e.getMessage());
-                                    } finally {
-                                        if (rsParents != null) try { rsParents.close(); } catch (SQLException e) { /* ignore */ }
-                                        if (pstmtParents != null) try { pstmtParents.close(); } catch (SQLException e) { /* ignore */ }
-                                        if (connParents != null) try { connParents.close(); } catch (SQLException e) { /* ignore */ }
+                                <option value="<%= rsUsers.getString("Username") %>"><%= rsUsers.getString("Username") %></option>
+                            <% 
                                     }
-                                } else { // For Admin/Parent, allow typing or other selection
-                            %>
-                            <input type="text" id="receiverUsername" name="receiverUsername" required>
-                            <%
+                                } catch (Exception e) {
+                                    System.err.println("Error loading users for message composition: " + e.getMessage());
+                                } finally {
+                                    if (rsUsers != null) try { rsUsers.close(); } catch (SQLException e) { /* ignore */ }
+                                    if (pstmtUsers != null) try { pstmtUsers.close(); } catch (SQLException e) { /* ignore */ }
                                 }
                             %>
                         </select>

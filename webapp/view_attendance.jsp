@@ -3,16 +3,17 @@
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Parent can access this page
-    if (!"Parent".equals(userRole)) {
+    Integer userId = (Integer) session.getAttribute("userId");
+
+    if (!"Parent".equals(userRole) && !"Teacher".equals(userRole) && !"Student".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Integer userId = (Integer) session.getAttribute("userId");
     Integer parentId = null;
+    Integer teacherId = null;
 
-    if (userId != null) {
+    if ("Parent".equals(userRole)) {
         try {
             String sqlParentId = "SELECT ParentID FROM Users WHERE UserID = ?";
             PreparedStatement pstmt_parent = conn.prepareStatement(sqlParentId);
@@ -24,6 +25,8 @@
         } catch (Exception e) {
             e.printStackTrace();
         }
+    } else if ("Teacher".equals(userRole)) {
+        teacherId = userId;
     }
 %>
 <%@ include file="includes/meta.jsp" %>
@@ -53,13 +56,25 @@
                             </thead>
                             <tbody>
                                 <%
-                                    if (parentId != null) {
-                                        PreparedStatement pstmt_attendance = null;
-                                        ResultSet rs_attendance = null;
-                                        try {
-                                            String sqlAttendance = "SELECT s.StudentName, c.CourseName, a.SessionDate, a.Status FROM Attendance a JOIN Enrollments e ON a.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID WHERE spl.ParentID = ? ORDER BY a.SessionDate DESC";
+                                    PreparedStatement pstmt_attendance = null;
+                                    ResultSet rs_attendance = null;
+                                    try {
+                                        String sqlAttendance = "";
+                                        if ("Parent".equals(userRole) && parentId != null) {
+                                            sqlAttendance = "SELECT s.StudentName, c.CourseName, a.SessionDate, a.Status FROM Attendance a JOIN Enrollments e ON a.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID WHERE spl.ParentID = ? ORDER BY a.SessionDate DESC";
                                             pstmt_attendance = conn.prepareStatement(sqlAttendance);
                                             pstmt_attendance.setInt(1, parentId);
+                                        } else if ("Teacher".equals(userRole) && teacherId != null) {
+                                            sqlAttendance = "SELECT s.StudentName, c.CourseName, a.SessionDate, a.Status FROM Attendance a JOIN Enrollments e ON a.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Schedules sch ON c.CourseID = sch.CourseID WHERE sch.TeacherUserID = ? ORDER BY a.SessionDate DESC";
+                                            pstmt_attendance = conn.prepareStatement(sqlAttendance);
+                                            pstmt_attendance.setInt(1, teacherId);
+                                        } else if ("Student".equals(userRole) && userId != null) {
+                                            sqlAttendance = "SELECT s.StudentName, c.CourseName, a.SessionDate, a.Status FROM Attendance a JOIN Enrollments e ON a.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID WHERE s.UserID = ? ORDER BY a.SessionDate DESC";
+                                            pstmt_attendance = conn.prepareStatement(sqlAttendance);
+                                            pstmt_attendance.setInt(1, userId);
+                                        }
+
+                                        if (pstmt_attendance != null) {
                                             rs_attendance = pstmt_attendance.executeQuery();
                                             while (rs_attendance.next()) {
                                 %>
@@ -71,9 +86,12 @@
                                 </tr>
                                 <%
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        if (rs_attendance != null) try { rs_attendance.close(); } catch (SQLException e) { /* ignore */ }
+                                        if (pstmt_attendance != null) try { pstmt_attendance.close(); } catch (SQLException e) { /* ignore */ }
                                     }
                                 %>
                             </tbody>

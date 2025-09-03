@@ -65,7 +65,7 @@
         logger.log(Level.SEVERE, "Exception in student_profile_process.jsp: " + e.getMessage(), e);
     } finally {
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { logger.log(Level.WARNING, "Error closing PreparedStatement", e); }
-        if (conn != null) try { conn.close(); } catch (SQLException e) { logger.log(Level.WARNING, "Error closing Connection", e); }
+        
     }
 
     // Redirect back to student_profile.jsp with status and message

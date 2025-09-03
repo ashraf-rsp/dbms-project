@@ -3,16 +3,17 @@
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Parent can access this page
-    if (!"Parent".equals(userRole)) {
+    Integer userId = (Integer) session.getAttribute("userId");
+
+    if (!("Parent".equals(userRole) || "Teacher".equals(userRole) || "Student".equals(userRole))) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Integer userId = (Integer) session.getAttribute("userId");
     Integer parentId = null;
+    Integer teacherId = null;
 
-    if (userId != null) {
+    if ("Parent".equals(userRole)) {
         try {
             String sqlParentId = "SELECT ParentID FROM Users WHERE UserID = ?";
             PreparedStatement pstmt_parent = conn.prepareStatement(sqlParentId);
@@ -24,6 +25,8 @@
         } catch (Exception e) {
             e.printStackTrace();
         }
+    } else if ("Teacher".equals(userRole)) {
+        teacherId = userId;
     }
 %>
 <%@ include file="includes/meta.jsp" %>
@@ -55,13 +58,25 @@
                             </thead>
                             <tbody>
                                 <%
-                                    if (parentId != null) {
-                                        PreparedStatement pstmt_grades = null;
-                                        ResultSet rs_grades = null;
-                                        try {
-                                            String sqlGrades = "SELECT s.StudentName, c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID WHERE spl.ParentID = ? ORDER BY g.GradeDate DESC";
+                                    PreparedStatement pstmt_grades = null;
+                                    ResultSet rs_grades = null;
+                                    try {
+                                        String sqlGrades = "";
+                                        if ("Parent".equals(userRole) && parentId != null) {
+                                            sqlGrades = "SELECT s.StudentName, c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID JOIN Student_Parent_Link spl ON s.StudentID = spl.StudentID WHERE spl.ParentID = ? ORDER BY g.GradeDate DESC";
                                             pstmt_grades = conn.prepareStatement(sqlGrades);
                                             pstmt_grades.setInt(1, parentId);
+                                        } else if ("Teacher".equals(userRole) && teacherId != null) {
+                                            sqlGrades = "SELECT s.StudentName, c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID JOIN Schedules sch ON c.CourseID = sch.CourseID WHERE sch.TeacherUserID = ? ORDER BY g.GradeDate DESC";
+                                            pstmt_grades = conn.prepareStatement(sqlGrades);
+                                            pstmt_grades.setInt(1, teacherId);
+                                        } else if ("Student".equals(userRole) && userId != null) {
+                                            sqlGrades = "SELECT s.StudentName, c.CourseName, g.GradePercentage, g.GradeLetter, u.Username AS GradedBy, g.GradeDate FROM Grades g JOIN Enrollments e ON g.EnrollmentID = e.EnrollmentID JOIN Students s ON e.StudentID = s.StudentID JOIN Courses c ON e.CourseID = c.CourseID JOIN Users u ON g.GradedByUserID = u.UserID WHERE s.UserID = ? ORDER BY g.GradeDate DESC";
+                                            pstmt_grades = conn.prepareStatement(sqlGrades);
+                                            pstmt_grades.setInt(1, userId);
+                                        }
+
+                                        if (pstmt_grades != null) {
                                             rs_grades = pstmt_grades.executeQuery();
                                             while (rs_grades.next()) {
                                 %>
@@ -75,9 +90,13 @@
                                 </tr>
                                 <%
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        out.println("<pre>Error: " + e.getMessage() + "</pre>");
+                                    } finally {
+                                        if (rs_grades != null) try { rs_grades.close(); } catch (SQLException e) { /* ignore */ }
+                                        if (pstmt_grades != null) try { pstmt_grades.close(); } catch (SQLException e) { /* ignore */ }
                                     }
                                 %>
                             </tbody>

@@ -284,7 +284,7 @@
     } finally {
         if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-        if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
+        
     }
 %>
 <%@ include file="WEB-INF/jspf/footer.jspf" %>
