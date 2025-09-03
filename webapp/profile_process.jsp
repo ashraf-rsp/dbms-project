@@ -1,157 +1,136 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, java.io.*, java.util.logging.*, java.util.ArrayList, java.util.List" %>
-<%@ page import="org.apache.commons.fileupload.*, org.apache.commons.fileupload.disk.*, org.apache.commons.fileupload.servlet.*" %>
+<%@ page import="java.sql.*, java.io.*, java.util.logging.*, java.util.ArrayList, java.util.List, java.util.Map, java.util.HashMap" %>
+<%@ page import="at.favre.lib.PasswordUtil" %> <%-- Import PasswordUtil --%>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
-    int targetUserId = -1;
+    Integer loggedInUserId = (Integer) request.getAttribute("userId"); // From AuthFilter
+    String loggedInUserRole = (String) request.getAttribute("userRole"); // From AuthFilter
 
-    String targetUserIdStr = null;
-    String studentName = null;
-    String email = null;
-    String dateOfBirth = null;
-    FileItem photoItem = null;
+    int targetUserId = -1;
 
     String status = "error";
     String message = "An unknown error occurred.";
 
-    if (!ServletFileUpload.isMultipartContent(request)) {
-        message = "Form must be multipart/form-data.";
-    } else {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        try {
-            List<FileItem> formItems = upload.parseRequest(request);
-            if (formItems != null && formItems.size() > 0) {
-                for (FileItem item : formItems) {
-                    if (item.isFormField()) {
-                        switch (item.getFieldName()) {
-                            case "userId": targetUserIdStr = item.getString(); break;
-                            case "email": email = item.getString(); break;
-                            // Other fields will be retrieved using request.getParameter in role-specific blocks
-                            default:
-                                // This ensures all form fields are processed, even if not explicitly handled here
-                                // This is important for multipart forms where all fields are FileItems
-                                break;
-                        }
-                    } else {
-                        if (item.getFieldName().equals("profilePhoto") && item.getSize() > 0) {
-                            photoItem = item;
-                        }
-                    }
-                }
-            }
-        } catch (FileUploadException e) {
-            message = "Error parsing uploaded file: " + e.getMessage();
-            logger.log(Level.SEVERE, "FileUploadException", e);
-        }
-    }
+    // Retrieve form fields directly from request parameters
+    String targetUserIdStr = request.getParameter("userId");
+    String userRole = request.getParameter("userRole"); // Role of the profile being edited
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+    String email = request.getParameter("email"); // Assuming email field is added to forms
 
-    if (targetUserIdStr != null) {
+    // --- Removed File Upload Logic ---
+    // FileItem photoItem = null; // No longer used
+    // String photoURL = null; // No longer used
+    // --- End Removed File Upload Logic ---
+
+    if (targetUserIdStr != null && !targetUserIdStr.isEmpty()) {
         targetUserId = Integer.parseInt(targetUserIdStr);
 
+        // Authorization check: Admin can edit anyone, others can only edit themselves
         boolean canEdit = false;
-        if (("Student".equals(userRole) || "Teacher".equals(userRole)) && loggedInUserId == targetUserId) {
-            canEdit = true; // Student and Teacher can only edit their own profile
+        if ("Admin".equals(loggedInUserRole)) {
+            canEdit = true;
+        } else if (loggedInUserId != null && loggedInUserId == targetUserId) {
+            canEdit = true;
         }
-        // Add more roles as needed (e.g., Admin can edit any profile)
 
         if (canEdit) {
-            StringBuilder sqlUpdate = new StringBuilder();
-            List<Object> params = new ArrayList<>();
-            String photoURL = null;
+            StringBuilder sqlUpdateUser = new StringBuilder("UPDATE Users SET Username = ? ");
+            List<Object> paramsUser = new ArrayList<>();
+            paramsUser.add(username);
 
-            // Handle photo upload first, as it's common
-            if (photoItem != null && photoItem.getSize() > 0) {
-                String fileName = new File(photoItem.getName()).getName();
-                String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "profile_pics";
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-                
-                String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-                File storeFile = new File(uploadPath + File.separator + uniqueFileName);
-                try {
-                    photoItem.write(storeFile);
-                    photoURL = "uploads/profile_pics/" + uniqueFileName;
-                } catch (Exception e) {
-                    message = "Error saving uploaded photo.";
-                    logger.log(Level.SEVERE, "File write error", e);
-                }
+            if (password != null && !password.isEmpty()) {
+                sqlUpdateUser.append(", PasswordHash = ? ");
+                paramsUser.add(PasswordUtil.hashPassword(password));
             }
+            // Add email update if email field is present in form
+            if (email != null && !email.isEmpty()) {
+                sqlUpdateUser.append(", Email = ? ");
+                paramsUser.add(email);
+            }
+            sqlUpdateUser.append(" WHERE UserID = ?");
+            paramsUser.add(targetUserId);
 
+            StringBuilder sqlUpdateProfile = new StringBuilder();
+            List<Object> paramsProfile = new ArrayList<>();
+            // photoURL is no longer handled here
+
+            // Role-specific profile updates
             if ("Student".equals(userRole)) {
-                sqlUpdate.append("UPDATE Students s JOIN Users u ON s.UserID = u.UserID SET s.StudentName = ?, s.DOB = ?, u.Email = ? ");
-                params.add(studentName);
-                params.add(dateOfBirth.isEmpty() ? null : dateOfBirth);
-                params.add(email);
-                if (photoURL != null) {
-                    sqlUpdate.append(", s.PhotoURL = ?");
-                    params.add(photoURL);
-                }
-                sqlUpdate.append(" WHERE s.UserID = ?");
-                params.add(targetUserId);
+                String studentName = request.getParameter("studentName"); // Use request.getParameter
+                String dateOfBirth = request.getParameter("dateOfBirth"); // Use request.getParameter
+
+                sqlUpdateProfile.append("UPDATE Students SET StudentName = ?, DOB = ? ");
+                paramsProfile.add(studentName);
+                paramsProfile.add(dateOfBirth.isEmpty() ? null : dateOfBirth);
+                // if (photoURL != null) { sqlUpdateProfile.append(", PhotoURL = ?"); paramsProfile.add(photoURL); }
+                sqlUpdateProfile.append(" WHERE UserID = ?"); // Assuming UserID in Students table
+                paramsProfile.add(targetUserId);
             } else if ("Teacher".equals(userRole)) {
-                // Assuming teacherName and other teacher-specific fields are passed from the form
-                // For now, we'll just update TeacherName and Email
-                String teacherName = request.getParameter("teacherName"); // Assuming form field name
+                String teacherName = request.getParameter("teacherName"); // Use request.getParameter
                 
-                sqlUpdate.append("UPDATE Teachers t JOIN Users u ON t.UserID = u.UserID SET t.TeacherName = ?, u.Email = ? ");
-                params.add(teacherName);
-                params.add(email);
-                if (photoURL != null) {
-                    sqlUpdate.append(", t.PhotoURL = ?");
-                    params.add(photoURL);
-                }
-                sqlUpdate.append(" WHERE t.UserID = ?");
-                params.add(targetUserId);
+                sqlUpdateProfile.append("UPDATE Teachers SET TeacherName = ? ");
+                paramsProfile.add(teacherName);
+                // if (photoURL != null) { sqlUpdateProfile.append(", PhotoURL = ?"); paramsProfile.add(photoURL); }
+                sqlUpdateProfile.append(" WHERE UserID = ?"); // Assuming UserID in Teachers table
+                paramsProfile.add(targetUserId);
             } else if ("Parent".equals(userRole)) {
                 String firstName = request.getParameter("firstName");
                 String lastName = request.getParameter("lastName");
                 String phone = request.getParameter("phone");
 
-                sqlUpdate.append("UPDATE Parents p JOIN Users u ON p.UserID = u.UserID SET p.FirstName = ?, p.LastName = ?, p.Phone = ?, u.Email = ? ");
-                params.add(firstName);
-                params.add(lastName);
-                params.add(phone);
-                params.add(email);
-                if (photoURL != null) {
-                    sqlUpdate.append(", p.PhotoURL = ?");
-                    params.add(photoURL);
-                }
-                sqlUpdate.append(" WHERE p.UserID = ?");
-                params.add(targetUserId);
+                sqlUpdateProfile.append("UPDATE Parents SET FirstName = ?, LastName = ?, Phone = ? ");
+                paramsProfile.add(firstName);
+                paramsProfile.add(lastName);
+                paramsProfile.add(phone);
+                // if (photoURL != null) { sqlUpdateProfile.append(", PhotoURL = ?"); paramsProfile.add(photoURL); }
+                sqlUpdateProfile.append(" WHERE UserID = ?"); // Assuming UserID in Parents table
+                paramsProfile.add(targetUserId);
             } else if ("Admin".equals(userRole)) {
-                String adminName = request.getParameter("adminName");
-
-                sqlUpdate.append("UPDATE Admins a JOIN Users u ON a.UserID = u.UserID SET a.AdminName = ?, u.Email = ? ");
-                params.add(adminName);
-                params.add(email);
-                if (photoURL != null) {
-                    sqlUpdate.append(", a.PhotoURL = ?");
-                    params.add(photoURL);
-                }
-                sqlUpdate.append(" WHERE a.UserID = ?");
-                params.add(targetUserId);
+                // Admin profile details (like AdminName) are typically handled directly in Users table
+                // No separate Admins table update needed if only Username/Password/Email are updated
+                // If there were specific admin profile fields, they would go here.
             }
-            // Add more else if blocks for other roles (Admin, Parent) as needed
 
-            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate.toString())) {
-                for (int i = 0; i < params.size(); i++) {
-                    ps.setObject(i + 1, params.get(i));
-                }
+            boolean userUpdated = false;
+            boolean profileUpdated = false;
 
-                int rowsAffected = ps.executeUpdate();
-                if (rowsAffected > 0) {
-                    status = "success";
-                    message = "Profile updated successfully!";
-                    session.setAttribute("message", message);
-                } else {
-                    message = "No changes were made to the profile.";
+            try (PreparedStatement psUser = conn.prepareStatement(sqlUpdateUser.toString())) {
+                logger.info("Executing SQL (User): " + sqlUpdateUser.toString());
+                logger.info("Params (User): " + paramsUser.toString());
+                for (int i = 0; i < paramsUser.size(); i++) {
+                    psUser.setObject(i + 1, paramsUser.get(i));
                 }
+                int rowsAffected = psUser.executeUpdate();
+                userUpdated = rowsAffected > 0;
+                logger.info("User update rows affected: " + rowsAffected + ", userUpdated: " + userUpdated);
             } catch (SQLException e) {
-                message = "Database error: " + e.getMessage();
-                logger.log(Level.SEVERE, "SQLException on update", e);
+                message = "Database error updating user: " + e.getMessage();
+                logger.log(Level.SEVERE, "SQLException on user update", e);
+            }
+
+            if (sqlUpdateProfile.length() > 0) { // Only execute if there's a profile-specific update
+                try (PreparedStatement psProfile = conn.prepareStatement(sqlUpdateProfile.toString())) {
+                    for (int i = 0; i < paramsProfile.size(); i++) {
+                        psProfile.setObject(i + 1, paramsProfile.get(i));
+                    }
+                    profileUpdated = psProfile.executeUpdate() > 0;
+                } catch (SQLException e) {
+                    message = "Database error updating profile: " + e.getMessage();
+                    logger.log(Level.SEVERE, "SQLException on profile update", e);
+                }
+            }
+
+            if (userUpdated || profileUpdated) {
+                status = "success";
+                message = "Profile updated successfully!";
+                // Update session username if it was changed
+                if (loggedInUserId != null && loggedInUserId == targetUserId) {
+                    session.setAttribute("loggedInUser", username);
+                }
+            } else {
+                message = "No changes were made to the profile.";
             }
         } else {
             message = "You are not authorized to perform this action.";
@@ -161,9 +140,16 @@
     }
 
     session.setAttribute("message", message);
-    if ("Teacher".equals(userRole)) {
-        response.sendRedirect("teacher_profile.jsp?userId=" + targetUserId);
-    } else {
-        response.sendRedirect("profile.jsp?userId=" + targetUserId);
+    // Redirect based on the role of the profile being edited
+    String redirectPage = "dashboard.jsp"; // Default redirect
+    if ("Student".equals(userRole)) {
+        redirectPage = "student_profile.jsp";
+    } else if ("Teacher".equals(userRole)) {
+        redirectPage = "teacher_profile.jsp";
+    } else if ("Parent".equals(userRole)) {
+        redirectPage = "parent_profile.jsp";
+    } else if ("Admin".equals(userRole)) {
+        redirectPage = "admin_profile.jsp";
     }
+    response.sendRedirect(redirectPage + "?userId=" + targetUserId + "&status=" + status + "&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
 %>
