@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
 <%@ page import="java.sql.*" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>

@@ -1,7 +1,6 @@
 <%
     String currentPage = (String) request.getAttribute("activePage");
     if (currentPage == null) currentPage = "";
-    String userRole = (String) session.getAttribute("userRole"); // Retrieve userRole from session
 %>
 
 <nav class="sidebar" id="sidebar">
@@ -9,7 +8,7 @@
         <li><a href="dashboard.jsp" class="<%= currentPage.equals("dashboard") ? "active" : "" %>">
             <i class="fas fa-home"></i> Dashboard</a></li>
 
-        <% if ("Admin".equals(userRole)) { %>
+        <% if ("Admin".equals((String) request.getAttribute("userRole"))) { %>
             <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
                 <i class="fas fa-user"></i> Profile</a></li>
             <li><a href="user_management.jsp" class="<%= currentPage.equals("user_management") ? "active" : "" %>">
@@ -29,7 +28,7 @@
             <li><a href="class_schedule.jsp" class="<%= currentPage.equals("class_schedule") ? "active" : "" %>">
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
-        <% } else if ("Teacher".equals(userRole)) { %>
+        <% } else if ("Teacher".equals((String) request.getAttribute("userRole"))) { %>
             <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
                 <i class="fas fa-user"></i> Profile</a></li>
             <li><a href="course_management.jsp" class="<%= currentPage.equals("course_management") ? "active" : "" %>">
@@ -45,7 +44,7 @@
             <li><a href="class_schedule.jsp" class="<%= currentPage.equals("class_schedule") ? "active" : "" %>">
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
-        <% } else if ("Parent".equals(userRole)) { %>
+        <% } else if ("Parent".equals((String) request.getAttribute("userRole"))) { %>
             <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
                 <i class="fas fa-user"></i> Profile</a></li>
             <li><a href="view_grades.jsp" class="<%= currentPage.equals("view_grades") ? "active" : "" %>">
@@ -61,7 +60,7 @@
             <li><a href="class_schedule.jsp" class="<%= currentPage.equals("class_schedule") ? "active" : "" %>">
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
-        <% } else if ("Student".equals(userRole)) { %>
+        <% } else if ("Student".equals((String) request.getAttribute("userRole"))) { %>
             <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
                 <i class="fas fa-user"></i> Profile</a></li>
             <li><a href="view_grades.jsp" class="<%= currentPage.equals("view_grades") ? "active" : "" %>">

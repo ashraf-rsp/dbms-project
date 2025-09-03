@@ -1,0 +1,1 @@
+UPDATE academic_center_db.Users SET PasswordHash = '$2b$12$JdJcWUDET3jaGtSVizy19uNDqbArjeU5BcN1As43KkJLecoApm7uG' WHERE Username = 'abc';

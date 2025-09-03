@@ -2,25 +2,16 @@
 <%@ include file="includes/meta.jsp" %>
 <html lang="en">
 <head>
-    <title>Access Denied - Academic Center</title>
+    <title>Access Denied</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <%@ include file="includes/header.jsp" %>
-    
-    <div class="main-container">
-        <main class="content-area">
-            <div class="container">
-                <div class="page-header">
-                    <h2><i class="fas fa-ban"></i> Access Denied</h2>
-                </div>
-                <div class="error-message">
-                    <p>You do not have permission to access this page.</p>
-                    <p>Please <a href="login.jsp">log in</a> with appropriate credentials or contact your administrator.</p>
-                </div>
-            </div>
-        </main>
+    <div class="container">
+        <h1><i class="fas fa-exclamation-triangle"></i> Access Denied</h1>
+        <p>You do not have permission to view this page.</p>
+        <p>Please contact the system administrator if you believe this is an error.</p>
+        <a href="dashboard.jsp" class="button">Return to Dashboard</a>
     </div>
-    
-    <%@ include file="includes/footer.jsp" %>
 </body>
 </html>

@@ -16,7 +16,7 @@
                 </div>
             
                 <div class="user-menu dropdown-toggle" id="user-menu-toggle">
-                    <span class="welcome-text">Welcome, <%= session.getAttribute("loggedInUser") %></span>
+                    <span class="welcome-text">Welcome, <%= (String) request.getAttribute("loggedInUser") %></span>
                     <img src="assets/images/placeholder-student.png" alt="User Avatar" class="user-avatar">
                     <div class="dropdown-menu" id="user-dropdown-menu">
                         <a href="student_profile.jsp" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>

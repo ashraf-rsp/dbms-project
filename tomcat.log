@@ -23010,3 +23010,629 @@ java.sql.SQLSyntaxErrorException: (conn=229) Unknown column 's.ScheduleTime' in 
 31-Aug-2025 02:25:52.865 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [420] ms
 31-Aug-2025 02:25:52.887 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
 31-Aug-2025 02:25:52.941 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3357] milliseconds
+01-Sep-2025 06:55:19.958 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+01-Sep-2025 06:55:19.977 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+01-Sep-2025 06:55:19.977 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+01-Sep-2025 06:55:19.978 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+01-Sep-2025 06:55:19.978 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+01-Sep-2025 06:55:19.979 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+01-Sep-2025 06:55:19.979 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+01-Sep-2025 06:55:19.980 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+01-Sep-2025 06:55:19.980 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+01-Sep-2025 06:55:19.980 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+01-Sep-2025 06:55:19.981 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+01-Sep-2025 06:55:20.042 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+01-Sep-2025 06:55:20.043 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+01-Sep-2025 06:55:20.044 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+01-Sep-2025 06:55:20.045 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+01-Sep-2025 06:55:20.046 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+01-Sep-2025 06:55:20.046 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+01-Sep-2025 06:55:20.047 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+01-Sep-2025 06:55:20.048 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+01-Sep-2025 06:55:20.049 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+01-Sep-2025 06:55:20.049 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+01-Sep-2025 06:55:20.050 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+01-Sep-2025 06:55:20.051 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+01-Sep-2025 06:55:20.052 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+01-Sep-2025 06:55:20.052 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+01-Sep-2025 06:55:20.053 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+01-Sep-2025 06:55:20.058 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+01-Sep-2025 06:55:21.219 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+01-Sep-2025 06:55:21.343 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2174] milliseconds
+01-Sep-2025 06:55:21.500 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+01-Sep-2025 06:55:21.501 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+01-Sep-2025 06:55:21.538 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+01-Sep-2025 06:55:22.797 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,256] ms
+01-Sep-2025 06:55:22.799 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+01-Sep-2025 06:55:22.873 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [75] ms
+01-Sep-2025 06:55:22.874 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+01-Sep-2025 06:55:23.781 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [907] ms
+01-Sep-2025 06:55:23.782 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+01-Sep-2025 06:55:23.856 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [74] ms
+01-Sep-2025 06:55:23.857 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+01-Sep-2025 06:55:23.921 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [63] ms
+01-Sep-2025 06:55:23.921 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+01-Sep-2025 06:55:24.228 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+01-Sep-2025 06:55:24.253 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [332] ms
+01-Sep-2025 06:55:24.254 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+01-Sep-2025 06:55:24.773 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+01-Sep-2025 06:55:24.782 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [527] ms
+01-Sep-2025 06:55:24.797 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+01-Sep-2025 06:55:24.848 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3504] milliseconds
+01-Sep-2025 06:56:00.388 INFO [http-nio-8080-exec-7] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 06:58:43.493 WARNING [http-nio-8080-exec-3] org.apache.jsp.login_005fprocess_jsp._jspService Failed login attempt for username: abc - Incorrect password
+01-Sep-2025 06:58:53.052 INFO [http-nio-8080-exec-6] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 06:59:32.046 INFO [http-nio-8080-exec-5] org.apache.jsp.login_005fprocess_jsp._jspService User t_parent logged in successfully with role Parent
+01-Sep-2025 07:00:17.027 INFO [http-nio-8080-exec-9] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 07:00:53.864 INFO [http-nio-8080-exec-9] org.apache.jsp.login_005fprocess_jsp._jspService User t_parent logged in successfully with role Parent
+01-Sep-2025 07:01:28.321 INFO [http-nio-8080-exec-10] org.apache.jsp.login_005fprocess_jsp._jspService User Ashraf  logged in successfully with role Admin
+01-Sep-2025 07:46:02.375 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 07:46:17.089 WARNING [http-nio-8080-exec-7] org.apache.jsp.login_005fprocess_jsp._jspService Failed login attempt for username: null - User not found
+01-Sep-2025 07:46:31.336 INFO [http-nio-8080-exec-8] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 07:47:51.073 INFO [http-nio-8080-exec-5] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+01-Sep-2025 07:48:18.793 INFO [http-nio-8080-exec-6] org.apache.jsp.login_005fprocess_jsp._jspService User t_parent logged in successfully with role Parent
+03-Sep-2025 08:50:47.101 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 08:50:47.118 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 08:50:47.119 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 08:50:47.120 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 08:50:47.120 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 08:50:47.120 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 08:50:47.121 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 08:50:47.121 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 08:50:47.121 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 08:50:47.122 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 08:50:47.122 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 08:50:47.185 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 08:50:47.186 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 08:50:47.186 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 08:50:47.186 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 08:50:47.187 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 08:50:47.187 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 08:50:47.187 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 08:50:47.187 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 08:50:47.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 08:50:47.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 08:50:47.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 08:50:47.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 08:50:47.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 08:50:47.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 08:50:47.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 08:50:47.194 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 08:50:48.423 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 08:50:48.573 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2273] milliseconds
+03-Sep-2025 08:50:48.782 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 08:50:48.783 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 08:50:48.847 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 08:50:50.347 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,496] ms
+03-Sep-2025 08:50:50.348 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 08:50:50.456 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [108] ms
+03-Sep-2025 08:50:50.458 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 08:50:51.423 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [965] ms
+03-Sep-2025 08:50:51.424 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 08:50:51.505 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [80] ms
+03-Sep-2025 08:50:51.506 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 08:50:51.577 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [71] ms
+03-Sep-2025 08:50:51.579 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 08:50:51.876 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 08:50:51.901 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [322] ms
+03-Sep-2025 08:50:51.901 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 08:50:52.464 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 08:50:52.471 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [569] ms
+03-Sep-2025 08:50:52.487 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 08:50:52.541 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3966] milliseconds
+Database connection error: Socket fail to connect to host:address=(host=localhost)(port=3306)(type=primary). Connection refused
+03-Sep-2025 09:17:50.981 INFO [http-nio-8080-exec-3] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+03-Sep-2025 09:37:56.721 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 09:37:56.728 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:37:56.735 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 09:37:56.820 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 09:37:56.848 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:37:56.875 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:38:03.906 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 09:38:03.931 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 09:38:03.931 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 09:38:03.932 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 09:38:03.932 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 09:38:03.932 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 09:38:03.933 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 09:38:03.933 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 09:38:03.933 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 09:38:03.934 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:38:03.934 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:38:03.998 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 09:38:04.000 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 09:38:04.001 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 09:38:04.002 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 09:38:04.003 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 09:38:04.004 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 09:38:04.005 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 09:38:04.005 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 09:38:04.006 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 09:38:04.007 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 09:38:04.008 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 09:38:04.009 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 09:38:04.010 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:38:04.011 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:38:04.011 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 09:38:04.021 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 09:38:05.209 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:38:05.336 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2166] milliseconds
+03-Sep-2025 09:38:05.525 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 09:38:05.526 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 09:38:05.561 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 09:38:06.832 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,269] ms
+03-Sep-2025 09:38:06.833 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 09:38:06.926 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [92] ms
+03-Sep-2025 09:38:06.927 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 09:38:07.820 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [892] ms
+03-Sep-2025 09:38:07.821 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 09:38:07.932 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [112] ms
+03-Sep-2025 09:38:07.933 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 09:38:08.001 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [67] ms
+03-Sep-2025 09:38:08.002 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 09:38:08.298 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:38:08.326 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [324] ms
+03-Sep-2025 09:38:08.327 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 09:38:08.820 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:38:08.827 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [499] ms
+03-Sep-2025 09:38:08.842 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:38:08.914 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3577] milliseconds
+03-Sep-2025 09:40:31.861 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User Ashraf logged in successfully with role Admin
+03-Sep-2025 09:43:30.458 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 09:43:30.461 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:43:30.465 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 09:43:30.520 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 09:43:30.550 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:43:30.577 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:43:37.648 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 09:43:37.669 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 09:43:37.670 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 09:43:37.671 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 09:43:37.672 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 09:43:37.673 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 09:43:37.674 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 09:43:37.675 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 09:43:37.676 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 09:43:37.677 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:43:37.678 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:43:37.724 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 09:43:37.725 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 09:43:37.726 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 09:43:37.727 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 09:43:37.728 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 09:43:37.728 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 09:43:37.729 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 09:43:37.730 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 09:43:37.731 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 09:43:37.731 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 09:43:37.732 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 09:43:37.733 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 09:43:37.734 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:43:37.734 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:43:37.735 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 09:43:37.745 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 09:43:39.073 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:43:39.242 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2374] milliseconds
+03-Sep-2025 09:43:39.419 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 09:43:39.422 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 09:43:39.458 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 09:43:40.948 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,486] ms
+03-Sep-2025 09:43:40.950 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 09:43:41.076 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [125] ms
+03-Sep-2025 09:43:41.076 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 09:43:42.131 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [1,054] ms
+03-Sep-2025 09:43:42.132 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 09:43:42.200 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [68] ms
+03-Sep-2025 09:43:42.201 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 09:43:42.261 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [59] ms
+03-Sep-2025 09:43:42.261 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 09:43:42.581 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:43:42.612 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [351] ms
+03-Sep-2025 09:43:42.613 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 09:43:43.208 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:43:43.219 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [605] ms
+03-Sep-2025 09:43:43.240 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:43:43.334 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [4090] milliseconds
+03-Sep-2025 09:44:52.975 INFO [http-nio-8080-exec-4] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+03-Sep-2025 09:45:41.243 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 09:45:41.246 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:45:41.253 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 09:45:41.341 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 09:45:41.382 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:45:41.405 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:45:48.310 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 09:45:48.329 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 09:45:48.331 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 09:45:48.332 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 09:45:48.332 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 09:45:48.333 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 09:45:48.334 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 09:45:48.335 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 09:45:48.336 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 09:45:48.337 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:45:48.338 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:45:48.386 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 09:45:48.387 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 09:45:48.388 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 09:45:48.389 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 09:45:48.390 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 09:45:48.390 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 09:45:48.391 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 09:45:48.392 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 09:45:48.393 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 09:45:48.393 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 09:45:48.394 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 09:45:48.394 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 09:45:48.395 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:45:48.395 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 09:45:48.395 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 09:45:48.399 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 09:45:49.504 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:45:49.622 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [1976] milliseconds
+03-Sep-2025 09:45:49.769 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 09:45:49.770 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 09:45:49.810 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 09:45:50.981 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,169] ms
+03-Sep-2025 09:45:50.982 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 09:45:51.062 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [79] ms
+03-Sep-2025 09:45:51.063 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 09:45:51.871 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [807] ms
+03-Sep-2025 09:45:51.872 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 09:45:51.970 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [99] ms
+03-Sep-2025 09:45:51.971 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 09:45:52.053 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [82] ms
+03-Sep-2025 09:45:52.054 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 09:45:52.414 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:45:52.433 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [379] ms
+03-Sep-2025 09:45:52.434 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 09:45:52.887 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 09:45:52.902 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [467] ms
+03-Sep-2025 09:45:52.920 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 09:45:52.972 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3349] milliseconds
+03-Sep-2025 09:46:11.636 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User t_teacher logged in successfully with role Teacher
+03-Sep-2025 09:46:53.644 INFO [http-nio-8080-exec-5] org.apache.jsp.login_005fprocess_jsp._jspService User t_parent logged in successfully with role Parent
+03-Sep-2025 09:47:13.066 WARNING [http-nio-8080-exec-10] org.apache.jsp.login_005fprocess_jsp._jspService Failed login attempt for username: abc - Incorrect password
+03-Sep-2025 09:51:20.309 WARNING [http-nio-8080-exec-2] org.apache.jsp.login_005fprocess_jsp._jspService Failed login attempt for username: abc - Incorrect password
+03-Sep-2025 09:52:29.642 INFO [http-nio-8080-exec-4] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:33:00.387 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:33:00.398 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:33:00.408 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:33:00.559 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:33:00.600 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:33:00.644 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:33:07.645 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:33:07.665 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:33:07.666 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:33:07.666 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:33:07.667 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:33:07.667 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:33:07.667 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:33:07.668 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:33:07.668 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:33:07.669 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:33:07.669 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:33:07.778 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:33:07.779 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:33:07.780 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:33:07.781 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:33:07.782 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:33:07.783 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:33:07.784 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:33:07.785 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:33:07.786 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:33:07.787 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:33:07.788 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:33:07.789 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:33:07.790 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:33:07.791 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:33:07.793 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:33:07.804 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:33:09.548 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:33:09.678 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2805] milliseconds
+03-Sep-2025 10:33:09.866 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:33:09.868 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:33:09.907 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:33:11.309 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,399] ms
+03-Sep-2025 10:33:11.310 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:33:11.392 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [81] ms
+03-Sep-2025 10:33:11.393 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:33:12.421 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [1,029] ms
+03-Sep-2025 10:33:12.422 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:33:12.506 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [84] ms
+03-Sep-2025 10:33:12.507 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:33:12.585 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [77] ms
+03-Sep-2025 10:33:12.586 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:33:12.864 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:33:12.893 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [307] ms
+03-Sep-2025 10:33:12.894 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:33:13.509 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:33:13.517 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [624] ms
+03-Sep-2025 10:33:13.549 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:33:13.616 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3937] milliseconds
+03-Sep-2025 10:33:23.080 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:34:00.031 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:34:00.033 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:34:00.040 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:34:00.089 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:34:00.126 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:34:00.139 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:34:07.216 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:34:07.235 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:34:07.237 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:34:07.238 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:34:07.239 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:34:07.240 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:34:07.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:34:07.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:34:07.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:34:07.242 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:34:07.242 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:34:07.284 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:34:07.285 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:34:07.285 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:34:07.286 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:34:07.286 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:34:07.287 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:34:07.287 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:34:07.287 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:34:07.288 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:34:07.288 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:34:07.288 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:34:07.288 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:34:07.289 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:34:07.289 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:34:07.289 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:34:07.293 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:34:08.464 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:34:08.629 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2178] milliseconds
+03-Sep-2025 10:34:08.789 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:34:08.789 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:34:08.821 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:34:10.187 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,358] ms
+03-Sep-2025 10:34:10.189 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:34:10.285 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [96] ms
+03-Sep-2025 10:34:10.286 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:34:11.264 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [978] ms
+03-Sep-2025 10:34:11.265 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:34:11.337 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [72] ms
+03-Sep-2025 10:34:11.338 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:34:11.427 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [88] ms
+03-Sep-2025 10:34:11.428 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:34:11.809 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:34:11.829 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [401] ms
+03-Sep-2025 10:34:11.830 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:34:12.373 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:34:12.390 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [560] ms
+03-Sep-2025 10:34:12.415 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:34:12.491 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3861] milliseconds
+03-Sep-2025 10:34:23.875 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:35:44.620 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:35:44.623 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:35:44.630 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:35:44.703 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:35:44.752 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:35:44.769 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:35:51.663 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:35:51.679 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:35:51.680 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:35:51.681 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:35:51.681 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:35:51.682 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:35:51.682 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:35:51.682 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:35:51.682 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:35:51.683 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:35:51.683 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:35:51.738 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:35:51.739 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:35:51.740 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:35:51.741 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:35:51.742 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:35:51.743 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:35:51.743 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:35:51.744 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:35:51.744 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:35:51.745 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:35:51.745 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:35:51.745 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:35:51.745 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:35:51.746 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:35:51.746 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:35:51.750 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:35:53.056 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:35:53.240 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2241] milliseconds
+03-Sep-2025 10:35:53.466 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:35:53.469 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:35:53.527 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:35:55.295 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,764] ms
+03-Sep-2025 10:35:55.299 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:35:55.471 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [171] ms
+03-Sep-2025 10:35:55.472 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:35:56.459 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [986] ms
+03-Sep-2025 10:35:56.460 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:35:56.537 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [77] ms
+03-Sep-2025 10:35:56.538 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:35:56.606 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [68] ms
+03-Sep-2025 10:35:56.607 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:35:56.896 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:35:56.915 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [307] ms
+03-Sep-2025 10:35:56.916 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:35:57.341 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:35:57.349 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [433] ms
+03-Sep-2025 10:35:57.370 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:35:57.425 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [4182] milliseconds
+03-Sep-2025 10:36:08.296 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:36:55.941 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:36:55.944 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:36:55.952 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:36:56.008 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:36:56.042 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:36:56.060 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:37:03.364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:37:03.381 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:37:03.382 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:37:03.382 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:37:03.383 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:37:03.383 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:37:03.383 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:37:03.384 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:37:03.384 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:37:03.384 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:37:03.385 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:37:03.431 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:37:03.432 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:37:03.432 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:37:03.432 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:37:03.433 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:37:03.433 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:37:03.433 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:37:03.434 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:37:03.434 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:37:03.434 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:37:03.434 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:37:03.435 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:37:03.435 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:37:03.435 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:37:03.436 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:37:03.450 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:37:04.593 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:37:04.742 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2077] milliseconds
+03-Sep-2025 10:37:04.934 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:37:04.936 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:37:04.987 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:37:06.599 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,610] ms
+03-Sep-2025 10:37:06.601 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:37:06.719 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [118] ms
+03-Sep-2025 10:37:06.720 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:37:07.778 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [1,058] ms
+03-Sep-2025 10:37:07.781 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:37:07.893 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [112] ms
+03-Sep-2025 10:37:07.893 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:37:07.979 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [84] ms
+03-Sep-2025 10:37:07.981 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:37:08.459 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:37:08.500 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [519] ms
+03-Sep-2025 10:37:08.502 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:37:09.238 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:37:09.252 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [749] ms
+03-Sep-2025 10:37:09.278 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:37:09.373 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [4630] milliseconds
+03-Sep-2025 10:37:25.135 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:39:22.005 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:39:22.008 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:39:22.013 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:39:22.076 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:39:22.115 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:39:22.138 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:39:29.675 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:39:29.696 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:39:29.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:39:29.699 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:39:29.701 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:39:29.701 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:39:29.702 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:39:29.703 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:39:29.704 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:39:29.705 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:39:29.706 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:39:29.745 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:39:29.746 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:39:29.746 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:39:29.747 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:39:29.747 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:39:29.747 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:39:29.748 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:39:29.748 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:39:29.749 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:39:29.749 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:39:29.751 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:39:29.753 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:39:29.755 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:39:29.756 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:39:29.757 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:39:29.764 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:39:31.558 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:39:31.734 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2978] milliseconds
+03-Sep-2025 10:39:31.924 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:39:31.925 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:39:31.965 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:39:33.374 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,407] ms
+03-Sep-2025 10:39:33.375 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:39:33.456 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [80] ms
+03-Sep-2025 10:39:33.457 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:39:34.714 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [1,257] ms
+03-Sep-2025 10:39:34.715 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:39:34.830 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [114] ms
+03-Sep-2025 10:39:34.831 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:39:34.898 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [67] ms
+03-Sep-2025 10:39:34.899 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:39:35.266 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:39:35.292 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [392] ms
+03-Sep-2025 10:39:35.294 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:39:35.946 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:39:35.954 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [660] ms
+03-Sep-2025 10:39:35.972 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:39:36.052 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [4317] milliseconds
+03-Sep-2025 10:39:46.077 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:43:30.025 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:43:30.028 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:43:30.034 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:43:30.102 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:43:30.132 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:43:30.157 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:43:37.169 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.1.44
+03-Sep-2025 10:43:37.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Aug 4 2025 13:14:17 UTC
+03-Sep-2025 10:43:37.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.1.44.0
+03-Sep-2025 10:43:37.190 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+03-Sep-2025 10:43:37.190 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.210-android12-9-g20d7c7c42370-ab224
+03-Sep-2025 10:43:37.190 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          aarch64
+03-Sep-2025 10:43:37.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /data/data/com.termux/files/usr/lib/jvm/java-17-openjdk
+03-Sep-2025 10:43:37.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           17.0.15+0
+03-Sep-2025 10:43:37.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Termux
+03-Sep-2025 10:43:37.192 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:43:37.192 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:43:37.238 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/data/data/com.termux/files/home/apache-tomcat-10.1.44/conf/logging.properties
+03-Sep-2025 10:43:37.239 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+03-Sep-2025 10:43:37.239 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+03-Sep-2025 10:43:37.240 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+03-Sep-2025 10:43:37.240 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dsun.io.useCanonCaches=false
+03-Sep-2025 10:43:37.240 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+03-Sep-2025 10:43:37.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+03-Sep-2025 10:43:37.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+03-Sep-2025 10:43:37.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+03-Sep-2025 10:43:37.241 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+03-Sep-2025 10:43:37.242 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+03-Sep-2025 10:43:37.242 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+03-Sep-2025 10:43:37.242 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:43:37.243 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/data/data/com.termux/files/home/apache-tomcat-10.1.44
+03-Sep-2025 10:43:37.243 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/data/data/com.termux/files/home/apache-tomcat-10.1.44/temp
+03-Sep-2025 10:43:37.247 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib]
+03-Sep-2025 10:43:38.346 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:43:38.472 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [2017] milliseconds
+03-Sep-2025 10:43:38.610 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+03-Sep-2025 10:43:38.611 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.1.44]
+03-Sep-2025 10:43:38.644 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT]
+03-Sep-2025 10:43:39.847 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/ROOT] has finished in [1,200] ms
+03-Sep-2025 10:43:39.851 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs]
+03-Sep-2025 10:43:39.922 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/docs] has finished in [73] ms
+03-Sep-2025 10:43:39.922 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples]
+03-Sep-2025 10:43:40.793 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/examples] has finished in [870] ms
+03-Sep-2025 10:43:40.794 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager]
+03-Sep-2025 10:43:40.873 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/host-manager] has finished in [78] ms
+03-Sep-2025 10:43:40.874 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager]
+03-Sep-2025 10:43:40.941 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/manager] has finished in [67] ms
+03-Sep-2025 10:43:40.942 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple]
+03-Sep-2025 10:43:41.214 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:43:41.236 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/idpsimple] has finished in [295] ms
+03-Sep-2025 10:43:41.237 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center]
+03-Sep-2025 10:43:41.677 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+03-Sep-2025 10:43:41.686 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/data/data/com.termux/files/home/apache-tomcat-10.1.44/webapps/academic-center] has finished in [449] ms
+03-Sep-2025 10:43:41.709 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:43:41.785 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [3311] milliseconds
+03-Sep-2025 10:43:54.995 INFO [http-nio-8080-exec-1] org.apache.jsp.login_005fprocess_jsp._jspService User abc logged in successfully with role Student
+03-Sep-2025 10:45:50.788 INFO [main] org.apache.catalina.core.StandardServer.await A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+03-Sep-2025 10:45:50.790 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:45:50.794 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+03-Sep-2025 10:45:50.847 WARNING [main] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesJdbc The web application [academic-center] registered the JDBC driver [org.mariadb.jdbc.Driver] but failed to unregister it when the web application was stopped. To prevent a memory leak, the JDBC Driver has been forcibly unregistered.
+03-Sep-2025 10:45:50.881 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+03-Sep-2025 10:45:50.899 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
