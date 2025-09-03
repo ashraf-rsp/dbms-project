@@ -19,7 +19,7 @@ public class AuthFilter implements Filter {
         pageRoles = new HashMap<>();
         // Admin pages
         pageRoles.put("/user_management.jsp", Arrays.asList("Admin"));
-        pageRoles.put("/course_management.jsp", Arrays.asList("Admin"));
+        pageRoles.put("/course_management.jsp", Arrays.asList("Admin", "Teacher"));
         pageRoles.put("/assign_teacher.jsp", Arrays.asList("Admin"));
         pageRoles.put("/enroll_student.jsp", Arrays.asList("Admin"));
         pageRoles.put("/dashboards/admin_dashboard.jsp", Arrays.asList("Admin"));

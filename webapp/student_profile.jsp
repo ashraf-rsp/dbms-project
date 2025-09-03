@@ -1,14 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
-    int userId = (Integer) session.getAttribute("userId");
+    // AuthFilter provides user attributes
+    Integer userId = (Integer) request.getAttribute("userId");
+    String userRole = (String) request.getAttribute("userRole");
 
-    if (!"Student".equals(userRole) && !"Parent".equals(userRole)) {
-        response.sendRedirect("access_denied.jsp");
+    if (userId == null) {
+        response.sendRedirect("login.jsp?error=session");
         return;
     }
+
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean";
 
     String studentIdString = null;
     String studentName = "";
@@ -29,9 +33,10 @@
     // If logged in as Parent, display the profile of a child passed as a parameter
     String requestedStudentId = request.getParameter("studentId");
 
+    // Role-based access check
     if ("Student".equals(userRole)) {
-        // For student's own profile, assume StudentID is same as Username (temporary workaround)
-        studentIdString = (String) session.getAttribute("loggedInUser");
+        // For student's own profile, assume StudentID is same as UserID (temporary workaround)
+        studentIdString = String.valueOf(userId); // Use userId from AuthFilter
     } else if ("Parent".equals(userRole)) {
         if (requestedStudentId != null && !requestedStudentId.isEmpty()) {
             studentIdString = requestedStudentId;
@@ -70,6 +75,14 @@
         } else {
             // If parent accesses profile page without studentId parameter, list their children
             response.sendRedirect("parent_profile.jsp"); // Redirect to parent_profile which lists children
+            return;
+        }
+    } else { // Admin or Teacher trying to access student profile directly
+        if (requestedStudentId != null && !requestedStudentId.isEmpty()) {
+            studentIdString = requestedStudentId;
+        } else {
+            // Admin/Teacher needs to specify studentId
+            out.println("<p>Please specify a student ID to view their profile.</p>");
             return;
         }
     }
@@ -133,7 +146,7 @@
     }
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Student Profile - Academic Center</title>
 </head>

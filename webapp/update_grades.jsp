@@ -1,19 +1,24 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, java.util.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Teacher can access this page
-    if (!"Teacher".equals(userRole)) {
+    // AuthFilter provides user attributes
+    Integer userId = (Integer) request.getAttribute("userId");
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (userId == null || !"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Integer teacherId = (Integer) session.getAttribute("userId");
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+
+    Integer teacherId = userId; // Use userId from AuthFilter
 
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Update Grades - Academic Center</title>
 </head>

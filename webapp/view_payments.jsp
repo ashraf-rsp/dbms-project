@@ -1,18 +1,22 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, java.util.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Parent can access this page
-    if (!"Parent".equals(userRole)) {
+    // AuthFilter provides user attributes
+    Integer userId = (Integer) request.getAttribute("userId");
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (userId == null || !"Parent".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Integer userId = (Integer) session.getAttribute("userId");
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+
     Integer parentId = null;
 
-    if (userId != null) {
+    if (userId != null) { // userId is guaranteed not null by the check above
         try {
             String sqlParentId = "SELECT ParentID FROM Users WHERE UserID = ?";
             PreparedStatement pstmt_parent = conn.prepareStatement(sqlParentId);
@@ -27,7 +31,7 @@
     }
 %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>View Payments - Academic Center</title>
 </head>
