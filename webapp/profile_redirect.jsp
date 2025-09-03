@@ -1,17 +1,30 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@ include file="includes/auth_check.jspf" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    String userRole = (String) session.getAttribute("userRole");
+    // This page is protected by AuthFilter, which sets userRole as a request attribute.
+    String userRole = (String) request.getAttribute("userRole");
     
-    if ("Student".equals(userRole)) {
-        response.sendRedirect("student_profile.jsp");
-    } else if ("Parent".equals(userRole)) {
-        response.sendRedirect("parent_profile.jsp");
-    } else if ("Teacher".equals(userRole)) {
-        response.sendRedirect("teacher_profile.jsp");
-    } else if ("Admin".equals(userRole)) {
-        response.sendRedirect("admin_profile.jsp");
-    } else {
-        // Default or error page if role is not recognized or not logged in
-        response.sendRedirect("access_denied.jsp");
+    if (userRole == null) {
+        // If userRole is not set, something is wrong. Redirect to login.
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    switch (userRole) {
+        case "Student":
+            response.sendRedirect("student_profile.jsp");
+            break;
+        case "Parent":
+            response.sendRedirect("parent_profile.jsp");
+            break;
+        case "Teacher":
+            response.sendRedirect("teacher_profile.jsp");
+            break;
+        case "Admin":
+            response.sendRedirect("admin_profile.jsp");
+            break;
+        default:
+            // Default or error page if role is not recognized
+            response.sendRedirect("access_denied.jsp");
+            break;
     }
 %>

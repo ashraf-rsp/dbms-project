@@ -1,17 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
-    // Ensure only Admin can access this page
-    if (!"Admin".equals(userRole)) {
-        response.sendRedirect("access_denied.jsp");
-        return;
-    }
-
+    // AuthFilter handles access control. This page is for Admins.
     String status = request.getParameter("status");
     String message = request.getParameter("message");
-
 %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en">

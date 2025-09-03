@@ -1,18 +1,21 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <% 
-    // This page is accessible by all logged-in users.
-    // userRole is already defined in auth_check.jspf
-    
-    int userId = (Integer) session.getAttribute("userId");
+    // AuthFilter provides user attributes
+    Integer userId = (Integer) request.getAttribute("userId");
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (userId == null) {
+        // Should not happen if filter is working, but as a safeguard
+        response.sendRedirect("login.jsp?error=session");
+        return;
+    }
 
     String status = request.getParameter("status");
     String message = request.getParameter("message");
-
 %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= (String) session.getAttribute("theme") %>">

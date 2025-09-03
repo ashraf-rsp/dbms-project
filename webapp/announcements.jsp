@@ -1,14 +1,15 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
+    // AuthFilter handles access control and sets userRole.
+    String userRole = (String) request.getAttribute("userRole");
+
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean"; // Default theme
 
     String status = request.getParameter("status");
     String message = request.getParameter("message");
-
 %>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
@@ -49,20 +50,23 @@
                                 PreparedStatement pstmt = null;
                                 ResultSet rs = null;
                                 try {
-                                    // Ensure conn is available, assuming it's from db_connection.jsp or similar
-                                    // If getConnection() is defined in db_connection.jsp, it should be accessible.
-                                    // If not, you might need to re-establish connection here or ensure it's passed.
-                                    // For this example, we assume 'conn' is available from the included file.
                                     String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
                                     pstmt = conn.prepareStatement(sql);
                                     rs = pstmt.executeQuery();
-                                    if (!rs.isBeforeFirst()) { // Check if ResultSet is empty
+                                    if (!rs.isBeforeFirst()) {
                                         out.println("<tr><td colspan=\"" + ("Admin".equals(userRole) ? "3" : "2") + "\">No announcements found.</td></tr>");
                                     } else {
                                         while (rs.next()) {
                                             String fullMessage = rs.getString("Message");
-                                            String title = fullMessage.split(\"\\\\n\")[0]; // Get first line as title
-                                            String date = rs.getTimestamp("Timestamp").toString().substring(0, 10); // YYYY-MM-DD
+                                            String title = fullMessage;
+                                            int newlinePos = -1;
+                                            if (fullMessage != null) {
+                                               newlinePos = fullMessage.indexOf('\n');
+                                               if (newlinePos != -1) {
+                                                   title = fullMessage.substring(0, newlinePos);
+                                               }
+                                            }
+                                            String date = rs.getTimestamp("Timestamp").toString().substring(0, 10);
                             %>
                                 <tr class="announcement-row">
                                     <td><%= title %></td>
@@ -82,12 +86,6 @@
                                 } finally {
                                     if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
                                     if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-                                    // Note: Closing 'conn' here might be problematic if it's shared across requests.
-                                    // It's generally better to manage connection lifecycle outside of individual JSP scriptlets.
-                                    // If db_connection.jsp manages the connection pool, it should handle closing.
-                                    // If not, and conn is a direct connection, closing it here might be intended.
-                                    // For now, keeping the original structure but with a comment.
-                                    
                                 }
                             %>
                         </tbody>
@@ -98,19 +96,25 @@
                 <div class="mobile-cards">
                     <% 
                         try {
-                            // Re-execute query for mobile cards
-                            // Ensure conn is available
                             String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
                             pstmt = conn.prepareStatement(sql);
                             rs = pstmt.executeQuery();
-                            if (!rs.isBeforeFirst()) { // Check if ResultSet is empty
+                            if (!rs.isBeforeFirst()) {
                                 out.println("<p>No announcements found.</p>");
                             } else {
                                 while (rs.next()) {
                                     String fullMessage = rs.getString("Message");
-                                    String title = fullMessage.split(\"\\\\n\")[0]; // Get first line as title
-                                    String content = fullMessage.substring(fullMessage.indexOf(\"\\\\n\") + 1); // Get content after first line
-                                    String date = rs.getTimestamp("Timestamp").toString().substring(0, 10); // YYYY-MM-DD
+                                    String title = fullMessage;
+                                    String content = "";
+                                    int newlinePos = -1;
+                                    if (fullMessage != null) {
+                                        newlinePos = fullMessage.indexOf('\n');
+                                        if (newlinePos != -1) {
+                                            title = fullMessage.substring(0, newlinePos);
+                                            content = fullMessage.substring(newlinePos + 1);
+                                        }
+                                    }
+                                    String date = rs.getTimestamp("Timestamp").toString().substring(0, 10);
                     %>
                         <div class="announcement-card">
                             <div class="card-header">
@@ -135,8 +139,6 @@
                         } finally {
                             if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
                             if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
-                            // Same note about closing 'conn' as above.
-                            
                         }
                     %>
                 </div>

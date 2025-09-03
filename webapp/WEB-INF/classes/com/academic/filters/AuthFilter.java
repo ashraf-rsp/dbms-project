@@ -67,8 +67,11 @@ public class AuthFilter implements Filter {
 
         if (isLoggedIn) {
             String userRole = (String) session.getAttribute("userRole");
+            Integer userId = (Integer) session.getAttribute("userId");
+
             request.setAttribute("loggedInUser", session.getAttribute("loggedInUser"));
             request.setAttribute("userRole", userRole);
+            request.setAttribute("userId", userId);
 
             if (pageRoles.containsKey(requestedPage)) {
                 List<String> allowedRoles = pageRoles.get(requestedPage);
