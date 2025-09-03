@@ -1,4 +1,0 @@
-<%
-    String loggedInUser = (String) session.getAttribute("loggedInUser");
-    String userRole = (String) session.getAttribute("userRole");
-%>

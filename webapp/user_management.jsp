@@ -1,15 +1,12 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ include file="includes/auth_check.jspf" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
+
 <%
-    // Check if the logged-in user is an Admin
-    
-    if (userRole == null || !userRole.equals("Admin")) {
-        response.sendRedirect("access_denied.jsp");
-        return;
-    }
+    String userRole = (String) request.getAttribute("userRole");
+    // The AuthFilter should handle the redirection if userRole is not Admin.
+    // This JSP assumes the AuthFilter has already verified the role.
 
     String action = request.getParameter("action");
     String userIdParam = request.getParameter("userId");

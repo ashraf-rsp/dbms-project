@@ -1,0 +1,183 @@
+
+
+
+
+
+
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Parent-First Academic Center Management">
+<link rel="stylesheet" href="/academic-center/css/themes.css">
+<link rel="stylesheet" href="/academic-center/css/components.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<html lang="en" data-theme="ocean">
+<head>
+    <title>Dashboard - Academic Center</title>
+</head>
+<body>
+    
+    <header class="main-header">
+    <div class="header-content">
+        <div class="logo-section">
+            <h1><i class="fas fa-graduation-cap"></i> ThinkSpire Academy</h1>
+        </div>
+        
+        <div class="header-actions desktop-header-actions">
+                        
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </div>
+            
+                <div class="message-icon">
+                    <a href="messages.jsp"><i class="fas fa-comment-dots"></i></a>
+                </div>
+            
+                <div class="user-menu dropdown-toggle" id="user-menu-toggle">
+                    <span class="welcome-text">Welcome, Ashraf</span>
+                    <img src="assets/images/placeholder-student.png" alt="User Avatar" class="user-avatar">
+                    <div class="dropdown-menu" id="user-dropdown-menu">
+                        <a href="student_profile.jsp" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+                        <a href="settings.jsp" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="logout.jsp" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            
+            <a href="#" id="theme-toggle-button" class="theme-toggle-button">
+                <i class="fas fa-moon"></i>
+            </a>
+            
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+    <div class="main-container">
+        
+        
+
+<nav class="sidebar" id="sidebar">
+    <ul class="nav-menu">
+        <li><a href="dashboard.jsp" class="active">
+            <i class="fas fa-home"></i> Dashboard</a></li>
+
+        
+            <li><a href="profile_redirect.jsp" class="">
+                <i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="user_management.jsp" class="">
+                <i class="fas fa-users-cog"></i> User Management</a></li>
+            <li><a href="course_management.jsp" class="">
+                <i class="fas fa-book"></i> Course Management</a></li>
+            <li><a href="assign_teacher.jsp" class="">
+                <i class="fas fa-chalkboard-teacher"></i> Assign Teacher</a></li>
+            <li><a href="enroll_student.jsp" class="">
+                <i class="fas fa-user-plus"></i> Enroll Student</a></li>
+            <li><a href="announcements.jsp" class="">
+                <i class="fas fa-bullhorn"></i> Announcements</a></li>
+            <li><a href="messages.jsp" class="">
+                <i class="fas fa-envelope"></i> Messages</a></li>
+            <li><a href="teacher_list.jsp" class="">
+                <i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
+            <li><a href="class_schedule.jsp" class="">
+                <i class="fas fa-clock"></i> Class Schedule</a></li>
+
+        
+    </ul>
+</nav>
+
+        <main class="content-area">
+            <div class="container">
+                <div class="page-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+                </div>
+
+                <div class="summary-cards-grid">
+                    <div class="summary-card">
+                        <h3>Welcome, Ashraf!</h3>
+                        <p>Here's a quick overview of your academic status.</p>
+                    </div>
+                </div>
+
+                
+                
+                    
+
+
+
+<div class="summary-cards-grid">
+    <div class="summary-card">
+        <div class="card-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="card-info">
+            <h3>Total Students</h3>
+            <p>5</p>
+        </div>
+    </div>
+    <div class="summary-card">
+        <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="card-info">
+            <h3>Total Teachers</h3>
+            <p>3</p>
+        </div>
+    </div>
+    <div class="summary-card">
+        <div class="card-icon"><i class="fas fa-book"></i></div>
+        <div class="card-info">
+            <h3>Total Courses</h3>
+            <p>5</p>
+        </div>
+    </div>
+    <div class_="summary-card">
+        <div class="card-icon"><i class="fas fa-user-plus"></i></div>
+        <div class="card-info">
+            <h3>Pending Registrations</h3>
+            <p>2</p>
+        </div>
+    </div>
+</div>
+
+<div class="data-table-container">
+    <div class="table-header">
+        <h3>Recent Activities</h3>
+    </div>
+    <div class="responsive-table">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Admin</td>
+                    <td>Updated system settings</td>
+                    <td>2025-08-30 10:00 AM</td>
+                </tr>
+                <!-- Add more dynamic rows here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+                
+
+            </div>
+        </main>
+    </div>
+
+        <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Academic Center Management System. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="js/main.js"></script>
+</body>
+</html>

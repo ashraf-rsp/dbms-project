@@ -1,44 +1,16 @@
-<%@ page import="java.util.Map, java.util.HashMap, java.util.List, java.util.Arrays" %>
 <%
+    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    String userRole = (String) session.getAttribute("userRole");
+
     if (loggedInUser == null || loggedInUser.isEmpty()) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        response.sendRedirect("login.jsp");
         return;
     }
 
-    // Define page-to-role mappings
-    Map<String, List<String>> pageRoles = new HashMap<>();
-
-    // Admin pages
-    pageRoles.put("/user_management.jsp", Arrays.asList("Admin"));
-    pageRoles.put("/course_management.jsp", Arrays.asList("Admin"));
-    pageRoles.put("/assign_teacher.jsp", Arrays.asList("Admin"));
-    pageRoles.put("/enroll_student.jsp", Arrays.asList("Admin"));
-
-    // Teacher pages
-    pageRoles.put("/mark_attendance.jsp", Arrays.asList("Teacher"));
-    pageRoles.put("/update_grades.jsp", Arrays.asList("Teacher"));
-
-    // Parent pages
-    pageRoles.put("/view_payments.jsp", Arrays.asList("Parent"));
-
-
-    // Shared pages
-    pageRoles.put("/dashboard.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
-    pageRoles.put("/profile_redirect.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
-    pageRoles.put("/announcements.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
-    pageRoles.put("/messages.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
-    pageRoles.put("/class_schedule.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
-    pageRoles.put("/view_grades.jsp", Arrays.asList("Parent", "Student"));
-    pageRoles.put("/view_attendance.jsp", Arrays.asList("Parent", "Student"));
-
-
-    String requestURI = request.getRequestURI();
-    String requestedPage = requestURI.substring(request.getContextPath().length());
-
-    if (pageRoles.containsKey(requestedPage)) {
-        List<String> allowedRoles = pageRoles.get(requestedPage);
-        if (userRole == null || !allowedRoles.contains(userRole)) {
-            response.sendRedirect(request.getContextPath() + "/access_denied.jsp");
+    String requiredRole = (String) request.getAttribute("requiredRole");
+    if (requiredRole != null && !requiredRole.isEmpty()) {
+        if (userRole == null || !userRole.equals(requiredRole)) {
+            response.sendRedirect("access_denied.jsp");
             return;
         }
     }
