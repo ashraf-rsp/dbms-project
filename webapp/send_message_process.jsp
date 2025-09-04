@@ -1,6 +1,7 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, java.io.StringWriter, java.io.PrintWriter, java.util.logging.Logger, java.util.logging.Level" %>
 <%@ include file="db_connection.jsp" %>
 <%
+    Logger logger = Logger.getLogger(this.getClass().getName());
     String action = request.getParameter("action");
     Integer senderUserId = (Integer) session.getAttribute("userId");
 
@@ -84,9 +85,13 @@
         }
 
     } catch (Exception e) {
-        session.setAttribute("message", "An error occurred: " + e.getMessage());
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        session.setAttribute("message", "An error occurred: " + e.getMessage() + "<br><pre>" + stackTrace + "</pre>");
         session.setAttribute("status", "error");
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Error in send_message_process.jsp", e); // Keep logging to server
     }
 
     response.sendRedirect("messages.jsp");
