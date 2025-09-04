@@ -1,7 +1,6 @@
 <%@ page import="java.sql.*, java.util.*" %>
 
 <%
-    Integer userId = (Integer) session.getAttribute("userId");
     Integer parentId = null;
 
     PreparedStatement pstmt_parent = null;

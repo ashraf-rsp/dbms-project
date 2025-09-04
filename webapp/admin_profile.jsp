@@ -84,7 +84,7 @@
                         }
                     %>
                     <h3>Contact Information</h3>
-                    <p><strong>Username:</strong> <%= adminUsername %></p>
+                    <p><strong>Name:</strong> <%= (adminName != null && !adminName.isEmpty()) ? adminName : "N/A" %></p>
                     <%-- <p><strong>Email:</strong> <%= adminEmail %></p> --%>
                 </div>
                 <div class="profile-actions">

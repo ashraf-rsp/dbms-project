@@ -206,8 +206,7 @@
                 <form action="profile_process.jsp" method="post">
                     <input type="hidden" name="studentId" value="<%= studentIdString %>">
                     <input type="hidden" name="userRole" value="Student">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="<%= loggedInUser %>" required>
+                    
                     <label for="studentName">Student Name:</label>
                     <input type="text" id="studentName" name="studentName" value="<%= studentName %>" required>
                     <label for="dateOfBirth">Date of Birth:</label>

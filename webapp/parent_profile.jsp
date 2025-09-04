@@ -117,8 +117,7 @@
                 <form action="profile_process.jsp" method="post">
                     <input type="hidden" name="userId" value="<%= userId %>">
                     <input type="hidden" name="userRole" value="Parent">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="<%= loggedInUser %>" required>
+                    
                     <label for="firstName">First Name:</label>
                     <input type="text" id="firstName" name="firstName" value="<%= parentFirstName %>" required>
                     <label for="lastName">Last Name:</label>

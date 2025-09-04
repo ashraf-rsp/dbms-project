@@ -1,7 +1,6 @@
 <%@ page import="java.sql.*, java.util.*" %>
 
 <%
-    Integer teacherId = (Integer) session.getAttribute("userId");
     int totalCourses = 0;
     int totalStudents = 0;
 
@@ -9,12 +8,12 @@
     Map<String, Integer> courseStudentCount = new LinkedHashMap<>();
     Map<String, String> courseSchedules = new LinkedHashMap<>();
 
-    if (teacherId != null) {
+    if (userId != null) {
         try {
             // Get courses taught by the teacher and their schedules
             String coursesSql = "SELECT c.CourseID, c.CourseName, s.DayOfWeek, s.StartTime, s.EndTime FROM Courses c JOIN Schedules s ON c.CourseID = s.CourseID WHERE s.TeacherUserID = ?";
             PreparedStatement psCourses = conn.prepareStatement(coursesSql);
-            psCourses.setInt(1, teacherId);
+            psCourses.setInt(1, userId);
             ResultSet rsCourses = psCourses.executeQuery();
 
             while (rsCourses.next()) {

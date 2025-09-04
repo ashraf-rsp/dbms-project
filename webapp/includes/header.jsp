@@ -16,10 +16,10 @@
                 </div>
             
                 <div class="user-menu dropdown-toggle" id="user-menu-toggle">
-                    <span class="welcome-text">Welcome, <%= (String) request.getAttribute("loggedInUser") %></span>
+                    <span class="welcome-text">Welcome, <%= (String) request.getAttribute("profileName") %></span>
                     <img src="assets/images/placeholder-student.png" alt="User Avatar" class="user-avatar">
                     <div class="dropdown-menu" id="user-dropdown-menu">
-                        <a href="student_profile.jsp" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+                        <a href="profile.jsp" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
                         <a href="settings.jsp" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
                         <a href="logout.jsp" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>

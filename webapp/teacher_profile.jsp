@@ -96,7 +96,7 @@
                         }
                     %>
                     <h3>Contact Information</h3>
-                    <p><strong>Username:</strong> <%= teacherUsername %></p>
+                    <p><strong>Name:</strong> <%= (teacherName != null && !teacherName.isEmpty()) ? teacherName : "N/A" %></p>
                     <%-- <p><strong>Email:</strong> <%= teacherEmail %></p> --%>
 
                     <h3>Assigned Courses</h3>
