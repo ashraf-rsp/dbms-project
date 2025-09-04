@@ -65,4 +65,5 @@
         </div>
     </section>
 </main>
+</div>
 <%@ include file="includes/footer.jsp" %>
