@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ include file="db_connection.jsp" %>
 <%
     // AuthFilter handles access control. This page is for Admins.
@@ -126,22 +128,22 @@
                 <div class="pagination">
                     <% 
                         int totalPages = (Integer) request.getAttribute("totalPages");
-                        int currentPage = (Integer) request.getAttribute("currentPage");
+                        int pageNum = (Integer) request.getAttribute("currentPage");
                         String searchCourse = (String) request.getAttribute("searchCourse");
 
-                        if (currentPage > 1) {
+                        if (pageNum > 1) {
                     %>
-                            <a href="course_management.jsp?page=<%= currentPage - 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Previous</a>
+                            <a href="course_management.jsp?page=<%= pageNum - 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Previous</a>
                     <% 
                         }
                         for (int i = 1; i <= totalPages; i++) {
                     %>
-                            <a href="course_management.jsp?page=<%= i %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button <%= i == currentPage ? "active" : "" %>"><%= i %></a>
+                            <a href="course_management.jsp?page=<%= i %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button <%= i == pageNum ? "active" : "" %>"><%= i %></a>
                     <% 
                         }
-                        if (currentPage < totalPages) {
+                        if (pageNum < totalPages) {
                     %>
-                            <a href="course_management.jsp?page=<%= currentPage + 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Next</a>
+                            <a href="course_management.jsp?page=<%= pageNum + 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Next</a>
                     <% 
                         }
                     %>
