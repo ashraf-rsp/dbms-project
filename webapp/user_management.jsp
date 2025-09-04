@@ -122,6 +122,22 @@
                 </div>
 
                 <h3>Existing Users</h3>
+                <div class="filter-search-container">
+                    <form action="user_management.jsp" method="get">
+                        <label for="filterUserType">Filter by User Type:</label>
+                        <select id="filterUserType" name="filterUserType" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            <option value="Admin" <%= "Admin".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Admin</option>
+                            <option value="Teacher" <%= "Teacher".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Teacher</option>
+                            <option value="Parent" <%= "Parent".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Parent</option>
+                            <option value="Student" <%= "Student".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Student</option>
+                        </select>
+
+                        <label for="searchUsername">Search by Username:</label>
+                        <input type="text" id="searchUsername" name="searchUsername" value="<%= request.getParameter("searchUsername") != null ? request.getParameter("searchUsername") : "" %>" placeholder="Enter username">
+                        <button type="submit" class="button small">Search</button>
+                    </form>
+                </div>
                 <div class="data-table-container">
                     <div class="responsive-table">
                         <table class="dashboard-table">
@@ -136,11 +152,38 @@
                             </thead>
                             <tbody>
                                 <% 
+                                    String filterUserType = request.getParameter("filterUserType");
+                                    String searchUsername = request.getParameter("searchUsername");
+
+                                    StringBuilder sqlListBuilder = new StringBuilder("SELECT UserID, Username, UserType, ParentID FROM Users");
+                                    List<Object> params = new ArrayList<>();
+
+                                    boolean firstCondition = true;
+
+                                    if (filterUserType != null && !filterUserType.isEmpty()) {
+                                        sqlListBuilder.append(" WHERE UserType = ?");
+                                        params.add(filterUserType);
+                                        firstCondition = false;
+                                    }
+
+                                    if (searchUsername != null && !searchUsername.isEmpty()) {
+                                        if (firstCondition) {
+                                            sqlListBuilder.append(" WHERE Username LIKE ?");
+                                        } else {
+                                            sqlListBuilder.append(" AND Username LIKE ?");
+                                        }
+                                        params.add("%" + searchUsername + "%");
+                                    }
+
+                                    sqlListBuilder.append(" ORDER BY UserID");
+
                                     PreparedStatement pstmtList = null;
                                     ResultSet rsList = null;
                                     try {
-                                        String sqlList = "SELECT UserID, Username, UserType, ParentID FROM Users ORDER BY UserID";
-                                        pstmtList = conn.prepareStatement(sqlList);
+                                        pstmtList = conn.prepareStatement(sqlListBuilder.toString());
+                                        for (int i = 0; i < params.size(); i++) {
+                                            pstmtList.setObject(i + 1, params.get(i));
+                                        }
                                         rsList = pstmtList.executeQuery();
                                         while (rsList.next()) {
                                 %>

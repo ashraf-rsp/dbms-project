@@ -34,6 +34,7 @@
                         <button type="submit" class="button">Login</button>
                     </form>
                     <p>Don't have an account? <a href="register.jsp">Register here</a></p>
+                    <p><a href="forgot_password.jsp">Forgot Password?</a></p>
                 </div>
             </div>
         </main>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.io.*, java.util.logging.*, java.util.ArrayList, java.util.List, java.util.Map, java.util.HashMap" %>
-<%@ page import="at.favre.lib.PasswordUtil" %> <%-- Import PasswordUtil --%>
+<%@ page import="at.favre.lib.crypto.bcrypt.BCrypt" %> <%-- Import BCrypt --%>
 <%@ include file="db_connection.jsp" %>
 <%
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -51,7 +51,7 @@
 
             if (password != null && !password.isEmpty()) {
                 setClauses.add("PasswordHash = ?");
-                paramsUser.add(PasswordUtil.hashPassword(password));
+                paramsUser.add(BCrypt.withDefaults().hashToString(12, password.toCharArray()));
             }
             // Add email update if email field is present in form
             if (email != null && !email.isEmpty()) {

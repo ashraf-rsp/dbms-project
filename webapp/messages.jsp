@@ -8,6 +8,11 @@
     Integer userId = (Integer) request.getAttribute("userId");
     String userRole = (String) request.getAttribute("userRole");
 
+    String currentView = request.getParameter("view");
+    if (currentView == null || currentView.trim().isEmpty()) {
+        currentView = "inbox"; // Default view
+    }
+
     if (userId == null) {
         // Should not happen if filter is working, but as a safeguard
         response.sendRedirect("login.jsp?error=session");
@@ -38,9 +43,14 @@
                 <h2><i class="fas fa-envelope"></i> Messages</h2>
             </div>
             
+            <div class="message-tabs">
+                <button class="tab-button <%= "inbox".equals(currentView) ? "active" : "" %>" onclick="window.location.href='messages.jsp?view=inbox'">Inbox</button>
+                <button class="tab-button <%= "sent".equals(currentView) ? "active" : "" %>" onclick="window.location.href='messages.jsp?view=sent'">Sent</button>
+            </div>
+
             <div class="data-table-container">
                 <div class="table-header">
-                    <h3>Inbox</h3>
+                    <h3><%= "inbox".equals(currentView) ? "Inbox" : "Sent Messages" %></h3>
                 </div>
                 <% 
                     if (status != null && message != null) {
@@ -55,6 +65,8 @@
                     <%= message %>
                 </div>
                 <% 
+                        session.removeAttribute("status");
+                        session.removeAttribute("message");
                     }
                 %>
                 
@@ -62,8 +74,9 @@
                     <table class="messages-table">
                         <thead>
                             <tr>
-                                <th>From</th>
+                                <th><%= "inbox".equals(currentView) ? "From" : "To" %></th>
                                 <th>Subject</th>
+                                <th>Content Preview</th>
                                 <th>Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -73,9 +86,18 @@
                             <% 
                                 PreparedStatement pstmt = null;
                                 ResultSet rs = null;
-                                String sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
-                                             "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
-                                             "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC"; // Declare and initialize sql here
+                                String sql = "";
+
+                                if ("inbox".equals(currentView)) {
+                                    sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                          "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
+                                          "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
+                                } else { // sent view
+                                    sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                          "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
+                                          "WHERE m.SenderUserID = ? ORDER BY m.Timestamp DESC";
+                                }
+
                                 try {
                                     
                                     pstmt = conn.prepareStatement(sql);
@@ -87,14 +109,15 @@
                                         while (rs.next()) {
                             %>
                             <tr class="message-row <%= rs.getBoolean("IsRead") ? "read" : "unread" %>">
-                                <td data-label="From"><%= rs.getString("SenderUsername") %></td>
+                                <td data-label="<%= "inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername" %>"><%= rs.getString("inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername") %></td>
                                 <td data-label="Subject"><%= rs.getString("Subject") %></td>
+                                <td data-label="Content Preview"><%= rs.getString("Content").length() > 50 ? rs.getString("Content").substring(0, 50) + "..." : rs.getString("Content") %></td>
                                 <td data-label="Date"><%= rs.getTimestamp("Timestamp") %></td>
                                 <td data-label="Status"><%= rs.getBoolean("IsRead") ? "Read" : "Unread" %></td>
                                 <td data-label="Actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= rs.getString("SenderUsername") %>"
+                                            data-sender="<%= "inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername" %>"
                                             data-subject="<%= rs.getString("Subject") %>"
                                             data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
@@ -125,6 +148,17 @@
                 <div class="mobile-cards">
                     <% 
                         // Re-execute query for mobile cards
+                        // Need to re-prepare statement as it might have been closed in finally block
+                        if ("inbox".equals(currentView)) {
+                            sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
+                                  "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
+                                  "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
+                        } else { // sent view
+                            sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Timestamp, m.IsRead " +
+                                  "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
+                                  "WHERE m.SenderUserID = ? ORDER BY m.Timestamp DESC";
+                        }
+
                         try {
                             pstmt = conn.prepareStatement(sql);
                             pstmt.setInt(1, userId);
@@ -137,15 +171,16 @@
                         <div class="message-card <%= rs.getBoolean("IsRead") ? "read" : "unread" %>">
                             <div class="card-header">
                                 <h4><%= rs.getString("Subject") %></h4>
-                                <span class="message-from">From: <%= rs.getString("SenderUsername") %></span>
+                                <span class="message-from"><%= "inbox".equals(currentView) ? "From" : "To" %>: <%= rs.getString("inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername") %></span>
                             </div>
                             <div class="card-body">
+                                <p>Content: <%= rs.getString("Content").length() > 100 ? rs.getString("Content").substring(0, 100) + "..." : rs.getString("Content") %></p>
                                 <p>Date: <%= rs.getTimestamp("Timestamp") %></p>
                                 <p>Status: <%= rs.getBoolean("IsRead") ? "Read" : "Unread" %></p>
                                 <div class="card-actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= rs.getString("SenderUsername") %>"
+                                            data-sender="<%= "inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername" %>"
                                             data-subject="<%= rs.getString("Subject") %>"
                                             data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
@@ -171,6 +206,7 @@
                     %>
                 </div>
             </div>
+
 
             <div class="compose-message-section">
                 <h2>Compose New Message</h2>
@@ -222,6 +258,9 @@
                     <p><strong>Date:</strong> <span id="modal-timestamp"></span></p>
                     <hr>
                     <p id="modal-content"></p>
+                    <div class="modal-actions">
+                        <button class="button primary-button reply-message-button"><i class="fas fa-reply"></i> Reply</button>
+                    </div>
                 </div>
             </div>
         </main>
@@ -250,13 +289,6 @@
                 const timestamp = this.dataset.timestamp;
                 const isRead = this.dataset.isRead === 'true';
 
-                // Fetch full message content via AJAX or redirect to a view_message.jsp
-                // For simplicity, let's assume content is not passed via data-attribute for now
-                // and will be fetched from the server when modal is opened, or we can pass it.
-                // For now, I'll just display the subject and sender.
-
-                // To fetch full content, we'd need another AJAX call or a hidden field with content.
-                // For this implementation, I'll make a simple AJAX call to get content.
                 fetch('get_message_content.jsp?messageId=' + messageId)
                     .then(response => response.text())
                     .then(content => {
@@ -265,6 +297,10 @@
                         document.getElementById('modal-timestamp').textContent = timestamp;
                         document.getElementById('modal-content').textContent = content;
                         viewMessageModal.style.display = 'block';
+
+                        // Store sender and subject for reply functionality
+                        viewMessageModal.dataset.currentSender = sender;
+                        viewMessageModal.dataset.currentSubject = subject;
 
                         // Mark as read if not already read
                         if (!isRead) {
@@ -283,6 +319,21 @@
                     })
                     .catch(error => console.error('Error fetching message content:', error));
             });
+        });
+
+        // Reply message button click
+        document.querySelector('.reply-message-button').addEventListener('click', function() {
+            const sender = viewMessageModal.dataset.currentSender;
+            const subject = viewMessageModal.dataset.currentSubject;
+
+            document.getElementById('receiverUsername').value = sender;
+            document.getElementById('subject').value = 'Re: ' + subject;
+            document.getElementById('content').value = ''; // Clear content for new reply
+
+            viewMessageModal.style.display = 'none'; // Close modal
+
+            // Scroll to compose section
+            document.querySelector('.compose-message-section').scrollIntoView({ behavior: 'smooth' });
         });
 
         // Close modal

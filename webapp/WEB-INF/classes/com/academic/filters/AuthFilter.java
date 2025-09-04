@@ -58,9 +58,25 @@ public class AuthFilter implements Filter {
         String contextPath = httpRequest.getContextPath();
         String requestedPage = requestURI.substring(contextPath.length());
 
+        // Publicly accessible pages
+        List<String> excludedPages = Arrays.asList(
+                "/login.jsp",
+                "/login_process.jsp",
+                "/register.jsp",
+                "/register_process.jsp",
+                "/forgot_password.jsp",
+                "/forgot_password_process.jsp",
+                "/change_password.jsp",
+                "/change_password_process.jsp",
+                "/index.jsp",
+                "/error.jsp",
+                "/access_denied.jsp"
+        );
+
+        boolean isExcludedPage = excludedPages.contains(requestedPage);
         boolean isLoggedIn = (session != null && session.getAttribute("loggedInUser") != null);
 
-        if (!isLoggedIn && !requestedPage.equals("/login.jsp") && !requestedPage.equals("/login_process.jsp") && !requestedPage.equals("/register.jsp") && !requestedPage.equals("/register_process.jsp")) {
+        if (!isLoggedIn && !isExcludedPage) {
             httpResponse.sendRedirect(contextPath + "/login.jsp");
             return;
         }

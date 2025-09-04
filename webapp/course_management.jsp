@@ -24,6 +24,13 @@
             <h1>Course Management</h1>
             <section class="course-management-section">
                 <h2>Available Courses</h2>
+                <div class="search-container">
+                    <form action="course_management.jsp" method="get">
+                        <label for="searchCourse">Search Courses:</label>
+                        <input type="text" id="searchCourse" name="searchCourse" value="<%= request.getParameter("searchCourse") != null ? request.getParameter("searchCourse") : "" %>" placeholder="Search by name or description">
+                        <button type="submit" class="button small">Search</button>
+                    </form>
+                </div>
                 <%
                     if (status != null && message != null) {
                         String alertClass = "";
@@ -43,10 +50,56 @@
                     <%
                         PreparedStatement pstmt = null;
                         ResultSet rs = null;
+                        
+                        int pageSize = 5; // Number of courses per page
+                        int currentPage = 1;
                         try {
-                            String sql = "SELECT CourseID, CourseName, CourseDescription, CourseFee FROM Courses ORDER BY CourseName";
-                            pstmt = conn.prepareStatement(sql);
-                            rs = pstmt.executeQuery();
+                            currentPage = Integer.parseInt(request.getParameter("page"));
+                        } catch (NumberFormatException e) {
+                            // Default to page 1 if parameter is invalid
+                            currentPage = 1;
+                        }
+                        int offset = (currentPage - 1) * pageSize;
+
+                        try {
+                            String searchCourse = request.getParameter("searchCourse");
+                            StringBuilder sqlBuilder = new StringBuilder("SELECT CourseID, CourseName, CourseDescription, CourseFee FROM Courses");
+                            StringBuilder countSqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Courses");
+                            List<Object> params = new ArrayList<>();
+
+                            if (searchCourse != null && !searchCourse.isEmpty()) {
+                                sqlBuilder.append(" WHERE CourseName LIKE ? OR CourseDescription LIKE ?");
+                                countSqlBuilder.append(" WHERE CourseName LIKE ? OR CourseDescription LIKE ?");
+                                params.add("%" + searchCourse + "%");
+                                params.add("%" + searchCourse + "%");
+                            }
+
+                            sqlBuilder.append(" ORDER BY CourseName LIMIT ? OFFSET ?");
+
+                            // Get total courses for pagination
+                            PreparedStatement countPstmt = conn.prepareStatement(countSqlBuilder.toString());
+                            for (int i = 0; i < params.size(); i++) {
+                                countPstmt.setObject(i + 1, params.get(i));
+                            }
+                            ResultSet countRs = countPstmt.executeQuery();
+                            int totalCourses = 0;
+                            if (countRs.next()) {
+                                totalCourses = countRs.getInt(1);
+                            }
+                            countRs.close();
+                            countPstmt.close();
+
+                            int totalPages = (int) Math.ceil((double) totalCourses / pageSize);
+                            request.setAttribute("totalPages", totalPages);
+                            request.setAttribute("currentPage", currentPage);
+                            request.setAttribute("searchCourse", searchCourse);
+
+                            pstmt = conn.prepareStatement(sqlBuilder.toString());
+                            for (int i = 0; i < params.size(); i++) {
+                                pstmt.setObject(i + 1, params.get(i));
+                            }
+                            pstmt.setInt(params.size() + 1, pageSize);
+                            pstmt.setInt(params.size() + 2, offset);
                             while (rs.next()) {
                     %>
                     <div class="course-item" data-course-id="<%= rs.getString("CourseID") %>">
@@ -67,6 +120,29 @@
                         } finally {
                             if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
                             if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+                        }
+                    %>
+                </div>
+                <div class="pagination">
+                    <% 
+                        int totalPages = (Integer) request.getAttribute("totalPages");
+                        int currentPage = (Integer) request.getAttribute("currentPage");
+                        String searchCourse = (String) request.getAttribute("searchCourse");
+
+                        if (currentPage > 1) {
+                    %>
+                            <a href="course_management.jsp?page=<%= currentPage - 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Previous</a>
+                    <% 
+                        }
+                        for (int i = 1; i <= totalPages; i++) {
+                    %>
+                            <a href="course_management.jsp?page=<%= i %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button <%= i == currentPage ? "active" : "" %>"><%= i %></a>
+                    <% 
+                        }
+                        if (currentPage < totalPages) {
+                    %>
+                            <a href="course_management.jsp?page=<%= currentPage + 1 %><%= searchCourse != null && !searchCourse.isEmpty() ? "&searchCourse=" + searchCourse : "" %>" class="button">Next</a>
+                    <% 
                         }
                     %>
                 </div>

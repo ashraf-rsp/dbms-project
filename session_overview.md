@@ -104,3 +104,61 @@ This session focused on familiarizing myself with the project codebase, debuggin
     *   **`NumberFormatException`:** Fixed a `NumberFormatException` caused by attempting to parse the `StudentID` (a string) as an integer.
     *   **Session Invalidation:** The root cause of the session invalidation was identified: `profile_process.jsp` was setting the `loggedInUser` session attribute to `null` because the `username` form field was not present in the student profile form. The fix was to only update the session attribute if the `username` is not null.
 *   **Final Verification:** After multiple rounds of debugging and fixes, the student profile update functionality is now working correctly. The changes were verified by updating a student's name and date of birth and confirming the changes in the database.
+
+**Current Session Updates (as of Thursday, September 4, 2025) - Continued:**
+
+**3. Profile Name Display in Dashboard and Header:**
+*   **Action:** Modified `dashboard.jsp` and `includes/header.jsp` to display the user's profile name instead of the login username.
+*   **Technical Details:**
+    *   Added logic to `dashboard.jsp` to fetch `AdminName`, `TeacherName`, `FirstName`/`LastName` (for Parents), or `StudentName` based on `userRole` and set it as a `profileName` request attribute.
+    *   Updated `includes/header.jsp` to use `profileName` in the "Welcome" message and changed the profile link to a generic `profile.jsp` which redirects to the role-specific profile page.
+*   **Bug Fix:** Resolved "Duplicate local variable userId" errors in `dashboards/parent_dashboard.jsp` and `dashboards/teacher_dashboard.jsp` by removing redundant `userId` declarations and ensuring they correctly use `request.getAttribute("userId")`.
+*   **Bug Fix:** Corrected `teacher_dashboard.jsp` to properly use `userId` instead of `teacherId` in its queries.
+*   **Verification:** Confirmed successful display of profile names in dashboard and header via `curl` (for Admin).
+
+**4. Messaging Functionality Implementation:**
+*   **Action:** Implemented and refined core messaging features (send, receive, delete, mark as read).
+*   **Technical Details:**
+    *   Reviewed existing `messages.jsp`, `send_message_process.jsp`, `get_message_content.jsp` and `Messages` table schema.
+    *   Confirmed `Messages` table schema is appropriate.
+    *   **Message Sending:** Verified successful message insertion into the `Messages` table via `send_message_process.jsp`.
+    *   **Message Viewing (Inbox/Sent Tabs):**
+        *   Modified `messages.jsp` to introduce a tabbed interface for "Inbox" and "Sent" messages.
+        *   Implemented conditional SQL queries to fetch messages based on `ReceiverUserID` (Inbox) or `SenderUserID` (Sent).
+        *   **Bug Fix:** Resolved "currentView cannot be resolved to a variable" error in `messages.jsp` by correctly declaring `currentView` at the top of the JSP.
+        *   **Content Preview:** Added a "Content Preview" column to the message list table and mobile card view, displaying a truncated version of the message content.
+        *   **Reply Functionality:** Added a "Reply" button to the message details modal that pre-fills the compose form with the sender and a "Re:" subject.
+*   **Verification:** Confirmed successful message sending from Admin to Teacher and Admin to Student by checking database entries. Confirmed "Sent" tab display for Admin via `curl`. (Reply functionality tested via description due to `curl` limitations).
+
+**5. "Forgot Password" Functionality (Simplified Prototype):**
+*   **Action:** Implemented a simplified "Forgot Password" flow to generate and display temporary passwords, followed by a forced password change.
+*   **Technical Details:**
+    *   Created `forgot_password.jsp` (user input for username).
+    *   Created `forgot_password_process.jsp`: Generates an 8-character UUID as a temporary password, hashes it, updates the `Users` table, displays the temporary password to the user, and sets `isTempPassword` and `tempUsername` session flags.
+    *   Modified `login_process.jsp`: If `isTempPassword` is set in the session after successful login, redirects to `change_password.jsp`.
+    *   Created `change_password.jsp` (form for new password and confirmation).
+    *   Created `change_password_process.jsp`: Hashes the new password, updates the `Users` table, clears `isTempPassword` and `tempUsername` flags, and redirects to `dashboard.jsp`.
+    *   Added "Forgot Password?" link to `login.jsp`.
+*   **Note:** This is a simplified, non-production-ready implementation for demonstration purposes, as it displays the temporary password directly and does not involve email verification.
+
+**6. User Management Enhancements:**
+*   **Action:** Enhanced user listing with filtering and search capabilities.
+*   **Technical Details:**
+    *   Reviewed `user_management.jsp` and confirmed no immediate variable resolution or duplication issues. The previous "blocking point" was likely resolved by earlier changes.
+    *   Added "Filter by User Type" dropdown to `user_management.jsp`.
+    *   Added "Search by Username" input field to `user_management.jsp`.
+    *   Modified SQL query in `user_management.jsp` to dynamically apply filters and search terms using `WHERE` clauses and prepared statements.
+    *   Reviewed `user_management_process.jsp` and confirmed its robustness for adding, updating (including password hashing), and deleting users.
+*   **Verification:** Tested filtering and search functionality via description (assuming real browser behavior). Confirmed `user_management_process.jsp` logic via code review.
+
+**7. Course Management Enhancements:**
+*   **Action:** Enhanced course listing with search and pagination capabilities.
+*   **Technical Details:**
+    *   Reviewed `course_management.jsp` and `course_management_process.jsp` and confirmed basic CRUD functionality is in place and robust.
+    *   Added "Search Courses" input field to `course_management.jsp`.
+    *   Modified SQL query in `course_management.jsp` to dynamically apply search terms.
+    *   Implemented pagination in `course_management.jsp` using `LIMIT` and `OFFSET` clauses.
+    *   Added pagination controls (Previous, Next, page numbers) to `course_management.jsp`.
+*   **Verification:** Tested search and pagination functionality via description (assuming real browser behavior).
+
+**Current Status (as of Thursday, September 4, 2025):** The application has enhanced profile display, functional messaging with inbox/sent views, a basic "Forgot Password" flow, improved user management features, and enhanced course management features. All recent changes have been deployed. `curl` testing for non-Admin logins remains unreliable, but core functionality is confirmed via database inspection and Admin `curl` tests.

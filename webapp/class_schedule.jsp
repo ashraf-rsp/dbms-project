@@ -15,55 +15,114 @@
     if (theme == null) theme = "ocean"; // Default theme
 
     // Prepare variables
-    String teacherName = "";
+    String displayName = "";
+    String studentId = null;
+    Integer parentId = null;
 
-    // --- Get Teacher Name for Display ---
-    if ("Teacher".equals(userRole)) {
-        PreparedStatement psName = conn.prepareStatement("SELECT Username FROM Users WHERE UserID = ?");
-        psName.setInt(1, userId);
-        ResultSet rsName = psName.executeQuery();
-        if (rsName.next()) {
-            teacherName = rsName.getString("Username");
+    // --- Get Display Name and User-Specific IDs ---
+    PreparedStatement psName = null;
+    ResultSet rsName = null;
+    try {
+        if ("Admin".equals(userRole)) {
+            displayName = "Admin";
+        } else if ("Teacher".equals(userRole)) {
+            psName = conn.prepareStatement("SELECT TeacherName FROM Teachers WHERE UserID = ?");
+            psName.setInt(1, userId);
+            rsName = psName.executeQuery();
+            if (rsName.next()) {
+                displayName = rsName.getString("TeacherName");
+            } else {
+                displayName = (String) request.getAttribute("loggedInUser"); // Fallback to username
+            }
+        } else if ("Student".equals(userRole)) {
+            psName = conn.prepareStatement("SELECT StudentName, StudentID FROM Students WHERE UserID = ?");
+            psName.setInt(1, userId);
+            rsName = psName.executeQuery();
+            if (rsName.next()) {
+                displayName = rsName.getString("StudentName");
+                studentId = rsName.getString("StudentID");
+            } else {
+                displayName = (String) request.getAttribute("loggedInUser"); // Fallback to username
+            }
+        } else if ("Parent".equals(userRole)) {
+            psName = conn.prepareStatement("SELECT ParentID, FirstName, LastName FROM Parents WHERE UserID = ?");
+            psName.setInt(1, userId);
+            rsName = psName.executeQuery();
+            if (rsName.next()) {
+                parentId = rsName.getInt("ParentID");
+                displayName = rsName.getString("FirstName") + " " + rsName.getString("LastName");
+            } else {
+                displayName = (String) request.getAttribute("loggedInUser"); // Fallback to username
+            }
         }
-        rsName.close();
-        psName.close();
+    } catch (SQLException e) {
+        System.err.println("Error fetching display name: " + e.getMessage());
+        displayName = (String) request.getAttribute("loggedInUser"); // Fallback to username
+    } finally {
+        if (rsName != null) try { rsName.close(); } catch (SQLException e) { /* ignore */ }
+        if (psName != null) try { psName.close(); } catch (SQLException e) { /* ignore */ }
     }
 
     // --- Fetch Schedule Data ---
     Map<String, Map<String, String>> scheduleGrid = new HashMap<>();
     String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-    String[] timeSlots = {"09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00"}; // Example time slots
+    List<String> timeSlots = new ArrayList<>();
 
-    StringBuilder sqlSchedule = new StringBuilder("SELECT s.DayOfWeek, s.StartTime, s.EndTime, c.CourseName, u.Username AS TeacherName, s.Room FROM Schedules s JOIN Courses c ON s.CourseID = c.CourseID JOIN Users u ON s.TeacherUserID = u.UserID ");
+    PreparedStatement psSchedule = null;
+    ResultSet rsSchedule = null;
+    PreparedStatement psTimeSlots = null;
+    ResultSet rsTimeSlots = null;
 
-    if ("Teacher".equals(userRole)) {
-        sqlSchedule.append("WHERE s.TeacherUserID = ? ");
-    } else if ("Student".equals(userRole) || "Parent".equals(userRole)) {
-        // The logic for student/parent is complex and appears broken in the original file.
-        // This simplified version will show an empty schedule for them for now.
-        sqlSchedule.append("WHERE 1=0 "); // Effectively returns no results
-    }
-    // Admin sees all schedules
-    sqlSchedule.append("ORDER BY FIELD(s.DayOfWeek, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'), s.StartTime");
+    try {
+        // Dynamically get all unique time slots
+        String sqlTimeSlots = "SELECT DISTINCT StartTime, EndTime FROM Schedules ORDER BY StartTime";
+        psTimeSlots = conn.prepareStatement(sqlTimeSlots);
+        rsTimeSlots = psTimeSlots.executeQuery();
+        while (rsTimeSlots.next()) {
+            timeSlots.add(rsTimeSlots.getTime("StartTime").toString().substring(0, 5) + " - " + rsTimeSlots.getTime("EndTime").toString().substring(0, 5));
+        }
+        rsTimeSlots.close();
+        psTimeSlots.close();
 
-    PreparedStatement psSchedule = conn.prepareStatement(sqlSchedule.toString());
+        StringBuilder sqlSchedule = new StringBuilder("SELECT s.DayOfWeek, s.StartTime, s.EndTime, c.CourseName, u.Username AS TeacherUsername, s.Room FROM Schedules s JOIN Courses c ON s.CourseID = c.CourseID JOIN Users u ON s.TeacherUserID = u.UserID ");
 
-    if ("Teacher".equals(userRole)) {
-        psSchedule.setInt(1, userId);
-    }
-    
-    ResultSet rsSchedule = psSchedule.executeQuery();
-    while (rsSchedule.next()) {
-        String day = rsSchedule.getString("DayOfWeek");
-        String startTime = rsSchedule.getTime("StartTime").toString().substring(0, 5);
-        String endTime = rsSchedule.getTime("EndTime").toString().substring(0, 5);
-        String courseName = rsSchedule.getString("CourseName");
-        String teacher = rsSchedule.getString("TeacherName");
-        String room = rsSchedule.getString("Room");
-        String timeSlot = startTime + " - " + endTime;
-        String itemContent = courseName + "<br>" + teacher + "<br>Room " + room;
+        if ("Teacher".equals(userRole)) {
+            sqlSchedule.append("WHERE s.TeacherUserID = ? ");
+            psSchedule = conn.prepareStatement(sqlSchedule.toString());
+            psSchedule.setInt(1, userId);
+        } else if ("Student".equals(userRole)) {
+            sqlSchedule.append("JOIN Enrollments e ON s.CourseID = e.CourseID WHERE e.StudentID = ? ");
+            psSchedule = conn.prepareStatement(sqlSchedule.toString());
+            psSchedule.setString(1, studentId);
+        } else if ("Parent".equals(userRole)) {
+            sqlSchedule.append("JOIN Enrollments e ON s.CourseID = e.CourseID JOIN Student_Parent_Link spl ON e.StudentID = spl.StudentID WHERE spl.ParentID = ? ");
+            psSchedule = conn.prepareStatement(sqlSchedule.toString());
+            psSchedule.setInt(1, parentId);
+        } else { // Admin sees all schedules
+            psSchedule = conn.prepareStatement(sqlSchedule.toString());
+        }
+        
+        rsSchedule = psSchedule.executeQuery();
+        while (rsSchedule.next()) {
+            String day = rsSchedule.getString("DayOfWeek");
+            String startTime = rsSchedule.getTime("StartTime").toString().substring(0, 5);
+            String endTime = rsSchedule.getTime("EndTime").toString().substring(0, 5);
+            String courseName = rsSchedule.getString("CourseName");
+            String teacherUsername = rsSchedule.getString("TeacherUsername");
+            String room = rsSchedule.getString("Room");
+            String timeSlot = startTime + " - " + endTime;
+            String itemContent = courseName + "<br>" + teacherUsername + "<br>Room " + room;
 
-        scheduleGrid.computeIfAbsent(timeSlot, k -> new HashMap<>()).put(day, itemContent);
+            scheduleGrid.computeIfAbsent(timeSlot, k -> new HashMap<>()).put(day, itemContent);
+        }
+    } catch (Exception e) {
+        System.err.println("Error fetching schedule: " + e.getMessage());
+        // Optionally set an error message for the user
+    } finally {
+        if (rsSchedule != null) try { rsSchedule.close(); } catch (SQLException e) { /* ignore */ }
+        if (psSchedule != null) try { psSchedule.close(); } catch (SQLException e) { /* ignore */ }
+        if (rsTimeSlots != null) try { rsTimeSlots.close(); } catch (SQLException e) { /* ignore */ }
+        if (psTimeSlots != null) try { psTimeSlots.close(); } catch (SQLException e) { /* ignore */ }
     }
 %>
 <%@ include file="includes/meta.jsp" %>
@@ -83,15 +142,7 @@
             </div>
             <section class="schedule-section">
                 <h2>Schedule for 
-                    <%
-                        if ("Admin".equals(userRole)) {
-                            out.print("All Classes");
-                        } else if ("Teacher".equals(userRole)) {
-                            out.print(teacherName);
-                        } else {
-                            out.print("Student/Parent (View In Progress)");
-                        }
-                    %>
+                    <%= displayName %>
                 </h2>
                 
                 <div class="schedule-grid-container">

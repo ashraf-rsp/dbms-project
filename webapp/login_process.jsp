@@ -30,7 +30,14 @@
                 session.setAttribute("userRole", rs.getString("UserType"));
 
                 logger.log(Level.INFO, "User {0} logged in successfully with role {1}", new Object[]{username, rs.getString("UserType")});
-                response.sendRedirect("dashboard.jsp");
+                
+                // Check if this is a temporary password login
+                if ("true".equals(session.getAttribute("isTempPassword"))) {
+                    session.removeAttribute("isTempPassword"); // Clear the flag
+                    response.sendRedirect("change_password.jsp");
+                } else {
+                    response.sendRedirect("dashboard.jsp");
+                }
             } else {
                 // Password does not match
                 session.setAttribute("loginError", "Invalid username or password.");
