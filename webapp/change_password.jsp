@@ -1,13 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String theme = (String) session.getAttribute("theme");
+    if (theme == null) theme = "ocean"; // Default theme
+%>
+<% request.setAttribute("additionalCss", "login"); %>
 <%@ include file="includes/meta.jsp" %>
-<html lang="en">
+<html lang="en" data-theme="<%= theme %>">
 <head>
     <title>Change Password - Academic Center</title>
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
+    <%@ include file="includes/header.jsp" %>
+    
     <div class="main-container">
+        <%-- No sidebar for this page --%>
+        
         <main class="content-area">
             <div class="login-page-wrapper">
                 <div class="login-container">
@@ -43,5 +50,7 @@
             </div>
         </main>
     </div>
+    
+    <%@ include file="includes/footer.jsp" %>
 </body>
 </html>
