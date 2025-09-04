@@ -45,14 +45,31 @@
         } else if ("delete".equals(action)) {
             int messageId = Integer.parseInt(request.getParameter("messageId"));
 
-            String sqlDeleteMessage = "DELETE FROM Messages WHERE MessageID = ? AND (SenderUserID = ? OR ReceiverUserID = ?)"; // Allow sender or receiver to delete
-            PreparedStatement pstmtDelete = conn.prepareStatement(sqlDeleteMessage);
-            pstmtDelete.setInt(1, messageId);
-            pstmtDelete.setInt(2, senderUserId);
-            pstmtDelete.setInt(3, senderUserId);
-            pstmtDelete.executeUpdate();
-            session.setAttribute("message", "Message deleted successfully.");
-            session.setAttribute("status", "success");
+            // First, set DeletedBySender flag if the user is the sender
+            String sqlUpdateSender = "UPDATE Messages SET DeletedBySender = TRUE WHERE MessageID = ? AND SenderUserID = ?";
+            PreparedStatement pstmtUpdateSender = conn.prepareStatement(sqlUpdateSender);
+            pstmtUpdateSender.setInt(1, messageId);
+            pstmtUpdateSender.setInt(2, senderUserId);
+            int senderRows = pstmtUpdateSender.executeUpdate();
+            pstmtUpdateSender.close();
+
+            // Then, set DeletedByReceiver flag if the user is the receiver
+            String sqlUpdateReceiver = "UPDATE Messages SET DeletedByReceiver = TRUE WHERE MessageID = ? AND ReceiverUserID = ?";
+            PreparedStatement pstmtUpdateReceiver = conn.prepareStatement(sqlUpdateReceiver);
+            pstmtUpdateReceiver.setInt(1, messageId);
+            pstmtUpdateReceiver.setInt(2, senderUserId);
+            int receiverRows = pstmtUpdateReceiver.executeUpdate();
+            pstmtUpdateReceiver.close();
+
+            if (senderRows > 0 || receiverRows > 0) {
+                session.setAttribute("message", "Message deleted successfully.");
+                session.setAttribute("status", "success");
+            } else {
+                // This case would mean the user is trying to delete a message that is not theirs,
+                // or the messageId is invalid. A generic success message is also fine to not reveal info.
+                session.setAttribute("message", "Message deleted successfully.");
+                session.setAttribute("status", "success");
+            }
 
         } else if ("mark_read".equals(action)) {
             int messageId = Integer.parseInt(request.getParameter("messageId"));

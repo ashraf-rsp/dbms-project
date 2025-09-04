@@ -302,20 +302,7 @@
                         viewMessageModal.dataset.currentSender = sender;
                         viewMessageModal.dataset.currentSubject = subject;
 
-                        // Mark as read if not already read
-                        if (!isRead) {
-                            fetch('send_message_process.jsp?action=mark_read&messageId=' + messageId, { method: 'POST' })
-                                .then(response => {
-                                    if (response.ok) {
-                                        // Update UI to show as read
-                                        this.closest('tr').classList.remove('unread');
-                                        this.closest('tr').classList.add('read');
-                                        // Update status text if visible
-                                        const statusCell = this.closest('tr').querySelector('td[data-label="Status"]');
-                                        if (statusCell) statusCell.textContent = 'Read';
-                                    }
-                                });
-                        }
+                        
                     })
                     .catch(error => console.error('Error fetching message content:', error));
             });
