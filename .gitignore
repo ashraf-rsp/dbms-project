@@ -3,3 +3,6 @@ Screenshot_*.jpg
 *.war
 webapp/WEB-INF/lib/
 webapp/WEB-INF/db.properties
+admin_cookies.txt
+cookie.txt
+teacher_cookies.txt
