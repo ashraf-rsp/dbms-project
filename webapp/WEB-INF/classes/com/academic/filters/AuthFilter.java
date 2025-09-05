@@ -23,6 +23,7 @@ public class AuthFilter implements Filter {
         pageRoles.put("/assign_teacher.jsp", Arrays.asList("Admin"));
         pageRoles.put("/enroll_student.jsp", Arrays.asList("Admin"));
         pageRoles.put("/dashboards/admin_dashboard.jsp", Arrays.asList("Admin"));
+        pageRoles.put("/user_management_process.jsp", Arrays.asList("Admin"));
 
         // Teacher pages
         pageRoles.put("/mark_attendance.jsp", Arrays.asList("Teacher"));

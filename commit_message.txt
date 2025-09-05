@@ -1,0 +1,18 @@
+feat: Enhance user management and core application features
+
+This commit addresses several issues and introduces enhancements across the application:
+
+- **User Management Page (`user_management.jsp`):
+  - Resolved JSP compilation errors related to `Map` and function declarations.
+  - Corrected SQL queries in `getUsersByType` to properly retrieve and display data for Admin, Teacher, Parent, and Student users, including correct email handling based on table structure.
+  - Implemented tabbed view for user types and dynamic display of related fields (e.g., student name, parent dropdown).
+
+- **General Improvements & Bug Fixes:**
+  - Updated `session_overview.md` with the latest development progress.
+  - Added robust role-based access checks to `assign_teacher.jsp`, `assign_teacher_process.jsp`, `course_management_process.jsp`, `enroll_student.jsp`, `enroll_student_process.jsp`, `mark_attendance.jsp`, `mark_attendance_process.jsp`, `update_grades.jsp`, `update_grades_process.jsp`.
+  - Improved error handling and user feedback across various JSPs by setting session messages and statuses.
+  - Refactored announcement and course deletion to use `fetch` API for better UX.
+  - Implemented duplicate enrollment and teacher assignment checks.
+  - Enhanced attendance and grade marking with pre-filling and status indicators.
+  - Added grade letter calculation in `update_grades_process.jsp`.
+  - Removed debug print statements from `send_message_process.jsp`.
