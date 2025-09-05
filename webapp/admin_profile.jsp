@@ -23,7 +23,7 @@
 
     try {
         // Retrieve admin details from the Users table
-        String sqlAdmin = "SELECT Username, AdminName FROM Users WHERE UserID = ? AND UserType = 'Admin'";
+        String sqlAdmin = "SELECT Username, AdminName, Email FROM Users WHERE UserID = ? AND UserType = 'Admin'";
         pstmt = conn.prepareStatement(sqlAdmin);
         pstmt.setInt(1, userId);
         rs = pstmt.executeQuery();
@@ -31,7 +31,7 @@
             adminUsername = rs.getString("Username");
             adminName = rs.getString("AdminName");
             // If an email column is added to Users, retrieve it here
-            // adminEmail = rs.getString("Email");
+            adminEmail = rs.getString("Email");
         } else {
             out.println("<p>Admin user not found or role mismatch.</p>");
             return;
@@ -85,7 +85,7 @@
                     %>
                     <h3>Contact Information</h3>
                     <p><strong>Name:</strong> <%= (adminName != null && !adminName.isEmpty()) ? adminName : "N/A" %></p>
-                    <%-- <p><strong>Email:</strong> <%= adminEmail %></p> --%>
+                    <p><strong>Email:</strong> <%= (adminEmail != null && !adminEmail.isEmpty()) ? adminEmail : "N/A" %></p>
                 </div>
                 <div class="profile-actions">
                     <%-- <a href="messages.jsp?composeTo=<%= adminEmail %>" class="button"><i class="fas fa-envelope"></i> Send Message</a> --%>
@@ -102,9 +102,8 @@
                     <input type="text" id="adminName" name="adminName" value="<%= (adminName != null) ? adminName : "" %>" required>
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="<%= adminUsername %>" required>
-                    <%-- If email is added to Users table, uncomment below --%>
-                    <%-- <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<%= adminEmail %>" required> --%>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<%= (adminEmail != null) ? adminEmail : "" %>">
                     <label for="password">New Password (leave blank to keep current):</label>
                     <input type="password" id="password" name="password">
                     

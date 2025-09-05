@@ -19,8 +19,12 @@
         return;
     }
 
-    String status = request.getParameter("status");
-    String message = request.getParameter("message");
+    String status = (String) session.getAttribute("status");
+    String message = (String) session.getAttribute("message");
+
+    // DEBUG: Print session attributes to see if they are set
+    out.println("<!-- DEBUG: Status from session: " + status + " -->");
+    out.println("<!-- DEBUG: Message from session: " + message + " -->");
 
     String theme = (String) session.getAttribute("theme");
     if (theme == null) theme = "ocean"; // Default theme
@@ -65,8 +69,9 @@
                     <%= message %>
                 </div>
                 <% 
-                        session.removeAttribute("status");
-                        session.removeAttribute("message");
+                        // Temporarily commented out for debugging
+                        // session.removeAttribute("status");
+                        // session.removeAttribute("message");
                     }
                 %>
                 
@@ -150,11 +155,11 @@
                         // Re-execute query for mobile cards
                         // Need to re-prepare statement as it might have been closed in finally block
                         if ("inbox".equals(currentView)) {
-                            sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Timestamp, m.IsRead " +
+                            sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
                                   "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
                                   "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
                         } else { // sent view
-                            sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Timestamp, m.IsRead " +
+                            sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
                                   "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
                                   "WHERE m.SenderUserID = ? ORDER BY m.Timestamp DESC";
                         }
@@ -211,6 +216,7 @@
             <div class="compose-message-section">
                 <h2>Compose New Message</h2>
                 <form action="send_message_process.jsp" method="post">
+                    <input type="hidden" name="action" value="send">
                     <div class="form-group">
                         <label for="receiverUsername">To (Username):</label>
                         <select id="receiverUsername" name="receiverUsername" required>
@@ -271,15 +277,45 @@
 </html>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const composeForm = document.querySelector('.compose-message-section form');
+        if (composeForm) {
+            composeForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                try {
+                    const formData = new URLSearchParams(new FormData(composeForm)).toString();
+
+                    fetch('send_message_process.jsp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            response.text().then(text => {
+                                alert('ERROR: Server returned an error.\n' + text);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        alert('FATAL: A network error occurred. Check console for details.\n' + error);
+                    });
+
+                } catch (e) {
+                    console.error('Error in form submission handler:', e);
+                    alert('FATAL: A JavaScript error occurred. Check console for details.\n' + e);
+                }
+            });
+        }
+
         const viewMessageModal = document.querySelector('.view-message-modal');
         const closeButton = document.querySelector('.view-message-modal .close-button');
-        const deleteMessageForm = document.createElement('form'); // Create a form dynamically for delete
-        deleteMessageForm.action = 'send_message_process.jsp';
-        deleteMessageForm.method = 'post';
-        deleteMessageForm.style.display = 'none';
-        deleteMessageForm.innerHTML = '<input type="hidden" name="action" value="delete"><input type="hidden" name="messageId" id="delete-message-id">';
-        document.body.appendChild(deleteMessageForm);
-
+        
         // View message button click
         document.querySelectorAll('.view-message-button').forEach(button => {
             button.addEventListener('click', function() {
@@ -287,7 +323,6 @@
                 const sender = this.dataset.sender;
                 const subject = this.dataset.subject;
                 const timestamp = this.dataset.timestamp;
-                const isRead = this.dataset.isRead === 'true';
 
                 fetch('get_message_content.jsp?messageId=' + messageId)
                     .then(response => response.text())
@@ -295,14 +330,11 @@
                         document.getElementById('modal-sender').textContent = sender;
                         document.getElementById('modal-subject').textContent = subject;
                         document.getElementById('modal-timestamp').textContent = timestamp;
-                        document.getElementById('modal-content').textContent = content;
+                        document.getElementById('modal-content').innerHTML = content; // Use innerHTML to render breaks
                         viewMessageModal.style.display = 'block';
 
-                        // Store sender and subject for reply functionality
                         viewMessageModal.dataset.currentSender = sender;
                         viewMessageModal.dataset.currentSubject = subject;
-
-                        
                     })
                     .catch(error => console.error('Error fetching message content:', error));
             });
@@ -315,18 +347,17 @@
 
             document.getElementById('receiverUsername').value = sender;
             document.getElementById('subject').value = 'Re: ' + subject;
-            document.getElementById('content').value = ''; // Clear content for new reply
-
-            viewMessageModal.style.display = 'none'; // Close modal
-
-            // Scroll to compose section
+            document.getElementById('content').focus();
+            viewMessageModal.style.display = 'none';
             document.querySelector('.compose-message-section').scrollIntoView({ behavior: 'smooth' });
         });
 
         // Close modal
-        closeButton.addEventListener('click', function() {
-            viewMessageModal.style.display = 'none';
-        });
+        if(closeButton) {
+            closeButton.addEventListener('click', function() {
+                viewMessageModal.style.display = 'none';
+            });
+        }
 
         window.addEventListener('click', function(event) {
             if (event.target == viewMessageModal) {
@@ -339,8 +370,12 @@
             button.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete this message?')) {
                     const messageId = this.dataset.messageId;
-                    document.getElementById('delete-message-id').value = messageId;
-                    deleteMessageForm.submit();
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = 'send_message_process.jsp';
+                    form.innerHTML = `<input type="hidden" name="action" value="delete"><input type="hidden" name="messageId" value="${messageId}">`;
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             });
         });

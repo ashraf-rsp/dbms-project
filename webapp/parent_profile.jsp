@@ -25,26 +25,26 @@
     ResultSet rs = null;
 
     try {
-        // Get ParentID from Users table
-        String sqlGetParentID = "SELECT ParentID FROM Users WHERE UserID = ?";
-        pstmt = conn.prepareStatement(sqlGetParentID);
+        // Get ParentID and email from Users table
+        String sqlGetUser = "SELECT ParentID, Email FROM Users WHERE UserID = ?";
+        pstmt = conn.prepareStatement(sqlGetUser);
         pstmt.setInt(1, userId);
         rs = pstmt.executeQuery();
         if (rs.next()) {
             parentId = rs.getInt("ParentID");
+            parentEmail = rs.getString("Email");
         }
         rs.close();
         pstmt.close();
 
         if (parentId != null) {
-            String sqlParent = "SELECT FirstName, LastName, Email, Phone FROM Parents WHERE ParentID = ?";
+            String sqlParent = "SELECT FirstName, LastName, Phone FROM Parents WHERE ParentID = ?";
             pstmt = conn.prepareStatement(sqlParent);
             pstmt.setInt(1, parentId);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 parentFirstName = rs.getString("FirstName");
                 parentLastName = rs.getString("LastName");
-                parentEmail = rs.getString("Email");
                 parentPhone = rs.getString("Phone");
             }
         } else {

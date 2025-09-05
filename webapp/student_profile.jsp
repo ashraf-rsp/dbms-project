@@ -18,6 +18,7 @@
     String studentIdString = null;
     String studentName = "";
     String studentDOB = "";
+    String studentEmail = "";
     String enrollmentDate = "N/A";
     String currentClass = "N/A";
 
@@ -91,20 +92,22 @@
     try {
         if (studentIdString != null) {
             // Get student details
-            String sqlStudent = "SELECT StudentName, DOB FROM Students WHERE StudentID = ?";
+            String sqlStudent = "SELECT s.StudentName, s.DOB, u.Email FROM Students s LEFT JOIN Users u ON s.UserID = u.UserID WHERE s.StudentID = ?";
             pstmt = conn.prepareStatement(sqlStudent);
             pstmt.setString(1, studentIdString);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 studentName = rs.getString("StudentName");
                 studentDOB = rs.getDate("DOB") != null ? rs.getDate("DOB").toString() : "N/A";
+                studentEmail = rs.getString("Email");
             }
             rs.close();
             pstmt.close();
 
             // Get parent details linked to this student
-            String sqlParentDetails = "SELECT p.FirstName, p.LastName, p.Email, p.Phone FROM Parents p " +
+            String sqlParentDetails = "SELECT p.FirstName, p.LastName, u.Email, p.Phone FROM Parents p " +
                                     "JOIN Student_Parent_Link spl ON p.ParentID = spl.ParentID " +
+                                    "LEFT JOIN Users u ON p.UserID = u.UserID " +
                                     "WHERE spl.StudentID = ? LIMIT 1";
             pstmt = conn.prepareStatement(sqlParentDetails);
             pstmt.setString(1, studentIdString);
@@ -184,6 +187,7 @@
                         }
                     %>
                     <h3>Personal Information</h3>
+                    <p><strong>Email:</strong> <%= (studentEmail != null && !studentEmail.isEmpty()) ? studentEmail : "N/A" %></p>
                     <p><strong>Date of Birth:</strong> <%= studentDOB %></p>
                     <p><strong>Enrollment Date:</strong> <%= enrollmentDate %></p>
                     <p><strong>Current Class:</strong> <%= currentClass %></p>
@@ -209,6 +213,8 @@
                     
                     <label for="studentName">Student Name:</label>
                     <input type="text" id="studentName" name="studentName" value="<%= studentName %>" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<%= (studentEmail != null) ? studentEmail : "" %>">
                     <label for="dateOfBirth">Date of Birth:</label>
                     <input type="date" id="dateOfBirth" name="dateOfBirth" value="<%= studentDOB %>">
                     

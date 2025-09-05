@@ -24,7 +24,7 @@
 
     try {
         // Retrieve teacher details from the Users table
-        String sqlTeacher = "SELECT u.Username, t.TeacherName FROM Users u JOIN Teachers t ON u.UserID = t.UserID WHERE u.UserID = ? AND u.UserType = 'Teacher'";
+        String sqlTeacher = "SELECT u.Username, u.Email, t.TeacherName FROM Users u JOIN Teachers t ON u.UserID = t.UserID WHERE u.UserID = ? AND u.UserType = 'Teacher'";
         pstmt = conn.prepareStatement(sqlTeacher);
         pstmt.setInt(1, userId);
         rs = pstmt.executeQuery();
@@ -32,7 +32,7 @@
             teacherUsername = rs.getString("Username");
             teacherName = rs.getString("TeacherName");
             // If an email column is added to Users, retrieve it here
-            // teacherEmail = rs.getString("Email");
+            teacherEmail = rs.getString("Email");
         } else {
             out.println("<p>Teacher user not found or role mismatch.</p>");
             return;
@@ -97,7 +97,7 @@
                     %>
                     <h3>Contact Information</h3>
                     <p><strong>Name:</strong> <%= (teacherName != null && !teacherName.isEmpty()) ? teacherName : "N/A" %></p>
-                    <%-- <p><strong>Email:</strong> <%= teacherEmail %></p> --%>
+                    <p><strong>Email:</strong> <%= (teacherEmail != null && !teacherEmail.isEmpty()) ? teacherEmail : "N/A" %></p>
 
                     <h3>Assigned Courses</h3>
                     <ul>
@@ -131,9 +131,8 @@
                     <input type="text" id="teacherName" name="teacherName" value="<%= (teacherName != null) ? teacherName : "" %>" required>
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" value="<%= teacherUsername %>" required>
-                    <%-- If email is added to Users table, uncomment below --%>
-                    <%-- <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<%= teacherEmail %>" required> --%>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<%= (teacherEmail != null) ? teacherEmail : "" %>">
                     <label for="password">New Password (leave blank to keep current):</label>
                     <input type="password" id="password" name="password">
                     
