@@ -28,7 +28,10 @@
             rsReceiver.close();
             pstmtReceiver.close();
 
+            System.out.println("send_message_process.jsp: ReceiverUserID: " + receiverUserId);
+
             if (receiverUserId != -1) {
+                System.out.println("send_message_process.jsp: Inserting message into database.");
                 String sqlInsertMessage = "INSERT INTO Messages (SenderUserID, ReceiverUserID, Subject, Content) VALUES (?, ?, ?, ?)";
                 PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsertMessage);
                 pstmtInsert.setInt(1, senderUserId);
@@ -91,7 +94,6 @@
         String stackTrace = sw.toString();
         session.setAttribute("message", "An error occurred: " + e.getMessage() + "<br><pre>" + stackTrace + "</pre>");
         session.setAttribute("status", "error");
-        logger.log(Level.SEVERE, "Error in send_message_process.jsp", e); // Keep logging to server
     }
 
     response.sendRedirect("messages.jsp");

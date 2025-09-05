@@ -1,7 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %>
-<%@ include file="db_connection.jsp" %>
-<%
+ச்சியை<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ page import="java.sql.*, java.util.*" %><%@ include file="db_connection.jsp" %>
+<%--
     // AuthFilter handles access control and sets userRole.
     String userRole = (String) request.getAttribute("userRole");
 
@@ -10,7 +8,33 @@
 
     String status = request.getParameter("status");
     String message = request.getParameter("message");
-%>
+
+    // Fetch announcements once
+    List<Map<String, Object>> announcements = new ArrayList<>();
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    try {
+        String sql = "SELECT AlertID, Title, Content, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
+        pstmt = conn.prepareStatement(sql);
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            Map<String, Object> announcement = new HashMap<>();
+            announcement.put("AlertID", rs.getInt("AlertID"));
+            announcement.put("Title", rs.getString("Title"));
+            announcement.put("Content", rs.getString("Content"));
+            announcement.put("Timestamp", rs.getTimestamp("Timestamp"));
+            announcements.add(announcement);
+        }
+    } catch (Exception e) {
+        System.err.println("Error loading announcements: " + e.getMessage());
+        // Set an error message to be displayed
+        message = "Error loading announcements.";
+        status = "error";
+    } finally {
+        if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
+        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
+    }
+--%>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
 <head>
@@ -47,45 +71,23 @@
                         </thead>
                         <tbody>
                             <% 
-                                PreparedStatement pstmt = null;
-                                ResultSet rs = null;
-                                try {
-                                    String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
-                                    pstmt = conn.prepareStatement(sql);
-                                    rs = pstmt.executeQuery();
-                                    if (!rs.isBeforeFirst()) {
-                                        out.println("<tr><td colspan=\"" + ("Admin".equals(userRole) ? "3" : "2") + "\">No announcements found.</td></tr>");
-                                    } else {
-                                        while (rs.next()) {
-                                            String fullMessage = rs.getString("Message");
-                                            String title = fullMessage;
-                                            int newlinePos = -1;
-                                            if (fullMessage != null) {
-                                               newlinePos = fullMessage.indexOf('\n');
-                                               if (newlinePos != -1) {
-                                                   title = fullMessage.substring(0, newlinePos);
-                                               }
-                                            }
-                                            String date = rs.getTimestamp("Timestamp").toString().substring(0, 10);
+                                if (announcements.isEmpty()) {
+                                    out.println("<tr><td colspan=\"" + ("Admin".equals(userRole) ? "3" : "2") + "\">No announcements found.</td></tr>");
+                                } else {
+                                    for (Map<String, Object> announcement : announcements) {
+                                        String date = ((Timestamp) announcement.get("Timestamp")).toString().substring(0, 10);
                             %>
                                 <tr class="announcement-row">
-                                    <td><%= title %></td>
+                                    <td><%= announcement.get("Title") %></td>
                                     <td><%= date %></td>
                                     <% if ("Admin".equals(userRole)) { %>
                                     <td>
-                                        <button class="button delete-announcement-button" data-alert-id="<%= rs.getInt("AlertID") %>"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <button class="button delete-announcement-button" data-alert-id="<%= announcement.get("AlertID") %>"><i class="fas fa-trash-alt"></i> Delete</button>
                                     </td>
                                     <% } %>
                                 </tr>
                             <% 
-                                        }
                                     }
-                                } catch (Exception e) {
-                                    System.err.println("Error loading announcements: " + e.getMessage());
-                                    out.println("<tr><td colspan=\"" + ("Admin".equals(userRole) ? "3" : "2") + "\">Error loading announcements.</td></tr>");
-                                } finally {
-                                    if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
-                                    if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
                                 }
                             %>
                         </tbody>
@@ -95,50 +97,28 @@
                 <!-- Mobile Card View -->
                 <div class="mobile-cards">
                     <% 
-                        try {
-                            String sql = "SELECT AlertID, Message, Timestamp FROM Alert_Log ORDER BY Timestamp DESC";
-                            pstmt = conn.prepareStatement(sql);
-                            rs = pstmt.executeQuery();
-                            if (!rs.isBeforeFirst()) {
-                                out.println("<p>No announcements found.</p>");
-                            } else {
-                                while (rs.next()) {
-                                    String fullMessage = rs.getString("Message");
-                                    String title = fullMessage;
-                                    String content = "";
-                                    int newlinePos = -1;
-                                    if (fullMessage != null) {
-                                        newlinePos = fullMessage.indexOf('\n');
-                                        if (newlinePos != -1) {
-                                            title = fullMessage.substring(0, newlinePos);
-                                            content = fullMessage.substring(newlinePos + 1);
-                                        }
-                                    }
-                                    String date = rs.getTimestamp("Timestamp").toString().substring(0, 10);
+                        if (announcements.isEmpty()) {
+                            out.println("<p>No announcements found.</p>");
+                        } else {
+                            for (Map<String, Object> announcement : announcements) {
+                                String date = ((Timestamp) announcement.get("Timestamp")).toString().substring(0, 10);
                     %>
                         <div class="announcement-card">
                             <div class="card-header">
-                                <h4><%= title %></h4>
+                                <h4><%= announcement.get("Title") %></h4>
                                 <span class="announcement-date"><%= date %></span>
                             </div>
                             <div class="card-body">
-                                <p><%= content %></p>
+                                <p><%= announcement.get("Content") %></p>
                             </div>
                             <% if ("Admin".equals(userRole)) { %>
                             <div class="card-actions">
-                                <button class="button delete-announcement-button" data-alert-id="<%= rs.getInt("AlertID") %>"><i class="fas fa-trash-alt"></i> Delete</button>
+                                <button class="button delete-announcement-button" data-alert-id="<%= announcement.get("AlertID") %>"><i class="fas fa-trash-alt"></i> Delete</button>
                             </div>
                             <% } %>
                         </div>
                     <% 
-                                }
                             }
-                        } catch (Exception e) {
-                            System.err.println("Error loading announcements for mobile view: " + e.getMessage());
-                            out.println("<p>Error loading announcements.</p>");
-                        } finally {
-                            if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
-                            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
                         }
                     %>
                 </div>
@@ -161,11 +141,6 @@
                 </form>
             </div>
             <% } %>
-
-            <form id="delete-announcement-form" action="announcements_process.jsp" method="post" style="display:none;">
-                <input type="hidden" name="action" value="delete">
-                <input type="hidden" name="alertId" id="delete-alert-id">
-            </form>
         </main>
     </div>
     
@@ -174,14 +149,29 @@
 </html>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const deleteAnnouncementForm = document.getElementById('delete-announcement-form');
-
         document.querySelectorAll('.delete-announcement-button').forEach(button => {
             button.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete this announcement?')) {
                     const alertId = this.dataset.alertId;
-                    document.getElementById('delete-alert-id').value = alertId;
-                    deleteAnnouncementForm.submit();
+                    const formData = new FormData();
+                    formData.append('action', 'delete');
+                    formData.append('alertId', alertId);
+
+                    fetch('announcements_process.jsp', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Error deleting announcement.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting announcement.');
+                    });
                 }
             });
         });

@@ -2,6 +2,8 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 
 <%@ include file="db_connection.jsp" %>
 
@@ -109,103 +111,351 @@
                         <input type="password" id="password" name="password" <% if ("add".equals(action) || action == null) { %>required<% } %>>
 
                         <label for="userType">User Type:</label>
-                        <select id="userType" name="userType" required>
+                        <select id="userType" name="userType" required onchange="toggleParentIdField()">
                             <option value="">-- Select --</option>
                             <option value="Admin" <%= "Admin".equals(userType) ? "selected" : "" %>>Admin</option>
                             <option value="Teacher" <%= "Teacher".equals(userType) ? "selected" : "" %>>Teacher</option>
                             <option value="Parent" <%= "Parent".equals(userType) ? "selected" : "" %>>Parent</option>
+                            <option value="Student" <%= "Student".equals(userType) ? "selected" : "" %>>Student</option>
                         </select>
 
-                        <label for="parentId">Parent ID (if User Type is Parent):</label>
-                        <input type="text" id="parentId" name="parentId" value="<%= parentId %>">
+                        <div id="studentNameField" style="display: <%= "Student".equals(userType) ? "block" : "none" %>;">
+                            <label for="studentName">Student Name:</label>
+                            <input type="text" id="studentName" name="studentName" value="">
+                        </div>
+
+                        <div id="parentIdField" style="display: <%= "Parent".equals(userType) || "Student".equals(userType) ? "block" : "none" %>;">
+                            <label for="parentId">Parent:</label>
+                            <select id="parentId" name="parentId">
+                                <option value="">-- Select Parent --</option>
+                                <%-- Populate with parents from the database --%>
+                                <% 
+                                    PreparedStatement pstmtParents = null;
+                                    ResultSet rsParents = null;
+                                    try {
+                                        String sqlParents = "SELECT ParentID, CONCAT(FirstName, ' ', LastName) AS ParentName FROM Parents ORDER BY ParentName";
+                                        pstmtParents = conn.prepareStatement(sqlParents);
+                                        rsParents = pstmtParents.executeQuery();
+                                        while (rsParents.next()) {
+                                            String pId = rsParents.getString("ParentID");
+                                            String selected = pId.equals(parentId) ? "selected" : "";
+                                %>
+                                <option value="<%= pId %>" <%= selected %>><%= rsParents.getString("ParentName") %></option>
+                                <% 
+                                        }
+                                    } catch (SQLException e) {
+                                        // log e
+                                    } finally {
+                                        if (rsParents != null) try { rsParents.close(); } catch (SQLException e) { /* ignore */ }
+                                        if (pstmtParents != null) try { pstmtParents.close(); } catch (SQLException e) { /* ignore */ }
+                                    }
+                                %>
+                            </select>
+                        </div>
 
                         <button type="submit" class="button"><%= submitButtonText %></button>
                     </form>
                 </div>
 
-                <h3>Existing Users</h3>
-                <div class="filter-search-container">
-                    <form action="user_management.jsp" method="get">
-                        <label for="filterUserType">Filter by User Type:</label>
-                        <select id="filterUserType" name="filterUserType" onchange="this.form.submit()">
-                            <option value="">All</option>
-                            <option value="Admin" <%= "Admin".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Admin</option>
-                            <option value="Teacher" <%= "Teacher".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Teacher</option>
-                            <option value="Parent" <%= "Parent".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Parent</option>
-                            <option value="Student" <%= "Student".equals(request.getParameter("filterUserType")) ? "selected" : "" %>>Student</option>
-                        </select>
+                <script>
+                    function toggleParentIdField() {
+                        var userType = document.getElementById('userType').value;
+                        var parentIdField = document.getElementById('parentIdField');
+                        var studentNameField = document.getElementById('studentNameField');
+                        if (userType === 'Parent' || userType === 'Student') {
+                            parentIdField.style.display = 'block';
+                        } else {
+                            parentIdField.style.display = 'none';
+                        }
+                        if (userType === 'Student') {
+                            studentNameField.style.display = 'block';
+                        } else {
+                            studentNameField.style.display = 'none';
+                        }
+                    }
 
-                        <label for="searchUsername">Search by Username:</label>
-                        <input type="text" id="searchUsername" name="searchUsername" value="<%= request.getParameter("searchUsername") != null ? request.getParameter("searchUsername") : "" %>" placeholder="Enter username">
-                        <button type="submit" class="button small">Search</button>
-                    </form>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        toggleParentIdField(); // Call on page load to set initial state
+
+                        // Tab switching logic
+                        document.querySelectorAll('.user-type-tab').forEach(tab => {
+                            tab.addEventListener('click', function() {
+                                const userType = this.dataset.userType;
+                                document.querySelectorAll('.user-type-tab').forEach(t => t.classList.remove('active'));
+                                this.classList.add('active');
+                                document.querySelectorAll('.user-list-section').forEach(s => s.style.display = 'none');
+                                document.getElementById(userType + 'List').style.display = 'block';
+                            });
+                        });
+
+                        // Set initial active tab
+                        const initialTab = document.querySelector('.user-type-tab.active');
+                        if (initialTab) {
+                            const userType = initialTab.dataset.userType;
+                            document.getElementById(userType + 'List').style.display = 'block';
+                        } else { // Default to Admin tab if no active tab is set
+                            document.querySelector('.user-type-tab[data-user-type="Admin"]').click();
+                        }
+                    });
+                </script>
+
+                <h3>Existing Users</h3>
+                <div class="user-type-tabs">
+                    <button class="user-type-tab active" data-user-type="Admin">Admins</button>
+                    <button class="user-type-tab" data-user-type="Teacher">Teachers</button>
+                    <button class="user-type-tab" data-user-type="Parent">Parents</button>
+                    <button class="user-type-tab" data-user-type="Student">Students</button>
                 </div>
-                <div class="data-table-container">
+
+                <%!
+                    // Helper function to render user table
+                    // This function will be called for each user type
+                    // It takes the userType and a list of users as input
+                    // and renders the table for that user type.
+                    // This is a simplified example, actual implementation might involve more complex data fetching.
+                    
+                    // Function to fetch users by type
+                                        List<Map<String, Object>> getUsersByType(Connection conn, String type) throws SQLException {
+                        List<Map<String, Object>> users = new ArrayList<>();
+                        StringBuilder sqlBuilder = new StringBuilder();
+                        String joinClause = "";
+                        String selectColumns = "u.UserID, u.Username, u.UserType, u.ParentID"; // Base columns from Users table
+
+                        // Add Email column based on UserType and table structure
+                        if ("Teacher".equals(type)) {
+                            selectColumns += ", t.TeacherName, t.Email"; // Teacher has its own Email
+                            joinClause = " JOIN Teachers t ON u.UserID = t.UserID";
+                        } else if ("Parent".equals(type)) {
+                            selectColumns += ", p.FirstName, p.LastName, p.Phone, u.Email"; // Parent uses Users.Email
+                            joinClause = " JOIN Parents p ON u.ParentID = p.ParentID";
+                        } else if ("Student".equals(type)) {
+                            selectColumns += ", s.StudentID, s.StudentName, u.Email"; // Student uses Users.Email
+                            joinClause = " JOIN Students s ON u.UserID = s.UserID";
+                        } else { // Admin and other types
+                            selectColumns += ", u.Email"; // Admin uses Users.Email
+                        }
+
+                        sqlBuilder.append("SELECT ").append(selectColumns).append(" FROM Users u").append(joinClause).append(" WHERE u.UserType = ? ORDER BY u.UserID");
+
+                        // out.println("DEBUG SQL: " + sqlBuilder.toString()); // Removed debug print
+
+                        PreparedStatement pstmtList = conn.prepareStatement(sqlBuilder.toString());
+                        pstmtList.setString(1, type);
+                        ResultSet rsList = pstmtList.executeQuery();
+                        while (rsList.next()) {
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("UserID", rsList.getInt("UserID"));
+                            user.put("Username", rsList.getString("Username"));
+                            user.put("UserType", rsList.getString("UserType"));
+                            
+                            // Populate Email based on UserType
+                            if ("Teacher".equals(type)) {
+                                user.put("Email", rsList.getString("Email")); // From Teachers table
+                                user.put("TeacherName", rsList.getString("TeacherName"));
+                            } else if ("Parent".equals(type)) {
+                                user.put("Email", rsList.getString("Email")); // From Users table
+                                user.put("ParentID", rsList.getString("ParentID"));
+                                user.put("FirstName", rsList.getString("FirstName"));
+                                user.put("LastName", rsList.getString("LastName"));
+                                user.put("Phone", rsList.getString("Phone"));
+                            } else if ("Student".equals(type)) {
+                                user.put("Email", rsList.getString("Email")); // From Users table
+                                user.put("StudentID", rsList.getString("StudentID"));
+                                user.put("StudentName", rsList.getString("StudentName"));
+                                // Fetch parent name for student
+                                String studentParentSql = "SELECT CONCAT(p.FirstName, ' ', p.LastName) AS ParentName FROM Parents p JOIN Student_Parent_Link spl ON p.ParentID = spl.ParentID WHERE spl.StudentID = ?";
+                                PreparedStatement pstmtStudentParent = conn.prepareStatement(studentParentSql);
+                                pstmtStudentParent.setString(1, rsList.getString("StudentID"));
+                                ResultSet rsStudentParent = pstmtStudentParent.executeQuery();
+                                if (rsStudentParent.next()) {
+                                    user.put("ParentName", rsStudentParent.getString("ParentName"));
+                                } else {
+                                    user.put("ParentName", "N/A");
+                                }
+                                rsStudentParent.close();
+                                pstmtStudentParent.close();
+                            } else { // Admin and other types
+                                user.put("Email", rsList.getString("Email")); // From Users table
+                            }
+                            users.add(user);
+                        }
+                        rsList.close();
+                        pstmtList.close();
+                        return users;
+                    }
+                %>
+
+                <div id="AdminList" class="user-list-section" style="display:none;">
+                    <h4>Admin Users</h4>
                     <div class="responsive-table">
                         <table class="dashboard-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Username</th>
-                                    <th>User Type</th>
-                                    <th>Parent ID</th>
+                                    <th>Email</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% 
-                                    String filterUserType = request.getParameter("filterUserType");
-                                    String searchUsername = request.getParameter("searchUsername");
-
-                                    StringBuilder sqlListBuilder = new StringBuilder("SELECT UserID, Username, UserType, ParentID FROM Users");
-                                    List<Object> params = new ArrayList<>();
-
-                                    boolean firstCondition = true;
-
-                                    if (filterUserType != null && !filterUserType.isEmpty()) {
-                                        sqlListBuilder.append(" WHERE UserType = ?");
-                                        params.add(filterUserType);
-                                        firstCondition = false;
-                                    }
-
-                                    if (searchUsername != null && !searchUsername.isEmpty()) {
-                                        if (firstCondition) {
-                                            sqlListBuilder.append(" WHERE Username LIKE ?");
-                                        } else {
-                                            sqlListBuilder.append(" AND Username LIKE ?");
-                                        }
-                                        params.add("%" + searchUsername + "%");
-                                    }
-
-                                    sqlListBuilder.append(" ORDER BY UserID");
-
-                                    PreparedStatement pstmtList = null;
-                                    ResultSet rsList = null;
                                     try {
-                                        pstmtList = conn.prepareStatement(sqlListBuilder.toString());
-                                        for (int i = 0; i < params.size(); i++) {
-                                            pstmtList.setObject(i + 1, params.get(i));
-                                        }
-                                        rsList = pstmtList.executeQuery();
-                                        while (rsList.next()) {
+                                        List<Map<String, Object>> adminUsers = getUsersByType(conn, "Admin");
+                                        if (adminUsers.isEmpty()) {
+                                            out.println("<tr><td colspan=\"4\">No Admin users found.</td></tr>");
+                                        } else {
+                                            for (Map<String, Object> user : adminUsers) {
                                 %>
                                 <tr>
-                                    <td><%= rsList.getInt("UserID") %></td>
-                                    <td><%= rsList.getString("Username") %></td>
-                                    <td><%= rsList.getString("UserType") %></td>
-                                    <td><%= rsList.getString("ParentID") != null ? rsList.getString("ParentID") : "N/A" %></td>
+                                    <td><%= user.get("UserID") %></td>
+                                    <td><%= user.get("Username") %></td>
+                                    <td><%= user.get("Email") %></td>
                                     <td>
-                                        <a href="user_management.jsp?action=edit&userId=<%= rsList.getInt("UserID") %>" class="button small">Edit</a>
-                                        <a href="user_management_process.jsp?action=delete&userId=<%= rsList.getInt("UserID") %>" class="button small danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                        <a href="user_management.jsp?action=edit&userId=<%= user.get("UserID") %>" class="button small">Edit</a>
+                                        <a href="user_management_process.jsp?action=delete&userId=<%= user.get("UserID") %>" class="button small danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                                     </td>
                                 </tr>
                                 <% 
+                                            }
                                         }
                                     } catch (SQLException e) {
-                                        // Log error
-                                    } finally {
-                                        if (rsList != null) try { rsList.close(); } catch (SQLException e) { /* ignore */ }
-                                        if (pstmtList != null) try { pstmtList.close(); } catch (SQLException e) { /* ignore */ }
+                                        out.println("<tr><td colspan=\"4\">Error loading Admin users.</td></tr>");
+                                    }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="TeacherList" class="user-list-section" style="display:none;">
+                    <h4>Teacher Users</h4>
+                    <div class="responsive-table">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Teacher Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    try {
+                                        List<Map<String, Object>> teacherUsers = getUsersByType(conn, "Teacher");
+                                        if (teacherUsers.isEmpty()) {
+                                            out.println("<tr><td colspan=\"5\">No Teacher users found.</td></tr>");
+                                        } else {
+                                            for (Map<String, Object> user : teacherUsers) {
+                                %>
+                                <tr>
+                                    <td><%= user.get("UserID") %></td>
+                                    <td><%= user.get("Username") %></td>
+                                    <td><%= user.get("Email") %></td>
+                                    <td><%= user.get("TeacherName") %></td>
+                                    <td>
+                                        <a href="user_management.jsp?action=edit&userId=<%= user.get("UserID") %>" class="button small">Edit</a>
+                                        <a href="user_management_process.jsp?action=delete&userId=<%= user.get("UserID") %>" class="button small danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                    </td>
+                                </tr>
+                                <% 
+                                            }
+                                        }
+                                    } catch (SQLException e) {
+                                        out.println("<tr><td colspan=\"5\">Error loading Teacher users: " + e.getMessage() + "</td></tr>");
+                                    }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="ParentList" class="user-list-section" style="display:none;">
+                    <h4>Parent Users</h4>
+                    <div class="responsive-table">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    try {
+                                        List<Map<String, Object>> parentUsers = getUsersByType(conn, "Parent");
+                                        if (parentUsers.isEmpty()) {
+                                            out.println("<tr><td colspan=\"6\">No Parent users found.</td></tr>");
+                                        } else {
+                                            for (Map<String, Object> user : parentUsers) {
+                                %>
+                                <tr>
+                                    <td><%= user.get("UserID") %></td>
+                                    <td><%= user.get("Username") %></td>
+                                    <td><%= user.get("Email") %></td>
+                                    <td><%= user.get("FirstName") %> <%= user.get("LastName") %></td>
+                                    <td><%= user.get("Phone") %></td>
+                                    <td>
+                                        <a href="user_management.jsp?action=edit&userId=<%= user.get("UserID") %>" class="button small">Edit</a>
+                                        <a href="user_management_process.jsp?action=delete&userId=<%= user.get("UserID") %>" class="button small danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                    </td>
+                                </tr>
+                                <% 
+                                            }
+                                        }
+                                    } catch (SQLException e) {
+                                        out.println("<tr><td colspan=\"6\">Error loading Parent users: " + e.getMessage() + "</td></tr>");
+                                    }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="StudentList" class="user-list-section" style="display:none;">
+                    <h4>Student Users</h4>
+                    <div class="responsive-table">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Student Name</th>
+                                    <th>Parent Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    try {
+                                        List<Map<String, Object>> studentUsers = getUsersByType(conn, "Student");
+                                        if (studentUsers.isEmpty()) {
+                                            out.println("<tr><td colspan=\"6\">No Student users found.</td></tr>");
+                                        } else {
+                                            for (Map<String, Object> user : studentUsers) {
+                                %>
+                                <tr>
+                                    <td><%= user.get("UserID") %></td>
+                                    <td><%= user.get("Username") %></td>
+                                    <td><%= user.get("Email") %></td>
+                                    <td><%= user.get("StudentName") %></td>
+                                    <td><%= user.get("ParentName") %></td>
+                                    <td>
+                                        <a href="user_management.jsp?action=edit&userId=<%= user.get("UserID") %>" class="button small">Edit</a>
+                                        <a href="user_management_process.jsp?action=delete&userId=<%= user.get("UserID") %>" class="button small danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                    </td>
+                                </tr>
+                                <% 
+                                            }
+                                        }
+                                    } catch (SQLException e) {
+                                        out.println("<tr><td colspan=\"6\">Error loading Student users: " + e.getMessage() + "</td></tr>");
                                     }
                                 %>
                             </tbody>

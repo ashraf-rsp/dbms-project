@@ -2,7 +2,13 @@
 <%@ page import="java.sql.*" %>
 <%@ include file="db_connection.jsp" %>
 <%
-    // AuthFilter handles access control. This page is for Admins.
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (!"Admin".equals(userRole)) {
+        response.sendRedirect("access_denied.jsp");
+        return;
+    }
+
     String status = request.getParameter("status");
     String message = request.getParameter("message");
 
@@ -57,7 +63,8 @@
                             <%
                                     }
                                 } catch (Exception e) {
-                                    System.err.println("Error loading teachers: " + e.getMessage());
+                                    session.setAttribute("message", "Error loading teachers: " + e.getMessage());
+                                    session.setAttribute("status", "error");
                                 } finally {
                                     if (rsTeachers != null) try { rsTeachers.close(); } catch (SQLException e) { /* ignore */ }
                                     if (pstmtTeachers != null) try { pstmtTeachers.close(); } catch (SQLException e) { /* ignore */ }
@@ -82,7 +89,8 @@
                             <%
                                     }
                                 } catch (Exception e) {
-                                    System.err.println("Error loading courses: " + e.getMessage());
+                                    session.setAttribute("message", "Error loading courses: " + e.getMessage());
+                                    session.setAttribute("status", "error");
                                 } finally {
                                     if (rsCourses != null) try { rsCourses.close(); } catch (SQLException e) { /* ignore */ }
                                     if (pstmtCourses != null) try { pstmtCourses.close(); } catch (SQLException e) { /* ignore */ }

@@ -3,8 +3,9 @@
 <%@ include file="../db_connection.jsp" %>
 
 <%
-    // Ensure only Teacher can access this page
-    if (!"Teacher".equals((String) session.getAttribute("userRole"))) {
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (!"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
@@ -53,10 +54,15 @@
         session.setAttribute("message", "Attendance marked successfully.");
         session.setAttribute("status", "success");
 
-    } catch (Exception e) {
-        session.setAttribute("message", "An error occurred: " + e.getMessage());
+    } catch (NumberFormatException e) {
+        session.setAttribute("message", "Invalid course ID or date format.");
         session.setAttribute("status", "error");
-        e.printStackTrace();
+    } catch (SQLException e) {
+        session.setAttribute("message", "Database error: " + e.getMessage());
+        session.setAttribute("status", "error");
+    } catch (Exception e) {
+        session.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
+        session.setAttribute("status", "error");
     }
 
     response.sendRedirect("mark_attendance.jsp");

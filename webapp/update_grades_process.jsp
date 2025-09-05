@@ -3,13 +3,14 @@
 <%@ include file="../db_connection.jsp" %>
 
 <%
-    // Ensure only Teacher can access this page
-    if (!"Teacher".equals((String) session.getAttribute("userRole"))) {
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (!"Teacher".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
         return;
     }
 
-    Integer teacherId = (Integer) session.getAttribute("userId");
+    Integer teacherId = (Integer) request.getAttribute("userId");
 
     try {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
@@ -27,7 +28,19 @@
 
             if (gradeStr != null && !gradeStr.isEmpty()) {
                 double gradePercentage = Double.parseDouble(gradeStr);
-                String gradeLetter = ""; // You can add logic here to determine the letter grade
+                String gradeLetter = "";
+
+                if (gradePercentage >= 90) {
+                    gradeLetter = "A";
+                } else if (gradePercentage >= 80) {
+                    gradeLetter = "B";
+                } else if (gradePercentage >= 70) {
+                    gradeLetter = "C";
+                } else if (gradePercentage >= 60) {
+                    gradeLetter = "D";
+                } else {
+                    gradeLetter = "F";
+                }
 
                 // Check if a grade record already exists
                 String checkSql = "SELECT GradeID FROM Grades WHERE EnrollmentID = ?";
@@ -60,10 +73,15 @@
         session.setAttribute("message", "Grades updated successfully.");
         session.setAttribute("status", "success");
 
-    } catch (Exception e) {
-        session.setAttribute("message", "An error occurred: " + e.getMessage());
+    } catch (NumberFormatException e) {
+        session.setAttribute("message", "Invalid grade format.");
         session.setAttribute("status", "error");
-        e.printStackTrace();
+    } catch (SQLException e) {
+        session.setAttribute("message", "Database error: " + e.getMessage());
+        session.setAttribute("status", "error");
+    } catch (Exception e) {
+        session.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
+        session.setAttribute("status", "error");
     }
 
     response.sendRedirect("update_grades.jsp");

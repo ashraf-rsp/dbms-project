@@ -63,7 +63,11 @@
                                         totalPaid = rs_fees.getDouble("TotalPaid");
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    session.setAttribute("message", "Error loading fee status: " + e.getMessage());
+                                    session.setAttribute("status", "error");
+                                } finally {
+                                    if (rs_fees != null) try { rs_fees.close(); } catch (SQLException e) { /* ignore */ }
+                                    if (pstmt_fees != null) try { pstmt_fees.close(); } catch (SQLException e) { /* ignore */ }
                                 }
                             }
                         %>
@@ -97,7 +101,10 @@
                                             pstmt_payments = conn.prepareStatement(sqlPayments);
                                             pstmt_payments.setInt(1, parentId);
                                             rs_payments = pstmt_payments.executeQuery();
-                                            while (rs_payments.next()) {
+                                            if (!rs_payments.isBeforeFirst()) {
+                                                out.println("<tr><td colspan=\"4\">No payment history found.</td></tr>");
+                                            } else {
+                                                while (rs_payments.next()) {
                                 %>
                                 <tr>
                                     <td><%= rs_payments.getString("StudentName") %></td>
@@ -106,9 +113,14 @@
                                     <td><%= rs_payments.getDate("PaymentDate") %></td>
                                 </tr>
                                 <%
+                                                }
                                             }
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            session.setAttribute("message", "Error loading payment history: " + e.getMessage());
+                                            session.setAttribute("status", "error");
+                                        } finally {
+                                            if (rs_payments != null) try { rs_payments.close(); } catch (SQLException e) { /* ignore */ }
+                                            if (pstmt_payments != null) try { pstmt_payments.close(); } catch (SQLException e) { /* ignore */ }
                                         }
                                     }
                                 %>

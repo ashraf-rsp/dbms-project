@@ -87,78 +87,73 @@ This session focused on familiarizing myself with the project codebase, debuggin
 5.  **Refine `web.xml` filter mapping:** Review and refine the filter mapping in `web.xml` to ensure it's optimal and doesn't interfere with static resources.
 6.  **Continue with the project plan:** After access control is fully verified, proceed with building out features as per `project_plan.md`.
 
-**Current Session Updates (as of Thursday, September 4, 2025):**
+**Current Session Updates (as of Friday, September 5, 2025):**
 
-**1. Admin and Teacher Profile Update Commit:**
-*   **Action:** Staged and committed changes related to enabling profile updates for Admin and Teacher roles.
-*   **Commit Message:** `fix(profile): Enable profile updates for Admin and Teacher roles`
-    *   Refactored `profile_process.jsp` to correctly handle profile updates.
-    *   Removed `Apache Commons FileUpload` dependency.
-    *   Implemented password hashing and corrected SQL/redirection.
+**1. Resolution of `SQLSyntaxErrorException: Unknown column 'Email' in 'SET'`:**
+*   **Problem:** An `SQLSyntaxErrorException` was occurring because the application was trying to update an `Email` column in the `Users` table that didn't exist. Email fields were also inconsistently placed in `Parents` and `Students` tables.
+*   **Solution:**
+    *   Added a unified `Email` column to the central `Users` table.
+    *   Removed the redundant `Email` columns from the `Parents` and `Students` tables to ensure data consistency.
+    *   Updated all user profile pages (`admin_profile.jsp`, `teacher_profile.jsp`, `parent_profile.jsp`, `student_profile.jsp`) and the processing script (`profile_process.jsp`) to use this single, consistent `Email` field from the `Users` table.
 
-**2. Student Profile Update Debugging & Fix:**
-*   **Problem Identified:** Student profile updates were failing with a variety of issues, including silent failures, "Connection refused" errors, `NumberFormatException`, and session invalidation.
-*   **Investigation & Resolution:**
-    *   **Initial Fix:** Corrected the `UPDATE` statement in `profile_process.jsp` to use `StudentID` instead of `UserID`.
-    *   **Database Corruption:** Discovered that previous failed attempts had corrupted the database, setting the `Username` for the student to `NULL`. Restored the username to `abc`.
-    *   **`NumberFormatException`:** Fixed a `NumberFormatException` caused by attempting to parse the `StudentID` (a string) as an integer.
-    *   **Session Invalidation:** The root cause of the session invalidation was identified: `profile_process.jsp` was setting the `loggedInUser` session attribute to `null` because the `username` form field was not present in the student profile form. The fix was to only update the session attribute if the `username` is not null.
-*   **Final Verification:** After multiple rounds of debugging and fixes, the student profile update functionality is now working correctly. The changes were verified by updating a student's name and date of birth and confirming the changes in the database.
+**2. Resolution of Frontend Messaging Failure:**
+*   **Problem:** The user reported that messages were not being sent from the frontend, despite `curl` tests showing success. This indicated a client-side issue.
+*   **Investigation & Solution:**
+    *   Initial attempts to fix by adding a hidden `action=send` parameter were insufficient.
+    *   Through aggressive JavaScript debugging, it was discovered that `receiverUsername` and `subject` fields were being sent as empty strings from the browser due to issues with `FormData` construction in the user's environment.
+    *   The final solution involved switching the JavaScript's form data serialization method from `new FormData()` to `new URLSearchParams(new FormData(composeForm)).toString()`.
+*   **Verification:** The user confirmed that messages were successfully transacting from the frontend after this fix.
+*   **Documentation:** A detailed `troubleshooting_log_20250905.md` file was created to document the problem, investigation steps, and the final solution.
+*   **Cleanup:** Debugging alerts were reverted from `webapp/messages.jsp`.
 
-**Current Session Updates (as of Thursday, September 4, 2025) - Continued:**
+**3. Improvements to Core Application Features:**
 
-**3. Profile Name Display in Dashboard and Header:**
-*   **Action:** Modified `dashboard.jsp` and `includes/header.jsp` to display the user's profile name instead of the login username.
-*   **Technical Details:**
-    *   Added logic to `dashboard.jsp` to fetch `AdminName`, `TeacherName`, `FirstName`/`LastName` (for Parents), or `StudentName` based on `userRole` and set it as a `profileName` request attribute.
-    *   Updated `includes/header.jsp` to use `profileName` in the "Welcome" message and changed the profile link to a generic `profile.jsp` which redirects to the role-specific profile page.
-*   **Bug Fix:** Resolved "Duplicate local variable userId" errors in `dashboards/parent_dashboard.jsp` and `dashboards/teacher_dashboard.jsp` by removing redundant `userId` declarations and ensuring they correctly use `request.getAttribute("userId")`.
-*   **Bug Fix:** Corrected `teacher_dashboard.jsp` to properly use `userId` instead of `teacherId` in its queries.
-*   **Verification:** Confirmed successful display of profile names in dashboard and header via `curl` (for Admin).
+*   **Announcements (`announcements.jsp`, `announcements_process.jsp`):**
+    *   **Database Schema Improvement:** Added `Title` and `Content` columns to the `Alert_Log` table for more robust storage of announcement data, replacing the fragile parsing of a single `Message` column.
+    *   **Data Migration:** Created and executed a shell script (`migrate_alerts.sh`) to migrate existing announcement data into the new `Title` and `Content` columns.
+    *   **Query Optimization:** Modified `announcements.jsp` to fetch announcements from the database only once, improving efficiency.
+    *   **Deletion Refactoring:** Changed the announcement deletion logic to use a `fetch` request for a smoother user experience, eliminating full page reloads.
+    *   **Backend Update:** Modified `announcements_process.jsp` to correctly insert and delete announcements using the new `Title` and `Content` columns.
 
-**4. Messaging Functionality Implementation:**
-*   **Action:** Implemented and refined core messaging features (send, receive, delete, mark as read).
-*   **Technical Details:**
-    *   Reviewed existing `messages.jsp`, `send_message_process.jsp`, `get_message_content.jsp` and `Messages` table schema.
-    *   Confirmed `Messages` table schema is appropriate.
-    *   **Message Sending:** Verified successful message insertion into the `Messages` table via `send_message_process.jsp`.
-    *   **Message Viewing (Inbox/Sent Tabs):**
-        *   Modified `messages.jsp` to introduce a tabbed interface for "Inbox" and "Sent" messages.
-        *   Implemented conditional SQL queries to fetch messages based on `ReceiverUserID` (Inbox) or `SenderUserID` (Sent).
-        *   **Bug Fix:** Resolved "currentView cannot be resolved to a variable" error in `messages.jsp` by correctly declaring `currentView` at the top of the JSP.
-        *   **Content Preview:** Added a "Content Preview" column to the message list table and mobile card view, displaying a truncated version of the message content.
-        *   **Reply Functionality:** Added a "Reply" button to the message details modal that pre-fills the compose form with the sender and a "Re:" subject.
-*   **Verification:** Confirmed successful message sending from Admin to Teacher and Admin to Student by checking database entries. Confirmed "Sent" tab display for Admin via `curl`. (Reply functionality tested via description due to `curl` limitations).
+*   **User Management (`user_management.jsp`, `user_management_process.jsp`):**
+    *   **Student Management:** Enhanced `user_management.jsp` to allow adding and editing "Student" user types, including a new "Student Name" field and linking students to parents via a dropdown.
+    *   **Backend Logic for Students:** Updated `user_management_process.jsp` to handle the full CRUD (Create, Read, Update, Delete) operations for students, including linking them to `Users`, `Students`, and `Student_Parent_Link` tables.
+    *   **Refactoring for Tabbed View:** Refactored `user_management.jsp` to introduce a tabbed/sectioned view for each user type (Admin, Teacher, Parent, Student), including separate `div` elements for each user type's table and updated JavaScript for tab switching.
+    *   **JSP Compilation Fix:** Identified and fixed a JSP compilation error in `user_management.jsp` where the `getUsersByType` helper function was incorrectly defined within a scriptlet instead of a JSP declaration block. The function was moved to a declaration block and `Connection conn` was passed as a parameter.
 
-**5. "Forgot Password" Functionality (Simplified Prototype):**
-*   **Action:** Implemented a simplified "Forgot Password" flow to generate and display temporary passwords, followed by a forced password change.
-*   **Technical Details:**
-    *   Created `forgot_password.jsp` (user input for username).
-    *   Created `forgot_password_process.jsp`: Generates an 8-character UUID as a temporary password, hashes it, updates the `Users` table, displays the temporary password to the user, and sets `isTempPassword` and `tempUsername` session flags.
-    *   Modified `login_process.jsp`: If `isTempPassword` is set in the session after successful login, redirects to `change_password.jsp`.
-    *   Created `change_password.jsp` (form for new password and confirmation).
-    *   Created `change_password_process.jsp`: Hashes the new password, updates the `Users` table, clears `isTempPassword` and `tempUsername` flags, and redirects to `dashboard.jsp`.
-    *   Added "Forgot Password?" link to `login.jsp`.
-*   **Note:** This is a simplified, non-production-ready implementation for demonstration purposes, as it displays the temporary password directly and does not involve email verification.
+*   **Course Management (`course_management.jsp`, `course_management_process.jsp`):**
+    *   **Deletion Refactoring:** Changed the course deletion logic to use a `fetch` request for a smoother user experience.
+    *   **Security Enhancement:** Added a role check to `course_management_process.jsp` to ensure only Admins can perform course management operations.
 
-**6. User Management Enhancements:**
-*   **Action:** Enhanced user listing with filtering and search capabilities.
-*   **Technical Details:**
-    *   Reviewed `user_management.jsp` and confirmed no immediate variable resolution or duplication issues. The previous "blocking point" was likely resolved by earlier changes.
-    *   Added "Filter by User Type" dropdown to `user_management.jsp`.
-    *   Added "Search by Username" input field to `user_management.jsp`.
-    *   Modified SQL query in `user_management.jsp` to dynamically apply filters and search terms using `WHERE` clauses and prepared statements.
-    *   Reviewed `user_management_process.jsp` and confirmed its robustness for adding, updating (including password hashing), and deleting users.
-*   **Verification:** Tested filtering and search functionality via description (assuming real browser behavior). Confirmed `user_management_process.jsp` logic via code review.
+*   **Enrollment (`enroll_student.jsp`, `enroll_student_process.jsp`):**
+    *   **Security Enhancement:** Added a role check to `enroll_student.jsp` to ensure only Admins can access the page.
+    *   **Robustness:** Implemented a check in `enroll_student_process.jsp` to prevent duplicate student enrollments in the same course.
+    *   **Error Handling:** Improved error messages for more specific user feedback.
+    *   **Corrected Role/User ID Retrieval:** Ensured `userRole` and `userId` are correctly retrieved from the `request` scope in `enroll_student_process.jsp`.
 
-**7. Course Management Enhancements:**
-*   **Action:** Enhanced course listing with search and pagination capabilities.
-*   **Technical Details:**
-    *   Reviewed `course_management.jsp` and `course_management_process.jsp` and confirmed basic CRUD functionality is in place and robust.
-    *   Added "Search Courses" input field to `course_management.jsp`.
-    *   Modified SQL query in `course_management.jsp` to dynamically apply search terms.
-    *   Implemented pagination in `course_management.jsp` using `LIMIT` and `OFFSET` clauses.
-    *   Added pagination controls (Previous, Next, page numbers) to `course_management.jsp`.
-*   **Verification:** Tested search and pagination functionality via description (assuming real browser behavior).
+*   **Teacher Assignment (`assign_teacher.jsp`, `assign_teacher_process.jsp`):**
+    *   **Security Enhancement:** Added a role check to `assign_teacher.jsp` to ensure only Admins can access the page.
+    *   **Robustness:** Implemented a check in `assign_teacher_process.jsp` to prevent duplicate teacher assignments to the same course.
+    *   **Error Handling:** Improved error messages for more specific user feedback.
+    *   **Corrected Role Retrieval:** Ensured `userRole` is correctly retrieved from the `request` scope in `assign_teacher_process.jsp`.
 
-**Current Status (as of Thursday, September 4, 2025):** The application has enhanced profile display, functional messaging with inbox/sent views, a basic "Forgot Password" flow, improved user management features, and enhanced course management features. All recent changes have been deployed. `curl` testing for non-Admin logins remains unreliable, but core functionality is confirmed via database inspection and Admin `curl` tests.
+*   **Attendance (`mark_attendance.jsp`, `mark_attendance_process.jsp`, `view_attendance.jsp`):**
+    *   **Improved User Experience:** In `mark_attendance.jsp`, implemented logic to pre-fill attendance status if already marked for a session and added a visual indication if attendance has been marked.
+    *   **Error Handling:** Improved error messages for loading courses and students in `mark_attendance.jsp`.
+    *   **Corrected Role/User ID Retrieval:** Ensured `userRole` and `userId` are correctly retrieved from the `request` scope in `mark_attendance_process.jsp`.
+    *   **User Feedback:** Added a "No records found" message to `view_attendance.jsp` when no attendance data is available.
+
+*   **Grades (`update_grades.jsp`, `update_grades_process.jsp`, `view_grades.jsp`):**
+    *   **Improved User Experience:** In `update_grades.jsp`, implemented logic to pre-fill grades if already entered for a course and added a visual indication if grades have been entered.
+    *   **Error Handling:** Improved error messages for loading courses and students in `update_grades.jsp`.
+    *   **Corrected Role/User ID Retrieval:** Ensured `userRole` and `userId` are correctly retrieved from the `request` scope in `update_grades_process.jsp`.
+    *   **Grade Letter Calculation:** Implemented logic in `update_grades_process.jsp` to calculate and store the letter grade based on the percentage.
+    *   **User Feedback:** Added a "No records found" message to `view_grades.jsp` when no grade data is available.
+
+*   **Payments (`view_payments.jsp`):**
+    *   **Error Handling:** Improved error handling for loading fee status and payment history.
+    *   **User Feedback:** Added a "No records found" message when no payment history is available.
+
+This comprehensive set of changes has significantly improved the functionality, security, and user experience of the Academic Center Management System.
+
+I am ready for your next instruction.

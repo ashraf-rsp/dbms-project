@@ -1,8 +1,8 @@
 <%@ page import="java.sql.*" %>
 <%@ include file="db_connection.jsp" %>
-<%@ include file="includes/auth_check.jspf" %>
 <%
     String action = request.getParameter("action");
+    String userRole = (String) request.getAttribute("userRole");
 
     if (!"Admin".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
@@ -13,11 +13,11 @@
         if ("add".equals(action)) {
             String announcementTitle = request.getParameter("announcementTitle");
             String announcementContent = request.getParameter("announcementContent");
-            String fullMessage = announcementTitle + "\n" + announcementContent;
 
-            String sql = "INSERT INTO Alert_Log (Message, Timestamp) VALUES (?, NOW())";
+            String sql = "INSERT INTO Alert_Log (Title, Content, Timestamp) VALUES (?, ?, NOW())";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, fullMessage);
+            pstmt.setString(1, announcementTitle);
+            pstmt.setString(2, announcementContent);
             pstmt.executeUpdate();
 
             session.setAttribute("message", "Announcement published successfully.");

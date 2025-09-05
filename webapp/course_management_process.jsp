@@ -4,6 +4,12 @@
 
 <%
     String action = request.getParameter("action");
+    String userRole = (String) request.getAttribute("userRole");
+
+    if (!"Admin".equals(userRole)) {
+        response.sendRedirect("access_denied.jsp");
+        return;
+    }
 
     try {
         if ("add".equals(action)) {

@@ -80,7 +80,10 @@
 
                                         if (pstmt_attendance != null) {
                                             rs_attendance = pstmt_attendance.executeQuery();
-                                            while (rs_attendance.next()) {
+                                            if (!rs_attendance.isBeforeFirst()) {
+                                                out.println("<tr><td colspan=\"4\">No attendance records found.</td></tr>");
+                                            } else {
+                                                while (rs_attendance.next()) {
                                 %>
                                 <tr>
                                     <td><%= rs_attendance.getString("StudentName") %></td>
@@ -89,10 +92,12 @@
                                     <td><span class="status-badge status-<%= rs_attendance.getString("Status").toLowerCase() %>"><%= rs_attendance.getString("Status") %></span></td>
                                 </tr>
                                 <%
+                                                }
                                             }
                                         }
                                     } catch (Exception e) {
-                                        e.printStackTrace();
+                                        session.setAttribute("message", "Error loading attendance records: " + e.getMessage());
+                                        session.setAttribute("status", "error");
                                     } finally {
                                         if (rs_attendance != null) try { rs_attendance.close(); } catch (SQLException e) { /* ignore */ }
                                         if (pstmt_attendance != null) try { pstmt_attendance.close(); } catch (SQLException e) { /* ignore */ }

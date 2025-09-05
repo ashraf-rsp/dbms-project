@@ -51,17 +51,21 @@
                                         }
                             %>
                             <option value="<%= rsCourses.getInt("CourseID") %>" <%= selected %>><%= rsCourses.getString("CourseName") %></option>
-                            <%
-                                    }
+                            <% 
+                                    } 
                                 } catch (Exception e) {
-                                    System.err.println("Error loading courses: " + e.getMessage());
+                                    session.setAttribute("message", "Error loading courses: " + e.getMessage());
+                                    session.setAttribute("status", "error");
+                                } finally {
+                                    if (rsCourses != null) try { rsCourses.close(); } catch (SQLException e) { /* ignore */ } 
+                                    if (pstmtCourses != null) try { pstmtCourses.close(); } catch (SQLException e) { /* ignore */ } 
                                 }
                             %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="sessionDate">Date:</label>
-                        <input type="date" id="sessionDate" name="sessionDate" value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" required>
+                        <input type="date" id="sessionDate" name="sessionDate" value="<%= request.getParameter("sessionDate") != null ? request.getParameter("sessionDate") : new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" required>
                     </div>
                 </form>
 
@@ -84,24 +88,56 @@
                                         ResultSet rsStudents = null;
                                         try {
                                             int courseId = Integer.parseInt(request.getParameter("courseId"));
-                                            String sqlStudents = "SELECT s.StudentID, s.StudentName FROM Students s JOIN Enrollments e ON s.StudentID = e.StudentID WHERE e.CourseID = ? ORDER BY s.StudentName";
+                                            String sessionDate = request.getParameter("sessionDate");
+
+                                            // Check if attendance has already been marked for this session
+                                            boolean attendanceMarked = false;
+                                            String sqlCheckAttendance = "SELECT COUNT(*) FROM Attendance WHERE CourseID = ? AND AttendanceDate = ?";
+                                            PreparedStatement pstmtCheckAttendance = conn.prepareStatement(sqlCheckAttendance);
+                                            pstmtCheckAttendance.setInt(1, courseId);
+                                            pstmtCheckAttendance.setString(2, sessionDate);
+                                            ResultSet rsCheckAttendance = pstmtCheckAttendance.executeQuery();
+                                            if (rsCheckAttendance.next() && rsCheckAttendance.getInt(1) > 0) {
+                                                attendanceMarked = true;
+                                            }
+                                            rsCheckAttendance.close();
+                                            pstmtCheckAttendance.close();
+
+                                            if (attendanceMarked) {
+                                                out.println("<tr><td colspan=\"2\"><div class=\"alert alert-info\">Attendance for this session has already been marked.</div></td></tr>");
+                                            }
+
+                                            String sqlStudents = "SELECT s.StudentID, s.StudentName, a.Status FROM Students s JOIN Enrollments e ON s.StudentID = e.StudentID LEFT JOIN Attendance a ON s.StudentID = a.StudentID AND a.CourseID = ? AND a.AttendanceDate = ? WHERE e.CourseID = ? ORDER BY s.StudentName";
                                             pstmtStudents = conn.prepareStatement(sqlStudents);
                                             pstmtStudents.setInt(1, courseId);
+                                            pstmtStudents.setString(2, sessionDate);
+                                            pstmtStudents.setInt(3, courseId);
                                             rsStudents = pstmtStudents.executeQuery();
                                             while (rsStudents.next()) {
+                                                String studentId = rsStudents.getString("StudentID");
+                                                String studentName = rsStudents.getString("StudentName");
+                                                String status = rsStudents.getString("Status");
+
+                                                String presentChecked = "Present".equals(status) ? "checked" : "";
+                                                String absentChecked = "Absent".equals(status) ? "checked" : "";
+                                                String lateChecked = "Late".equals(status) ? "checked" : "";
                                     %>
                                     <tr>
-                                        <td><%= rsStudents.getString("StudentName") %></td>
+                                        <td><%= studentName %></td>
                                         <td>
-                                            <input type="radio" name="attendance_<%= rsStudents.getString("StudentID") %>" value="Present" checked> Present
-                                            <input type="radio" name="attendance_<%= rsStudents.getString("StudentID") %>" value="Absent"> Absent
-                                            <input type="radio" name="attendance_<%= rsStudents.getString("StudentID") %>" value="Late"> Late
+                                            <input type="radio" name="attendance_<%= studentId %>" value="Present" <%= presentChecked %>> Present
+                                            <input type="radio" name="attendance_<%= studentId %>" value="Absent" <%= absentChecked %>> Absent
+                                            <input type="radio" name="attendance_<%= studentId %>" value="Late" <%= lateChecked %>> Late
                                         </td>
                                     </tr>
-                                    <%
+                                    <% 
                                             }
                                         } catch (Exception e) {
-                                            System.err.println("Error loading students: " + e.getMessage());
+                                            session.setAttribute("message", "Error loading students: " + e.getMessage());
+                                            session.setAttribute("status", "error");
+                                        } finally {
+                                            if (rsStudents != null) try { rsStudents.close(); } catch (SQLException e) { /* ignore */ } 
+                                            if (pstmtStudents != null) try { pstmtStudents.close(); } catch (SQLException e) { /* ignore */ } 
                                         }
                                     %>
                                 </tbody>

@@ -82,7 +82,10 @@
 
                                         if (pstmt_grades != null) {
                                             rs_grades = pstmt_grades.executeQuery();
-                                            while (rs_grades.next()) {
+                                            if (!rs_grades.isBeforeFirst()) {
+                                                out.println("<tr><td colspan=\"6\">No grade records found.</td></tr>");
+                                            } else {
+                                                while (rs_grades.next()) {
                                 %>
                                 <tr>
                                     <td><%= rs_grades.getString("StudentName") %></td>
@@ -93,11 +96,12 @@
                                     <td><%= rs_grades.getDate("GradeDate") %></td>
                                 </tr>
                                 <%
+                                                }
                                             }
                                         }
                                     } catch (Exception e) {
-                                        e.printStackTrace();
-                                        out.println("<pre>Error: " + e.getMessage() + "</pre>");
+                                        session.setAttribute("message", "Error loading grade records: " + e.getMessage());
+                                        session.setAttribute("status", "error");
                                     } finally {
                                         if (rs_grades != null) try { rs_grades.close(); } catch (SQLException e) { /* ignore */ }
                                         if (pstmt_grades != null) try { pstmt_grades.close(); } catch (SQLException e) { /* ignore */ }

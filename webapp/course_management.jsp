@@ -231,8 +231,25 @@
                 if (event.target.classList.contains('delete-button')) {
                     if (confirm('Are you sure you want to delete this course?')) {
                         const courseId = event.target.dataset.courseId;
-                        document.getElementById('delete-course-id').value = courseId;
-                        deleteCourseForm.submit();
+                        const formData = new FormData();
+                        formData.append('action', 'delete');
+                        formData.append('courseId', courseId);
+
+                        fetch('course_management_process.jsp', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                alert('Error deleting course.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error deleting course.');
+                        });
                     }
                 }
             });

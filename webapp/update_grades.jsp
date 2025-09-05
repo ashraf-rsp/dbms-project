@@ -51,10 +51,14 @@
                                         }
                             %>
                             <option value="<%= rsCourses.getInt("CourseID") %>" <%= selected %>><%= rsCourses.getString("CourseName") %></option>
-                            <%
+                            <% 
                                     }
                                 } catch (Exception e) {
-                                    System.err.println("Error loading courses: " + e.getMessage());
+                                    session.setAttribute("message", "Error loading courses: " + e.getMessage());
+                                    session.setAttribute("status", "error");
+                                } finally {
+                                    if (rsCourses != null) try { rsCourses.close(); } catch (SQLException e) { /* ignore */ } 
+                                    if (pstmtCourses != null) try { pstmtCourses.close(); } catch (SQLException e) { /* ignore */ } 
                                 }
                             %>
                         </select>
@@ -74,27 +78,52 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <%
+                                    <% 
                                         PreparedStatement pstmtStudents = null;
                                         ResultSet rsStudents = null;
                                         try {
                                             int courseId = Integer.parseInt(request.getParameter("courseId"));
-                                            String sqlStudents = "SELECT s.StudentID, s.StudentName FROM Students s JOIN Enrollments e ON s.StudentID = e.StudentID WHERE e.CourseID = ? ORDER BY s.StudentName";
+
+                                            // Check if grades have already been entered for this course
+                                            boolean gradesEntered = false;
+                                            String sqlCheckGrades = "SELECT COUNT(*) FROM Grades WHERE CourseID = ?";
+                                            PreparedStatement pstmtCheckGrades = conn.prepareStatement(sqlCheckGrades);
+                                            pstmtCheckGrades.setInt(1, courseId);
+                                            ResultSet rsCheckGrades = pstmtCheckGrades.executeQuery();
+                                            if (rsCheckGrades.next() && rsCheckGrades.getInt(1) > 0) {
+                                                gradesEntered = true;
+                                            }
+                                            rsCheckGrades.close();
+                                            pstmtCheckGrades.close();
+
+                                            if (gradesEntered) {
+                                                out.println("<tr><td colspan=\"2\"><div class=\"alert alert-info\">Grades for this course have already been entered.</div></td></tr>");
+                                            }
+
+                                            String sqlStudents = "SELECT s.StudentID, s.StudentName, g.GradeValue FROM Students s JOIN Enrollments e ON s.StudentID = e.StudentID LEFT JOIN Grades g ON e.EnrollmentID = g.EnrollmentID WHERE e.CourseID = ? ORDER BY s.StudentName";
                                             pstmtStudents = conn.prepareStatement(sqlStudents);
                                             pstmtStudents.setInt(1, courseId);
                                             rsStudents = pstmtStudents.executeQuery();
                                             while (rsStudents.next()) {
+                                                String studentId = rsStudents.getString("StudentID");
+                                                String studentName = rsStudents.getString("StudentName");
+                                                int gradeValue = rsStudents.getInt("GradeValue");
+                                                String grade = (gradeValue == 0) ? "" : String.valueOf(gradeValue);
                                     %>
                                     <tr>
-                                        <td><%= rsStudents.getString("StudentName") %></td>
+                                        <td><%= studentName %></td>
                                         <td>
-                                            <input type="number" min="0" max="100" name="grade_<%= rsStudents.getString("StudentID") %>" placeholder="Enter grade">
+                                            <input type="number" min="0" max="100" name="grade_<%= studentId %>" value="<%= grade %>" placeholder="Enter grade">
                                         </td>
                                     </tr>
-                                    <%
+                                    <% 
                                             }
                                         } catch (Exception e) {
-                                            System.err.println("Error loading students: " + e.getMessage());
+                                            session.setAttribute("message", "Error loading students: " + e.getMessage());
+                                            session.setAttribute("status", "error");
+                                        } finally {
+                                            if (rsStudents != null) try { rsStudents.close(); } catch (SQLException e) { /* ignore */ } 
+                                            if (pstmtStudents != null) try { pstmtStudents.close(); } catch (SQLException e) { /* ignore */ } 
                                         }
                                     %>
                                 </tbody>
