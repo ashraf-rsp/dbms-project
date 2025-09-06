@@ -1,0 +1,6 @@
+CREATE TABLE Sessions (
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    SessionName VARCHAR(50) NOT NULL,
+    Year INT NOT NULL,
+    Term VARCHAR(20) NOT NULL
+);

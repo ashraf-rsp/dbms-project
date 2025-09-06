@@ -1,0 +1,1 @@
+ALTER TABLE Enrollments ADD COLUMN SessionID INT;

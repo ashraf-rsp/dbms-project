@@ -1,0 +1,1 @@
+ALTER TABLE Courses ADD COLUMN SemesterID INT, DROP COLUMN Semester;

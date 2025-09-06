@@ -2,6 +2,7 @@
 <%@ page import="java.util.LinkedHashMap" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 <%@ include file="db_connection.jsp" %>
 <%@ include file="includes/auth_check.jspf" %>
 
@@ -12,28 +13,66 @@
         return;
     }
 
+    // Fetch all semesters
+    Map<Integer, String> semesters = new LinkedHashMap<>();
+    PreparedStatement pstmtSemesters = null;
+    ResultSet rsSemesters = null;
+    try {
+        String sqlSemesters = "SELECT SemesterID, SemesterName FROM Semesters ORDER BY SemesterLevel";
+        pstmtSemesters = conn.prepareStatement(sqlSemesters);
+        rsSemesters = pstmtSemesters.executeQuery();
+        while (rsSemesters.next()) {
+            semesters.put(rsSemesters.getInt("SemesterID"), rsSemesters.getString("SemesterName"));
+        }
+    } catch (SQLException e) {
+        System.err.println("Error fetching semesters: " + e.getMessage());
+    } finally {
+        if (rsSemesters != null) try { rsSemesters.close(); } catch (SQLException e) { /* ignore */ }
+        if (pstmtSemesters != null) try { pstmtSemesters.close(); } catch (SQLException e) { /* ignore */ }
+    }
+
+    // Fetch all sessions
+    List<String[]> sessions = new ArrayList<>();
+    PreparedStatement pstmtSessions = null;
+    ResultSet rsSessions = null;
+    try {
+        String sqlSessions = "SELECT SessionID, SessionName FROM Sessions ORDER BY Year DESC, Term";
+        pstmtSessions = conn.prepareStatement(sqlSessions);
+        rsSessions = pstmtSessions.executeQuery();
+        while (rsSessions.next()) {
+            sessions.add(new String[]{rsSessions.getString("SessionID"), rsSessions.getString("SessionName")});
+        }
+    } catch (SQLException e) {
+        System.err.println("Error fetching sessions: " + e.getMessage());
+    } finally {
+        if (rsSessions != null) try { rsSessions.close(); } catch (SQLException e) { /* ignore */ }
+        if (pstmtSessions != null) try { pstmtSessions.close(); } catch (SQLException e) { /* ignore */ }
+    }
+
+
     // Fetch all courses grouped by semester
-    LinkedHashMap<String, List<String[]>> coursesBySemester = new LinkedHashMap<>();
+    Map<Integer, List<String[]>> coursesBySemester = new LinkedHashMap<>();
     PreparedStatement pstmtCourses = null;
     ResultSet rsCourses = null;
 
     try {
-        String sqlCourses = "SELECT CourseID, CourseCode, CourseName, CreditHours, Semester, CourseFee FROM Courses ORDER BY Semester, CourseCode";
+        String sqlCourses = "SELECT c.CourseID, c.CourseCode, c.CourseName, c.CreditHours, c.CourseFee, c.SemesterID " +
+                            "FROM Courses c ORDER BY c.SemesterID, c.CourseCode";
         pstmtCourses = conn.prepareStatement(sqlCourses);
         rsCourses = pstmtCourses.executeQuery();
 
         while (rsCourses.next()) {
-            String courseId = rsCourses.getString("CourseID");
-            String courseCode = rsCourses.getString("CourseCode");
-            String courseName = rsCourses.getString("CourseName");
-            String creditHours = rsCourses.getString("CreditHours");
-            String semester = rsCourses.getString("Semester");
-            String courseFee = rsCourses.getString("CourseFee");
-
-            if (!coursesBySemester.containsKey(semester)) {
-                coursesBySemester.put(semester, new ArrayList<>());
+            int semesterID = rsCourses.getInt("SemesterID");
+            if (!coursesBySemester.containsKey(semesterID)) {
+                coursesBySemester.put(semesterID, new ArrayList<>());
             }
-            coursesBySemester.get(semester).add(new String[]{courseId, courseCode, courseName, creditHours, courseFee});
+            coursesBySemester.get(semesterID).add(new String[]{
+                rsCourses.getString("CourseID"),
+                rsCourses.getString("CourseCode"),
+                rsCourses.getString("CourseName"),
+                rsCourses.getString("CreditHours"),
+                rsCourses.getString("CourseFee")
+            });
         }
 
     } catch (SQLException e) {
@@ -66,13 +105,38 @@
         if (pstmtStudents != null) try { pstmtStudents.close(); } catch (SQLException e) { /* ignore */ }
         if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignore */ }
     }
-%>
+%> 
 
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= (String) session.getAttribute("theme") == null ? "ocean" : (String) session.getAttribute("theme") %>">
 <head>
     <title>Course Management - Academic Center</title>
     <link rel="stylesheet" href="css/responsive-table.css">
+    <style>
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .tab-link {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-right: 5px;
+        }
+        .tab-link.active {
+            border-color: #ccc;
+            border-bottom: 1px solid white;
+            background-color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <% request.setAttribute("title", "Course Management"); %>
@@ -89,6 +153,25 @@
                 </div>
 
                 <div class="summary-card">
+                    <h3>Create New Session</h3>
+                    <form action="create_session_process.jsp" method="post">
+                        <div class="form-group">
+                            <label for="year">Year:</label>
+                            <input type="number" id="year" name="year" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="term">Term:</label>
+                            <select id="term" name="term" class="form-control" required>
+                                <option value="Fall">Fall</option>
+                                <option value="Summer">Summer</option>
+                                <option value="Spring">Spring</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Session</button>
+                    </form>
+                </div>
+
+                <div class="summary-card">
                     <h3>Assign Course to Student</h3>
                     <form action="assign_course_process.jsp" method="post">
                         <div class="form-group">
@@ -101,12 +184,21 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="sessionId">Select Session:</label>
+                            <select id="sessionId" name="sessionId" class="form-control" required>
+                                <option value="">-- Select Session --</option>
+                                <% for (String[] sess : sessions) { %>
+                                    <option value="<%= sess[0] %>"><%= sess[1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="courseId">Select Course:</label>
                             <select id="courseId" name="courseId" class="form-control" required>
                                 <option value="">-- Select Course --</option>
-                                <% for (String semester : coursesBySemester.keySet()) { %>
-                                    <optgroup label="<%= semester %>">
-                                        <% for (String[] course : coursesBySemester.get(semester)) { %>
+                                <% for (Map.Entry<Integer, List<String[]>> entry : coursesBySemester.entrySet()) { %>
+                                    <optgroup label="<%= semesters.get(entry.getKey()) %>">
+                                        <% for (String[] course : entry.getValue()) { %>
                                             <option value="<%= course[0] %>" data-credits="<%= course[3] %>" data-fee-per-credit="<%= course[4] %>"><%= course[1] %> (<%= course[3] %> Credits)</option>
                                         <% } %>
                                     </optgroup>
@@ -131,14 +223,15 @@
                 </div>
 
                 <div class="data-table-container">
-                    <div class="table-header">
-                        <h3>All Available Courses</h3>
+                    <div class="tabs">
+                        <% for (Map.Entry<Integer, String> entry : semesters.entrySet()) { %>
+                            <div class="tab-link" onclick="openTab(event, 'semester-<%= entry.getKey() %>')"><%= entry.getValue() %></div>
+                        <% } %>
                     </div>
-                    <% if (coursesBySemester.isEmpty()) { %>
-                        <p>No course information available.</p>
-                    <% } else { %>
-                        <% for (String semester : coursesBySemester.keySet()) { %>
-                            <h4><%= semester %></h4>
+
+                    <% for (Map.Entry<Integer, String> entry : semesters.entrySet()) { %>
+                        <div id="semester-<%= entry.getKey() %>" class="tab-content">
+                            <h3><%= entry.getValue() %></h3>
                             <div class="responsive-table">
                                 <table class="dashboard-table">
                                     <thead>
@@ -150,18 +243,24 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% for (String[] course : coursesBySemester.get(semester)) { %>
+                                        <% if (coursesBySemester.containsKey(entry.getKey())) { %>
+                                            <% for (String[] course : coursesBySemester.get(entry.getKey())) { %>
+                                                <tr>
+                                                    <td><%= course[1] %></td>
+                                                    <td><%= course[2] %></td>
+                                                    <td><%= course[3] %></td>
+                                                    <td><%= course[4] %></td>
+                                                </tr>
+                                            <% } %>
+                                        <% } else { %>
                                             <tr>
-                                                <td><%= course[1] %></td>
-                                                <td><%= course[2] %></td>
-                                                <td><%= course[3] %></td>
-                                                <td><%= course[4] %></td>
+                                                <td colspan="4">No courses found for this semester.</td>
                                             </tr>
                                         <% } %>
                                     </tbody>
                                 </table>
                             </div>
-                        <% } %>
+                        </div>
                     <% } %>
                 </div>
             </div>
@@ -171,7 +270,24 @@
     <%@ include file="includes/footer.jsp" %>
 
     <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Open the first tab by default
+            document.querySelector('.tab-link').click();
+
             const courseSelect = document.getElementById('courseId');
             const calculatedFeeInput = document.getElementById('calculatedFee');
 
