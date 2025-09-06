@@ -102,6 +102,7 @@
                             }
                             pstmt.setInt(params.size() + 1, pageSize);
                             pstmt.setInt(params.size() + 2, offset);
+                            rs = pstmt.executeQuery();
                             while (rs.next()) {
                     %>
                     <div class="course-item" data-course-id="<%= rs.getString("CourseID") %>">
@@ -231,6 +232,7 @@
                 if (event.target.classList.contains('delete-button')) {
                     if (confirm('Are you sure you want to delete this course?')) {
                         const courseId = event.target.dataset.courseId;
+                        alert("Deleting course with ID: " + courseId);
                         const formData = new FormData();
                         formData.append('action', 'delete');
                         formData.append('courseId', courseId);

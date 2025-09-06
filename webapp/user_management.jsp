@@ -31,8 +31,10 @@
     }
 
     String username = "";
+    String email = "";
     String userType = "";
     String parentId = "";
+    String studentName = "";
     String formTitle = "Add New User";
     String submitButtonText = "Add User";
 
@@ -47,7 +49,7 @@
 
         try {
             
-            String sql = "SELECT Username, UserType, ParentID FROM Users WHERE UserID = ?";
+            String sql = "SELECT Username, UserType, ParentID, Email FROM Users WHERE UserID = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
@@ -56,6 +58,19 @@
                 username = rs.getString("Username");
                 userType = rs.getString("UserType");
                 parentId = rs.getString("ParentID");
+                email = rs.getString("Email");
+
+                if ("Student".equals(userType)) {
+                    String sqlStudent = "SELECT StudentName FROM Students WHERE UserID = ?";
+                    PreparedStatement pstmtStudent = conn.prepareStatement(sqlStudent);
+                    pstmtStudent.setInt(1, userId);
+                    ResultSet rsStudent = pstmtStudent.executeQuery();
+                    if (rsStudent.next()) {
+                        studentName = rsStudent.getString("StudentName");
+                    }
+                    rsStudent.close();
+                    pstmtStudent.close();
+                }
             } else {
                 session.setAttribute("message", "User not found.");
                 response.sendRedirect("user_management.jsp");
@@ -80,6 +95,7 @@
 <html lang="en" data-theme="<%= theme %>">
 <head>
     <title><%= formTitle %> - Academic Center</title>
+    <link rel="stylesheet" href="css/responsive-table.css">
 </head>
 <body>
     <%@ include file="includes/header.jsp" %>
@@ -100,12 +116,15 @@
                 <% } %>
 
                 <div class="form-container">
-                    <form action="user_management_process.jsp" method="post">
+                    <form action="user_management_process.jsp" method="post" onsubmit="return debugUpdate(this)">
                         <input type="hidden" name="action" value="<%= action != null ? action : "add" %>">
                         <input type="hidden" name="userId" value="<%= userId != -1 ? userId : "" %>">
 
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" value="<%= username %>" required>
+
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="<%= email %>" required>
 
                         <label for="password">Password: <% if ("edit".equals(action)) { %>(Leave blank to keep current password)<% } %></label>
                         <input type="password" id="password" name="password" <% if ("add".equals(action) || action == null) { %>required<% } %>>
@@ -121,7 +140,7 @@
 
                         <div id="studentNameField" style="display: <%= "Student".equals(userType) ? "block" : "none" %>;">
                             <label for="studentName">Student Name:</label>
-                            <input type="text" id="studentName" name="studentName" value="">
+                            <input type="text" id="studentName" name="studentName" value="<%= studentName %>">
                         </div>
 
                         <div id="parentIdField" style="display: <%= "Parent".equals(userType) || "Student".equals(userType) ? "block" : "none" %>;">
@@ -158,6 +177,23 @@
                 </div>
 
                 <script>
+                    function debugUpdate(form) {
+                        var userId = form.userId.value;
+                        var username = form.username.value;
+                        var email = form.email.value;
+                        var userType = form.userType.value;
+                        var studentName = form.studentName.value;
+                        var parentId = form.parentId.value;
+                        alert("Submitting the following values:\n" +
+                            "User ID: " + userId + "\n" +
+                            "Username: " + username + "\n" +
+                            "Email: " + email + "\n" +
+                            "User Type: " + userType + "\n" +
+                            "Student Name: " + studentName + "\n" +
+                            "Parent ID: " + parentId);
+                        return true;
+                    }
+
                     function toggleParentIdField() {
                         var userType = document.getElementById('userType').value;
                         var parentIdField = document.getElementById('parentIdField');
