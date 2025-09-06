@@ -1,5 +1,5 @@
-ச்சியை<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ page import="java.sql.*, java.util.*" %><%@ include file="db_connection.jsp" %>
-<%--
+<%@ page contentType="text/html;charset=UTF-8" language="java" %><%@ page import="java.sql.*, java.util.*" %><%@ include file="db_connection.jsp" %>
+<% 
     // AuthFilter handles access control and sets userRole.
     String userRole = (String) request.getAttribute("userRole");
 
@@ -34,7 +34,7 @@
         if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignore */ }
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { /* ignore */ }
     }
---%>
+%>
 <%@ include file="includes/meta.jsp" %>
 <html lang="en" data-theme="<%= theme %>">
 <head>
