@@ -26,15 +26,18 @@ public class AuthFilter implements Filter {
         pageRoles.put("/user_management_process.jsp", Arrays.asList("Admin"));
 
         // Teacher pages
+        pageRoles.put("/teacher_courses.jsp", Arrays.asList("Teacher"));
         pageRoles.put("/mark_attendance.jsp", Arrays.asList("Teacher"));
         pageRoles.put("/update_grades.jsp", Arrays.asList("Teacher"));
         pageRoles.put("/dashboards/teacher_dashboard.jsp", Arrays.asList("Teacher"));
 
         // Parent pages
+        pageRoles.put("/parent_courses.jsp", Arrays.asList("Parent"));
         pageRoles.put("/view_payments.jsp", Arrays.asList("Parent"));
         pageRoles.put("/dashboards/parent_dashboard.jsp", Arrays.asList("Parent"));
 
         // Student pages
+        pageRoles.put("/student_courses.jsp", Arrays.asList("Student"));
         pageRoles.put("/dashboards/student_dashboard.jsp", Arrays.asList("Student"));
 
         // Shared pages
@@ -45,6 +48,7 @@ public class AuthFilter implements Filter {
         pageRoles.put("/class_schedule.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
         pageRoles.put("/view_grades.jsp", Arrays.asList("Parent", "Student"));
         pageRoles.put("/view_attendance.jsp", Arrays.asList("Parent", "Student"));
+        pageRoles.put("/course_details.jsp", Arrays.asList("Admin", "Teacher", "Parent", "Student"));
     }
 
     @Override
