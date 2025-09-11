@@ -10,8 +10,7 @@
             <i class="fas fa-home"></i> Dashboard</a></li>
 
         <% if ("Admin".equals(userRole)) { %>
-            <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
-                <i class="fas fa-user"></i> Profile</a></li>
+            
             <li><a href="user_management.jsp" class="<%= currentPage.equals("user_management") ? "active" : "" %>">
                 <i class="fas fa-users-cog"></i> User Management</a></li>
             <li><a href="course_management.jsp" class="<%= currentPage.equals("course_management") ? "active" : "" %>">
@@ -30,8 +29,7 @@
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
         <% } else if ("Teacher".equals(userRole)) { %>
-            <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
-                <i class="fas fa-user"></i> Profile</a></li>
+            
             <li><a href="teacher_courses.jsp" class="<%= currentPage.equals("my_courses") ? "active" : "" %>">
                 <i class="fas fa-book"></i> My Courses</a></li>
             <li><a href="mark_attendance.jsp" class="<%= currentPage.equals("mark_attendance") ? "active" : "" %>">
@@ -46,8 +44,7 @@
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
         <% } else if ("Parent".equals(userRole)) { %>
-            <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
-                <i class="fas fa-user"></i> Profile</a></li>
+            
             <li><a href="parent_courses.jsp" class="<%= currentPage.equals("my_children_courses") ? "active" : "" %>">
                 <i class="fas fa-book"></i> My Children's Courses</a></li>
             <li><a href="view_grades.jsp" class="<%= currentPage.equals("view_grades") ? "active" : "" %>">
@@ -64,8 +61,7 @@
                 <i class="fas fa-clock"></i> Class Schedule</a></li>
 
         <% } else if ("Student".equals(userRole)) { %>
-            <li><a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
-                <i class="fas fa-user"></i> Profile</a></li>
+            
             <li><a href="student_courses.jsp" class="<%= currentPage.equals("my_courses") ? "active" : "" %>">
                 <i class="fas fa-book"></i> My Courses</a></li>
             <li><a href="view_grades.jsp" class="<%= currentPage.equals("view_grades") ? "active" : "" %>">
@@ -80,4 +76,14 @@
                 <i class="fas fa-envelope"></i> Messages</a></li>
         <% } %>
     </ul>
+    <div class="sidebar-bottom-actions">
+        <a href="profile_redirect.jsp" class="<%= currentPage.equals("profile") ? "active" : "" %>">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="logout.jsp">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
 </nav>
