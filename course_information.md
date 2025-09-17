@@ -1,0 +1,82 @@
+# Course Information
+
+This document outlines the course registration details by semester.
+
+## Fall 2022
+
+| Course Code  | Course Title                      | Credit Hours | Status            |
+| :----------- | :-------------------------------- | :----------- | :---------------- |
+| CHE 1111-0531 | Chemistry                         | 3            | Fresh Registration |
+| CHE 1112-0531 | Chemistry Lab                     | 1            | Fresh Registration |
+| CSE 1213-0613 | Structured Programming Language   | 3            | Fresh Registration |
+| CSE 1214-0613 | Structured Programming Language Lab | 1            | Fresh Registration |
+| HUM 1111-0031 | Organizational Behaviors          | 3            | Fresh Registration |
+| HUM 1113-0222 | Bangladesh Studies                | 3            | Fresh Registration |
+| MATH 1111-0541 | Mathematics-I                     | 3            | Fresh Registration |
+| PHY 1111-0533 | Physics                           | 3            | Fresh Registration |
+| PHY 1112-0533 | Physics Lab                       | 1            | Fresh Registration |
+
+## Spring 2023
+
+| Course Code  | Course Title                      | Credit Hours | Status            |
+| :----------- | :-------------------------------- | :----------- | :---------------- |
+| CSE 1203-0611 | Discrete Mathematics              | 3            | Fresh Registration |
+| CSE 2141-0613 | Object Oriented Programming Language | 3            | Fresh Registration |
+| CSE 2142-0613 | Object Oriented Programming Language Lab | 1            | Fresh Registration |
+| EEE 1211-0714 | Electrical Circuit Analysis       | 3            | Fresh Registration |
+| EEE 1212-0714 | Electrical Circuit Analysis Lab   | 1            | Fresh Registration |
+| ENG 1213-0231 | Communicative English             | 3            | Fresh Registration |
+| MATH 1213-0541 | Mathematics-II                    | 3            | Fresh Registration |
+
+## Fall 2023
+
+| Course Code  | Course Title                               | Credit Hours | Status            |
+| :----------- | :----------------------------------------- | :----------- | :---------------- |
+| CSE 1111-0611 | Fundamentals of Computer and Office Applications | 3            | Fresh Registration |
+| CSE 1112-0611 | Fundamentals of Computer Lab             | 1            | Fresh Registration |
+| CSE 2105-0613 | Competitive Programming-I                  | 1            | Fresh Registration |
+| CSE 2144-0611 | Engineering Drawing                        | 1            | Fresh Registration |
+| CSE 2234-0613 | Numerical Analysis with MATLAB             | 3            | Fresh Registration |
+| HUM 2125-0031 | Arts of Presentation                     | 3            | Fresh Registration |
+| MATH 2115-0541 | Mathematics-III                          | 3            | Fresh Registration |
+
+## Spring 2024
+
+| Course Code  | Course Title                      | Credit Hours | Status            |
+| :----------- | :-------------------------------- | :----------- | :---------------- |
+| BBA 2211-0414 | Business Communication            | 3            | Fresh Registration |
+| CSE 2205-0613 | Competitive Programming-II        | 1            | Fresh Registration |
+| CSE 2215-0613 | Data Structures and Algorithms    | 3            | Fresh Registration |
+| CSE 2216-0613 | Data Structures and Algorithms Lab | 1            | Fresh Registration |
+| CSE 2221-0613 | System Analysis and Design        | 3            | Fresh Registration |
+| CSE 2222-0613 | System Analysis and Design Lab    | 1            | Fresh Registration |
+| CSE 3131-0612 | Data Communicaiton and Networking | 3            | Fresh Registration |
+| CSE 3132-0612 | Data Communicaiton and Networking Lab | 1            | Fresh Registration |
+| MATH 2217-0542 | Math-IV (Probability and Statistics) | 3            | Fresh Registration |
+
+## Fall 2024
+
+| Course Code  | Course Title                      | Credit Hours | Status            |
+| :----------- | :-------------------------------- | :----------- | :---------------- |
+| CSE 3108-0613 | Integrated Design Project I       | 1            | Fresh Registration |
+| CSE 3143-0611 | Theory of Computing               | 3            | Fresh Registration |
+| CSE 3151-0414 | Digital Logic Design              | 3            | Fresh Registration |
+| CSE 3152-0414 | Digital Logic Design Lab          | 1            | Fresh Registration |
+| CSE 3253-0714 | Microprocessor and Assembly Language | 3            | Fresh Registration |
+| CSE 3254-0714 | Microprocessor and Assembly Language Lab | 1            | Fresh Registration |
+| EEE 2113-0714 | Electronics Devices and Circuits  | 3            | Fresh Registration |
+| EEE 2114-0714 | Electronics Devices and Circuits Lab | 1            | Fresh Registration |
+
+## Spring 2025
+
+| Course Code  | Course Title                      | Credit Hours | Status            |
+| :----------- | :-------------------------------- | :----------- | :---------------- |
+| CSE 3208-0613 | Integrated Design Project II      | 1            | Fresh Registration |
+| CSE 3219-0613 | Compiler Construction             | 3            | Fresh Registration |
+| CSE 3220-0613 | Compiler Construction Lab         | 1            | Fresh Registration |
+| CSE 3223-0612 | Database Management System        | 3            | Fresh Registration |
+| CSE 3224-0612 | Database Management System Lab    | 1            | Fresh Registration |
+| CSE 3246-0613 | Web Programming                   | 3            | Fresh Registration |
+| CSE 4277-0612 | Network and Server Administration | 3            | Fresh Registration |
+| CSE 4278-0612 | Network and Server Administration Lab | 1            | Fresh Registration |
+| HUM 3103-0413 | Principles of Management          | 3            | Fresh Registration |

@@ -1,18 +1,5 @@
-feat: Enhance user management and core application features
+feat: Redesign class schedule and sidebar
 
-This commit addresses several issues and introduces enhancements across the application:
+Redesigns the class schedule page from a basic grid to a modern, responsive "Agenda View". This new design groups classes by day and displays each class as a card for improved readability.
 
-- **User Management Page (`user_management.jsp`):
-  - Resolved JSP compilation errors related to `Map` and function declarations.
-  - Corrected SQL queries in `getUsersByType` to properly retrieve and display data for Admin, Teacher, Parent, and Student users, including correct email handling based on table structure.
-  - Implemented tabbed view for user types and dynamic display of related fields (e.g., student name, parent dropdown).
-
-- **General Improvements & Bug Fixes:**
-  - Updated `session_overview.md` with the latest development progress.
-  - Added robust role-based access checks to `assign_teacher.jsp`, `assign_teacher_process.jsp`, `course_management_process.jsp`, `enroll_student.jsp`, `enroll_student_process.jsp`, `mark_attendance.jsp`, `mark_attendance_process.jsp`, `update_grades.jsp`, `update_grades_process.jsp`.
-  - Improved error handling and user feedback across various JSPs by setting session messages and statuses.
-  - Refactored announcement and course deletion to use `fetch` API for better UX.
-  - Implemented duplicate enrollment and teacher assignment checks.
-  - Enhanced attendance and grade marking with pre-filling and status indicators.
-  - Added grade letter calculation in `update_grades_process.jsp`.
-  - Removed debug print statements from `send_message_process.jsp`.
+Refactors the sidebar navigation by moving the Profile and Logout links to a new dedicated action bar at the bottom, cleaning up the main navigation menu.
