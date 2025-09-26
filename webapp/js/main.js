@@ -109,11 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentCount = parseInt(element.textContent, 10);
         const newCount = parseInt(count, 10);
 
+        element.textContent = newCount; // Always update text content
+
         if (newCount > 0) {
-            element.textContent = newCount;
-            element.classList.remove('hidden');
+            element.style.display = 'block'; // Show if count > 0
         } else {
-            element.classList.add('hidden');
+            element.style.display = 'none'; // Hide if count is 0
         }
 
         // Optional: Add a small animation if the count changes

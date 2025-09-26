@@ -33,8 +33,10 @@ D:\Java\tomcat\webapps\dbms-project\login.jsp
 D:\Java\tomcat\webapps\dbms-project\login_process.jsp
 D:\Java\tomcat\webapps\dbms-project\logout.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_absent.jsp
+D:\Java\tomcat\webapps\dbms-project\mark_all_notifications_read.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_attendance.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_attendance_process.jsp
+D:\Java\tomcat\webapps\dbms-project\mark_notification_read.jsp
 D:\Java\tomcat\webapps\dbms-project\messages.jsp
 D:\Java\tomcat\webapps\dbms-project\parent_courses.jsp
 D:\Java\tomcat\webapps\dbms-project\parent_profile.jsp

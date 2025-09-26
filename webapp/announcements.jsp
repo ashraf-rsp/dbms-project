@@ -51,6 +51,7 @@
         <main class="content-area">
             <div class="page-header">
                 <h2><i class="fas fa-bullhorn"></i> Announcements</h2>
+                <button id="mark-all-read-button" class="button secondary-button"><i class="fas fa-check-double"></i> Mark All As Read</button>
             </div>
             
             <div class="data-table-container">
@@ -257,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         announcementItem.style.opacity = '0';
                         setTimeout(() => {
                             announcementItem.remove();
+                            document.dispatchEvent(new CustomEvent('notificationRead')); // Refresh count
                         }, 500);
                     } else {
                         alert('Error deleting announcement: ' + data.message);
@@ -269,5 +271,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Mark All As Read functionality
+    const markAllReadButton = document.getElementById('mark-all-read-button');
+    if (markAllReadButton) {
+        markAllReadButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to mark all notifications as read?')) {
+                fetch('mark_all_notifications_read.jsp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                        document.dispatchEvent(new CustomEvent('notificationRead')); // Refresh count
+                    } else {
+                        alert('Error marking all notifications as read: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while marking all notifications as read.');
+                });
+            }
+        });
+    }
 });
 </script>

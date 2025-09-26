@@ -96,6 +96,21 @@ body {
     right: -10px; /* Adjusted position */
 }
 
+.main-header .message-count {
+    background: var(--accent-rose);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    position: absolute;
+    top: -5px;
+    right: -10px; /* Adjusted position */
+}
+
+.main-header .message-icon {
+    position: relative;
+}
+
 .main-header .user-menu {
     display: flex;
     align-items: center;
