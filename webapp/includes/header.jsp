@@ -12,6 +12,7 @@
 
                 <div class="notification-icon" id="notification-bell">
                     <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notification-count">0</span>
                 </div>
 
                 <div class="message-icon">
@@ -40,42 +41,3 @@
         </button>
     </div>
 </header>
-
-<% if (session.getAttribute("loggedInUser") != null) { %>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const messageCountSpan = document.getElementById('message-count');
-        const loggedInUserId = "<%= request.getAttribute("userId") %>"; // Assuming userId is available in request scope
-
-        if (loggedInUserId && loggedInUserId !== "null") { // Check if user is logged in
-            const websocketUrl = "ws://" + window.location.host + "<%= request.getContextPath() %>/message-updates/" + loggedInUserId;
-            const websocket = new WebSocket(websocketUrl);
-
-            websocket.onopen = function(event) {
-                console.log("WebSocket connected:", event);
-            };
-
-            websocket.onmessage = function(event) {
-                const message = JSON.parse(event.data);
-                if (message.type === "new_message_count") {
-                    messageCountSpan.textContent = message.count;
-                    if (message.count > 0) {
-                        messageCountSpan.classList.add('has-messages'); // Add a class for styling
-                    } else {
-                        messageCountSpan.classList.remove('has-messages');
-                    }
-                }
-            };
-
-            websocket.onclose = function(event) {
-                console.log("WebSocket disconnected:", event);
-                // Optionally, try to reconnect after a delay
-            };
-
-            websocket.onerror = function(error) {
-                console.error("WebSocket error:", error);
-            };
-        }
-    });
-</script>
-<% } %>

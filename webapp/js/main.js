@@ -80,3 +80,57 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error in DOMContentLoaded event listener:', e);
     }
 });
+
+// --- Real-Time Count Polling ---
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationCountElement = document.getElementById('notification-count');
+    const messageCountElement = document.getElementById('message-count');
+
+    function fetchCounts() {
+        // Fetch Notification Count
+        fetch('get_notification_count.jsp')
+            .then(response => response.text())
+            .then(count => {
+                updateCount(notificationCountElement, count);
+            })
+            .catch(error => console.error('Error fetching notification count:', error));
+
+        // Fetch Message Count
+        fetch('get_message_count.jsp')
+            .then(response => response.text())
+            .then(count => {
+                updateCount(messageCountElement, count);
+            })
+            .catch(error => console.error('Error fetching message count:', error));
+    }
+
+    function updateCount(element, count) {
+        if (!element) return;
+        const currentCount = parseInt(element.textContent, 10);
+        const newCount = parseInt(count, 10);
+
+        if (newCount > 0) {
+            element.textContent = newCount;
+            element.classList.remove('hidden');
+        } else {
+            element.classList.add('hidden');
+        }
+
+        // Optional: Add a small animation if the count changes
+        if (newCount !== currentCount) {
+            element.classList.add('updated');
+            setTimeout(() => {
+                element.classList.remove('updated');
+            }, 500);
+        }
+    }
+
+    // Check if the count elements exist before starting polling
+    if (notificationCountElement && messageCountElement) {
+        // Fetch counts immediately on page load
+        fetchCounts();
+
+        // Poll for new counts every 10 seconds
+        setInterval(fetchCounts, 10000);
+    }
+});
