@@ -132,5 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Poll for new counts every 10 seconds
         setInterval(fetchCounts, 10000);
+
+        // Listen for custom event to refresh counts (e.g., after marking a notification as read)
+        document.addEventListener('notificationRead', fetchCounts);
     }
 });

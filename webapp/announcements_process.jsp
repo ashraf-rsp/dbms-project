@@ -17,10 +17,16 @@
             String announcementContent = request.getParameter("announcementContent");
 
             String sql = "INSERT INTO Alert_Log (Title, Content, Timestamp) VALUES (?, ?, NOW())";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, announcementTitle);
             pstmt.setString(2, announcementContent);
             pstmt.executeUpdate();
+            // Get the generated AlertID
+            ResultSet generatedKeys = pstmt.getGeneratedKeys();
+            int newAlertId = -1;
+            if (generatedKeys.next()) {
+                newAlertId = generatedKeys.getInt(1);
+            }
 
             // After creating the announcement, create a notification for all users
             try {
@@ -28,13 +34,14 @@
                 Statement userStmt = conn.createStatement();
                 ResultSet userRs = userStmt.executeQuery("SELECT UserID FROM Users");
 
-                String notificationSql = "INSERT INTO Notifications (UserID, Message, IsRead) VALUES (?, ?, 0)";
+                String notificationSql = "INSERT INTO Notifications (UserID, Message, AlertID, IsRead) VALUES (?, ?, ?, 0)";
                 PreparedStatement notificationPstmt = conn.prepareStatement(notificationSql);
 
                 while (userRs.next()) {
                     int userId = userRs.getInt("UserID");
                     notificationPstmt.setInt(1, userId);
                     notificationPstmt.setString(2, "New announcement posted: " + announcementTitle);
+                    notificationPstmt.setInt(3, newAlertId); // Store the AlertID
                     notificationPstmt.addBatch();
                 }
                 notificationPstmt.executeBatch(); // Execute batch insert

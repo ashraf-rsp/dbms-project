@@ -77,7 +77,8 @@
                                     for (Map<String, Object> announcement : announcements) {
                                         String date = ((Timestamp) announcement.get("Timestamp")).toString().substring(0, 10);
                             %>
-                                <tr class="announcement-item" data-title="<%= announcement.get("Title") %>" data-content="<%= announcement.get("Content") %>">
+                                <tr class="announcement-item" data-title="<%= announcement.get("Title") %>" data-content="<%= announcement.get("Content") %>" data-alert-id="<%= String.valueOf(announcement.get("AlertID")) %>">
+                                    <% System.err.println("--- ANNOUNCEMENTS JSP (Desktop): Rendering AlertID=" + announcement.get("AlertID") + " ---"); %>
                                     <td><%= announcement.get("Title") %></td>
                                     <td><%= date %></td>
                                     <% if ("Admin".equals(userRole)) { %>
@@ -103,7 +104,8 @@
                             for (Map<String, Object> announcement : announcements) {
                                 String date = ((Timestamp) announcement.get("Timestamp")).toString().substring(0, 10);
                     %>
-                        <div class="announcement-card">
+                                        <div class="announcement-card announcement-item" data-title="<%= announcement.get("Title") %>" data-content="<%= announcement.get("Content") %>" data-alert-id="<%= String.valueOf(announcement.get("AlertID")) %>">
+                            <% System.err.println("--- ANNOUNCEMENTS JSP (Mobile): Rendering AlertID=" + announcement.get("AlertID") + " ---"); %>
                             <div class="card-header">
                                 <h4><%= announcement.get("Title") %></h4>
                                 <span class="announcement-date"><%= date %></span>
@@ -170,10 +172,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalBackdrop = document.querySelector('.modal-backdrop');
 
     // Function to open the modal
-    function openModal(title, content) {
+    function openModal(title, content, alertId) {
         modalTitle.textContent = title;
         modalBody.innerHTML = content; // Use innerHTML to render potential HTML content
         modal.style.display = 'flex';
+
+        // Mark notification as read
+        if (alertId) {
+            fetch('mark_notification_read.jsp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ alertId: alertId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Notification marked as read:', data.message);
+                    // Trigger a refresh of the notification count
+                    // Assuming fetchCounts() is available globally or can be called
+                    if (typeof fetchCounts === 'function') {
+                        fetchCounts();
+                    } else {
+                        // Fallback if fetchCounts is not directly accessible (e.g., defined in main.js)
+                        // A simple way to trigger update is to dispatch a custom event
+                        document.dispatchEvent(new CustomEvent('notificationRead'));
+                    }
+                } else {
+                    console.error('Failed to mark notification as read:', data.message);
+                }
+            })
+            .catch(error => console.error('Error marking notification as read:', error));
+        }
     }
 
     // Function to close the modal
@@ -194,7 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const title = this.dataset.title;
             const content = this.dataset.content;
-            openModal(title, content);
+            const alertId = this.dataset.alertId; // Get the AlertID
+            console.log("--- ANNOUNCEMENTS JS: Clicked AlertID from dataset:", alertId, "---"); // DEBUG
+            openModal(title, content, alertId);
         });
     });
 
