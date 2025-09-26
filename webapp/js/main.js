@@ -136,5 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Listen for custom event to refresh counts (e.g., after marking a notification as read)
         document.addEventListener('notificationRead', fetchCounts);
+        // Listen for custom event to refresh message counts (e.g., after marking messages as read)
+        document.addEventListener('messageRead', fetchCounts);
     }
 });

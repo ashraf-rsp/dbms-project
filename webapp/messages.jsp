@@ -45,6 +45,7 @@
         <main class="content-area">
             <div class="page-header">
                 <h2><i class="fas fa-envelope"></i> Messages</h2>
+                <button id="mark-all-messages-read-button" class="button secondary-button"><i class="fas fa-check-double"></i> Mark All As Read</button>
             </div>
             
             <div class="message-tabs">
@@ -379,5 +380,34 @@
                 }
             });
         });
+
+        // Mark All As Read functionality
+        const markAllMessagesReadButton = document.getElementById('mark-all-messages-read-button');
+        if (markAllMessagesReadButton) {
+            markAllMessagesReadButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to mark all messages as read?')) {
+                    fetch('mark_all_messages_read.jsp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            document.dispatchEvent(new CustomEvent('messageRead')); // Refresh count
+                            window.location.reload(); // Reload page to update message list
+                        } else {
+                            alert('Error marking all messages as read: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while marking all messages as read.');
+                    });
+                }
+            });
+        }
     });
 </script>
