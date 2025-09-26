@@ -95,12 +95,16 @@
                                 String sql = "";
 
                                 if ("inbox".equals(currentView)) {
-                                    sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
-                                          "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
+                                    sql = "SELECT m.MessageID, m.SenderUserID, m.ReceiverUserID, s.Username AS SenderUsername, r.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                          "FROM Messages m " +
+                                          "JOIN Users s ON m.SenderUserID = s.UserID " +
+                                          "JOIN Users r ON m.ReceiverUserID = r.UserID " +
                                           "WHERE m.ReceiverUserID = ? AND m.DeletedByReceiver = FALSE ORDER BY m.Timestamp DESC";
                                 } else { // sent view
-                                    sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
-                                          "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
+                                    sql = "SELECT m.MessageID, m.SenderUserID, m.ReceiverUserID, s.Username AS SenderUsername, r.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                          "FROM Messages m " +
+                                          "JOIN Users s ON m.SenderUserID = s.UserID " +
+                                          "JOIN Users r ON m.ReceiverUserID = r.UserID " +
                                           "WHERE m.SenderUserID = ? AND m.DeletedBySender = FALSE ORDER BY m.Timestamp DESC";
                                 }
 
@@ -123,7 +127,10 @@
                                 <td data-label="Actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= "inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername" %>"
+                                            data-sender-id="<%= rs.getInt("SenderUserID") %>"
+                                            data-receiver-id="<%= rs.getInt("ReceiverUserID") %>"
+                                            data-sender="<%= "inbox".equals(currentView) ? rs.getString("SenderUsername") : rs.getString("ReceiverUsername") %>"
+                                            data-receiver="<%= "inbox".equals(currentView) ? rs.getString("ReceiverUsername") : rs.getString("SenderUsername") %>"
                                             data-subject="<%= rs.getString("Subject") %>"
                                             data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
@@ -156,13 +163,17 @@
                         // Re-execute query for mobile cards
                         // Need to re-prepare statement as it might have been closed in finally block
                         if ("inbox".equals(currentView)) {
-                            sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
-                                  "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
-                                  "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
+                            sql = "SELECT m.MessageID, m.SenderUserID, m.ReceiverUserID, s.Username AS SenderUsername, r.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                  "FROM Messages m " +
+                                  "JOIN Users s ON m.SenderUserID = s.UserID " +
+                                  "JOIN Users r ON m.ReceiverUserID = r.UserID " +
+                                  "WHERE m.ReceiverUserID = ? AND m.DeletedByReceiver = FALSE ORDER BY m.Timestamp DESC";
                         } else { // sent view
-                            sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
-                                  "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
-                                  "WHERE m.SenderUserID = ? ORDER BY m.Timestamp DESC";
+                            sql = "SELECT m.MessageID, m.SenderUserID, m.ReceiverUserID, s.Username AS SenderUsername, r.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
+                                  "FROM Messages m " +
+                                  "JOIN Users s ON m.SenderUserID = s.UserID " +
+                                  "JOIN Users r ON m.ReceiverUserID = r.UserID " +
+                                  "WHERE m.SenderUserID = ? AND m.DeletedBySender = FALSE ORDER BY m.Timestamp DESC";
                         }
 
                         try {
@@ -186,7 +197,10 @@
                                 <div class="card-actions">
                                     <button class="button view-message-button" 
                                             data-message-id="<%= rs.getInt("MessageID") %>" 
-                                            data-sender="<%= "inbox".equals(currentView) ? "SenderUsername" : "ReceiverUsername" %>"
+                                            data-sender-id="<%= rs.getInt("SenderUserID") %>"
+                                            data-receiver-id="<%= rs.getInt("ReceiverUserID") %>"
+                                            data-sender="<%= "inbox".equals(currentView) ? rs.getString("SenderUsername") : rs.getString("ReceiverUsername") %>"
+                                            data-receiver="<%= "inbox".equals(currentView) ? rs.getString("ReceiverUsername") : rs.getString("SenderUsername") %>"
                                             data-subject="<%= rs.getString("Subject") %>"
                                             data-timestamp="<%= rs.getTimestamp("Timestamp") %>"
                                             data-is-read="<%= rs.getBoolean("IsRead") %>">
@@ -256,17 +270,19 @@
                 </form>
             </div>
 
-            <div class="view-message-modal" style="display:none;">
-                <div class="modal-content">
-                    <span class="close-button">&times;</span>
-                    <h2>Message Details</h2>
-                    <p><strong>From:</strong> <span id="modal-sender"></span></p>
-                    <p><strong>Subject:</strong> <span id="modal-subject"></span></p>
-                    <p><strong>Date:</strong> <span id="modal-timestamp"></span></p>
-                    <hr>
-                    <p id="modal-content"></p>
-                    <div class="modal-actions">
-                        <button class="button primary-button reply-message-button"><i class="fas fa-reply"></i> Reply</button>
+            <div class="view-message-modal modal-container" style="display:none;">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content chat-modal-content">
+                    <div class="modal-header">
+                        <h3 id="chat-modal-subject"></h3>
+                        <span class="close-button">&times;</span>
+                    </div>
+                    <div class="chat-history" id="chat-history">
+                        <!-- Chat messages will be loaded here -->
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-reply-input" placeholder="Type your message...">
+                        <button id="chat-send-button" class="button primary-button"><i class="fas fa-paper-plane"></i> Send</button>
                     </div>
                 </div>
             </div>
@@ -315,60 +331,155 @@
         }
 
         const viewMessageModal = document.querySelector('.view-message-modal');
-        const closeButton = document.querySelector('.view-message-modal .close-button');
-        
+        const closeButton = viewMessageModal.querySelector('.close-button');
+        const chatModalSubject = document.getElementById('chat-modal-subject');
+        const chatHistory = document.getElementById('chat-history');
+        const chatReplyInput = document.getElementById('chat-reply-input');
+        const chatSendButton = document.getElementById('chat-send-button');
+
+        let currentOtherUserId = null; // To store the ID of the user in the current chat
+
+        // Function to open the chat modal
+        function openChatModal(otherUserId, otherUsername, subject) {
+            currentOtherUserId = otherUserId;
+            chatModalSubject.textContent = `Chat with ${otherUsername} - ${subject}`;
+            chatHistory.innerHTML = ''; // Clear previous messages
+            viewMessageModal.style.display = 'flex';
+
+            // Fetch conversation history
+            const conversationHistoryUrl = "get_conversation_history.jsp?otherUserId=" + otherUserId;
+            console.log("--- MESSAGES JS DEBUG: Fetching conversation history from (concatenated):", conversationHistoryUrl, "---"); // DEBUG
+            fetch(conversationHistoryUrl)
+                .then(response => response.json())
+                .then(conversation => {
+                    conversation.forEach(msg => {
+                        const messageElement = document.createElement('div');
+                        messageElement.classList.add('chat-message');
+                        messageElement.classList.add(msg.senderId === userIdFromSession ? 'sent' : 'received');
+                        messageElement.innerHTML = `\r\n                            <div class="chat-bubble">\r\n                                ${msg.content}\r\n                                <div class="chat-message-info">${msg.senderUsername} - ${msg.timestamp}</div>\r\n                            </div>\r\n                        `;
+                        chatHistory.appendChild(messageElement);
+
+                        // Mark message as read if it's an unread message received by current user
+                        if (msg.receiverId === userIdFromSession && !msg.isRead) {
+                            fetch('send_message_process.jsp', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({ action: 'mark_read', messageId: msg.messageId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    console.log('Message marked as read:', msg.messageId);
+                                    document.dispatchEvent(new CustomEvent('messageRead')); // Refresh count
+                                } else {
+                                    console.error('Failed to mark message as read:', data.message);
+                                }
+                            })
+                            .catch(error => console.error('Error marking message as read:', error));
+                        }
+                    });
+                    chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to bottom
+                })
+                .catch(error => console.error('Error fetching conversation history:', error));
+        }
+
+        // Function to close the chat modal
+        function closeChatModal() {
+            viewMessageModal.style.display = 'none';
+            window.location.reload(); // Reload page to update message list status
+        }
+
+        // Event listeners for closing the modal
+        closeButton.addEventListener('click', closeChatModal);
+        window.addEventListener('click', function(event) {
+            if (event.target === viewMessageModal) {
+                closeChatModal();
+            }
+        });
+
         // View message button click
         document.querySelectorAll('.view-message-button').forEach(button => {
             button.addEventListener('click', function() {
                 const messageId = this.dataset.messageId;
-                const sender = this.dataset.sender;
+                const senderId = parseInt(this.dataset.senderId, 10); // Parse as integer
+                const receiverId = parseInt(this.dataset.receiverId, 10); // Parse as integer
+                const senderUsername = this.dataset.sender; // Assuming sender username is available
+                const receiverUsername = this.dataset.receiver; // Assuming receiver username is available
                 const subject = this.dataset.subject;
-                const timestamp = this.dataset.timestamp;
 
-                fetch('get_message_content.jsp?messageId=' + messageId)
-                    .then(response => response.text())
-                    .then(content => {
-                        document.getElementById('modal-sender').textContent = sender;
-                        document.getElementById('modal-subject').textContent = subject;
-                        document.getElementById('modal-timestamp').textContent = timestamp;
-                        document.getElementById('modal-content').innerHTML = content; // Use innerHTML to render breaks
-                        viewMessageModal.style.display = 'block';
+                // Determine the other user's ID and username for the chat
+                const userIdFromSession = parseInt("<%= userId %>", 10); // Get current user ID from session
+                let otherUserId = null;
+                let otherUsername = '';
 
-                        viewMessageModal.dataset.currentSender = sender;
-                        viewMessageModal.dataset.currentSubject = subject;
-                    })
-                    .catch(error => console.error('Error fetching message content:', error));
+                console.log("--- MESSAGES JS DEBUG: senderId=", senderId, ", receiverId=", receiverId, ", userIdFromSession=", userIdFromSession, "---"); // DEBUG
+
+                if (senderId === userIdFromSession) {
+                    otherUserId = receiverId;
+                    otherUsername = receiverUsername;
+                } else {
+                    otherUserId = senderId;
+                    otherUsername = senderUsername;
+                }
+
+                console.log("--- MESSAGES JS DEBUG: Determined otherUserId=", otherUserId, ", otherUsername=", otherUsername, "---"); // DEBUG
+
+                if (otherUserId) {
+                    openChatModal(otherUserId, otherUsername, subject);
+                } else {
+                    console.error('Could not determine other user for chat.'); // <--- This is the error message
+                }
             });
         });
 
-        // Reply message button click
-        document.querySelector('.reply-message-button').addEventListener('click', function() {
-            const sender = viewMessageModal.dataset.currentSender;
-            const subject = viewMessageModal.dataset.currentSubject;
-
-            document.getElementById('receiverUsername').value = sender;
-            document.getElementById('subject').value = 'Re: ' + subject;
-            document.getElementById('content').focus();
-            viewMessageModal.style.display = 'none';
-            document.querySelector('.compose-message-section').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Close modal
-        if(closeButton) {
-            closeButton.addEventListener('click', function() {
-                viewMessageModal.style.display = 'none';
-            });
-        }
-
-        window.addEventListener('click', function(event) {
-            if (event.target == viewMessageModal) {
-                viewMessageModal.style.display = 'none';
+        // Send reply functionality
+        chatSendButton.addEventListener('click', sendMessage);
+        chatReplyInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
 
+        function sendMessage() {
+            const replyContent = chatReplyInput.value.trim();
+            if (replyContent === '' || currentOtherUserId === null) {
+                return;
+            }
+
+            const bodyParams = new URLSearchParams();
+            bodyParams.append('action', 'send');
+            bodyParams.append('receiverUserId', currentOtherUserId);
+            bodyParams.append('subject', chatModalSubject.textContent.split(' - ')[1]); // Extract subject from modal title
+            bodyParams.append('content', replyContent);
+
+            fetch('send_message_process.jsp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: bodyParams
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chatReplyInput.value = '';
+                    // Reload conversation to show new message
+                    openChatModal(currentOtherUserId, chatModalSubject.textContent.split(' - ')[0].replace('Chat with ', ''), chatModalSubject.textContent.split(' - ')[1]);
+                } else {
+                    alert('Error sending message: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('An error occurred while sending the message.');
+            });
+        }
+
         // Delete message button click
         document.querySelectorAll('.delete-message-button').forEach(button => {
-            button.addEventListener('click', function() { // Removed event parameter
+            button.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete this message?')) {
                     const messageId = this.dataset.messageId;
                     const form = document.createElement('form');

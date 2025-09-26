@@ -39,11 +39,14 @@
                 pstmtInsert.setString(3, subject);
                 pstmtInsert.setString(4, content);
                 pstmtInsert.executeUpdate();
-                session.setAttribute("message", "Message sent successfully.");
-                session.setAttribute("status", "success");
+                response.setContentType("application/json");
+                response.getWriter().write("{\"status\": \"success\", \"message\": \"Message sent successfully.\"}");
+                return; // Stop execution
             } else {
-                session.setAttribute("message", "Recipient username not found.");
-                session.setAttribute("status", "error");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+                response.getWriter().write("{\"status\": \"error\", \"message\": \"Recipient username not found.\"}");
+                return; // Stop execution
             }
 
         } else if ("delete".equals(action)) {
@@ -63,7 +66,7 @@
             String sqlUpdateReceiver = "UPDATE Messages SET DeletedByReceiver = TRUE WHERE MessageID = ? AND ReceiverUserID = ?";
             PreparedStatement pstmtUpdateReceiver = conn.prepareStatement(sqlUpdateReceiver);
             pstmtUpdateReceiver.setInt(1, messageId);
-            pstmtUpdateReceiver.setInt(2, senderUserId);
+            pstmtUpdateReceiver.setInt(2, senderUserId); // Logged-in user is receiver
             int receiverRows = pstmtUpdateReceiver.executeUpdate();
             pstmtUpdateReceiver.close();
 
@@ -91,13 +94,14 @@
             }
 
             if (senderRows > 0 || receiverRows > 0) {
-                session.setAttribute("message", "Message deleted successfully.");
-                session.setAttribute("status", "success");
+                response.setContentType("application/json");
+                response.getWriter().write("{\"status\": \"success\", \"message\": \"Message deleted successfully.\"}");
+                return; // Stop execution
             } else {
-                // This case would mean the user is trying to delete a message that is not theirs,
-                // or the messageId is invalid. A generic success message is also fine to not reveal info.
-                session.setAttribute("message", "Message deleted successfully.");
-                session.setAttribute("status", "success");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+                response.getWriter().write("{\"status\": \"error\", \"message\": \"Message not found or not authorized.\"}");
+                return; // Stop execution
             }
 
         } else if ("mark_read".equals(action)) {
@@ -109,7 +113,9 @@
             pstmtMarkRead.setInt(2, senderUserId);
             pstmtMarkRead.executeUpdate();
             // No redirect needed for AJAX call
-            return;
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\": \"success\", \"message\": \"Message marked as read.\"}");
+            return; // Stop execution
         }
 
     } catch (Exception e) {
@@ -117,9 +123,11 @@
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String stackTrace = sw.toString();
-        session.setAttribute("message", "An error occurred: " + e.getMessage() + "<br><pre>" + stackTrace + "</pre>");
-        session.setAttribute("status", "error");
+        // session.setAttribute("message", "An error occurred: " + e.getMessage() + "<br><pre>" + stackTrace + "</pre>");
+        // session.setAttribute("status", "error");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+        response.getWriter().write("{\"status\": \"error\", \"message\": \"An internal error occurred: " + e.getMessage() + "\"}");
+        return; // Stop execution
     }
-
-    response.sendRedirect("messages.jsp");
 %>
