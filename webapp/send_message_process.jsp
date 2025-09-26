@@ -47,7 +47,9 @@
             }
 
         } else if ("delete".equals(action)) {
-            int messageId = Integer.parseInt(request.getParameter("messageId"));
+            String messageIdParam = request.getParameter("messageId"); // Get as String first
+            System.err.println("--- SEND MESSAGE PROCESS: Deleting messageIdParam='" + messageIdParam + "' ---"); // DEBUG
+            int messageId = Integer.parseInt(messageIdParam);
 
             // First, set DeletedBySender flag if the user is the sender
             String sqlUpdateSender = "UPDATE Messages SET DeletedBySender = TRUE WHERE MessageID = ? AND SenderUserID = ?";
@@ -64,6 +66,29 @@
             pstmtUpdateReceiver.setInt(2, senderUserId);
             int receiverRows = pstmtUpdateReceiver.executeUpdate();
             pstmtUpdateReceiver.close();
+
+            // Check if both sender and receiver have marked the message for deletion
+            String sqlCheckFlags = "SELECT DeletedBySender, DeletedByReceiver FROM Messages WHERE MessageID = ?";
+            PreparedStatement pstmtCheckFlags = conn.prepareStatement(sqlCheckFlags);
+            pstmtCheckFlags.setInt(1, messageId);
+            ResultSet rsFlags = pstmtCheckFlags.executeQuery();
+            boolean deletedBySender = false;
+            boolean deletedByReceiver = false;
+            if (rsFlags.next()) {
+                deletedBySender = rsFlags.getBoolean("DeletedBySender");
+                deletedByReceiver = rsFlags.getBoolean("DeletedByReceiver");
+            }
+            rsFlags.close();
+            pstmtCheckFlags.close();
+
+            if (deletedBySender && deletedByReceiver) {
+                // If both have marked for deletion, physically delete the message
+                String sqlDeleteMessage = "DELETE FROM Messages WHERE MessageID = ?";
+                PreparedStatement pstmtDeleteMessage = conn.prepareStatement(sqlDeleteMessage);
+                pstmtDeleteMessage.setInt(1, messageId);
+                pstmtDeleteMessage.executeUpdate();
+                pstmtDeleteMessage.close();
+            }
 
             if (senderRows > 0 || receiverRows > 0) {
                 session.setAttribute("message", "Message deleted successfully.");

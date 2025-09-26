@@ -97,11 +97,11 @@
                                 if ("inbox".equals(currentView)) {
                                     sql = "SELECT m.MessageID, u.Username AS SenderUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
                                           "FROM Messages m JOIN Users u ON m.SenderUserID = u.UserID " +
-                                          "WHERE m.ReceiverUserID = ? ORDER BY m.Timestamp DESC";
+                                          "WHERE m.ReceiverUserID = ? AND m.DeletedByReceiver = FALSE ORDER BY m.Timestamp DESC";
                                 } else { // sent view
                                     sql = "SELECT m.MessageID, u.Username AS ReceiverUsername, m.Subject, m.Content, m.Timestamp, m.IsRead " +
                                           "FROM Messages m JOIN Users u ON m.ReceiverUserID = u.UserID " +
-                                          "WHERE m.SenderUserID = ? ORDER BY m.Timestamp DESC";
+                                          "WHERE m.SenderUserID = ? AND m.DeletedBySender = FALSE ORDER BY m.Timestamp DESC";
                                 }
 
                                 try {
@@ -368,14 +368,26 @@
 
         // Delete message button click
         document.querySelectorAll('.delete-message-button').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function() { // Removed event parameter
                 if (confirm('Are you sure you want to delete this message?')) {
                     const messageId = this.dataset.messageId;
                     const form = document.createElement('form');
                     form.method = 'post';
                     form.action = 'send_message_process.jsp';
-                    form.innerHTML = `<input type="hidden" name="action" value="delete"><input type="hidden" name="messageId" value="${messageId}">`;
-                    document.body.appendChild(form);
+                    document.body.appendChild(form); // Append form first
+
+                    const actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'delete';
+                    form.appendChild(actionInput);
+
+                    const messageIdInput = document.createElement('input');
+                    messageIdInput.type = 'hidden';
+                    messageIdInput.name = 'messageId';
+                    messageIdInput.value = messageId; // Use the messageId from the dataset
+                    form.appendChild(messageIdInput);
+
                     form.submit();
                 }
             });
