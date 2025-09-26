@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 # IMPORTANT: This script cannot be run directly from this directory (/storage/emulated/0/...)
-# due to Android permissions. 
+# due to Android permissions.
 # To use it, first copy it to your home directory and make it executable:
 #
+
 # cp deploy.sh ~/
 # chmod +x ~/deploy.sh
 # ~/deploy.sh

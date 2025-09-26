@@ -1,0 +1,13 @@
+@echo off
+echo Configuring Tomcat shutdown port...
+
+echo Copying server.xml...
+copy "D:\Java\tomcat\conf\server.xml" .
+
+echo Modifying server.xml...
+powershell -Command "(Get-Content server.xml) -replace '<Server>', '<Server port=\"8005\" shutdown=\"SHUTDOWN\">' | Set-Content server.xml"
+
+echo Copying modified server.xml back to Tomcat...
+copy server.xml "D:\Java\tomcat\conf\server.xml"
+
+echo Tomcat configuration updated.

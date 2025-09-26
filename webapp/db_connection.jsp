@@ -3,13 +3,13 @@
 <%@ page import="java.sql.SQLException" %>
 <%
     // Database credentials
-    String dbUrl = "jdbc:mariadb://localhost:3306/academic_center_db";
-    String dbUser = "academic_user";
+    String dbUrl = "jdbc:mysql://localhost:3306/dbms_project";
+    String dbUser = "dbms_user";
     String dbPassword = "ashraf";
 
     Connection conn = null;
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     } catch (SQLException e) {
         // Log the exception or handle it as needed

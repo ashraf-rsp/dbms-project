@@ -1,8 +1,10 @@
 <header class="main-header">
     <div class="header-content">
-        <div class="logo-section">
-            <h1><i class="fas fa-graduation-cap"></i> ThinkSpire Academy</h1>
-        </div>
+        <a href="dashboard.jsp" style="text-decoration: none; color: inherit;">
+            <div class="logo-section">
+                <h1><i class="fas fa-graduation-cap"></i> ThinkSpire Academy</h1>
+            </div>
+        </a>
 
         <div class="header-actions desktop-header-actions">
             <% if (session.getAttribute("loggedInUser") != null) { %>
@@ -10,18 +12,11 @@
 
                 <div class="notification-icon" id="notification-bell">
                     <i class="fas fa-bell"></i>
-                    <span class="notification-count hidden" id="notification-count">0</span>
-                    <div class="notifications-dropdown" id="notifications-dropdown">
-                        
-                        <div class="notifications-list" id="notifications-list">
-                            <!-- Notifications will be loaded here by JavaScript -->
-                            <p class="no-notifications">No new notifications.</p>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="message-icon">
                     <a href="messages.jsp"><i class="fas fa-comment-dots"></i></a>
+                    <span class="message-count" id="message-count">0</span>
                 </div>
 
                 <div class="user-menu dropdown-toggle" id="user-menu-toggle">
@@ -46,100 +41,41 @@
     </div>
 </header>
 
+<% if (session.getAttribute("loggedInUser") != null) { %>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const notificationBell = document.getElementById('notification-bell');
-        const notificationsDropdown = document.getElementById('notifications-dropdown');
-        const notificationCount = document.getElementById('notification-count');
-        const notificationsList = document.getElementById('notifications-list');
+        const messageCountSpan = document.getElementById('message-count');
+        const loggedInUserId = "<%= request.getAttribute("userId") %>"; // Assuming userId is available in request scope
 
-        let loggedInUserId = <%= request.getAttribute("userId") %>;
+        if (loggedInUserId && loggedInUserId !== "null") { // Check if user is logged in
+            const websocketUrl = "ws://" + window.location.host + "<%= request.getContextPath() %>/message-updates/" + loggedInUserId;
+            const websocket = new WebSocket(websocketUrl);
 
-        // Function to fetch notifications
-        function fetchNotifications() {
-            // Ensure loggedInUserId is a valid number before fetching
-            if (typeof loggedInUserId === 'number' && loggedInUserId > 0) {
-                fetch(`notifications_api.jsp?action=fetch&userId=${loggedInUserId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            const notifications = data.notifications;
-                            notificationCount.textContent = notifications.length;
+            websocket.onopen = function(event) {
+                console.log("WebSocket connected:", event);
+            };
 
-                            // Hide count if zero
-                            if (notifications.length === 0) {
-                                notificationCount.classList.add('hidden');
-                                notificationsList.innerHTML = '<p class="no-notifications">No new notifications.</p>';
-                            } else {
-                                notificationCount.classList.remove('hidden');
-                                notificationsList.innerHTML = ''; // Clear existing notifications
-                                notifications.forEach(notification => {
-                                    const notificationLink = document.createElement('a');
-                                    notificationLink.href = `notification_details.jsp?id=${notification.notificationId}`;
-                                    notificationLink.classList.add('notification-item');
-                                    notificationLink.dataset.notificationId = notification.notificationId;
-                                    notificationLink.innerHTML = '<p>' + notification.message + '</p><span>' + new Date(notification.timestamp).toLocaleString() + '</span>';
-                                    notificationsList.appendChild(notificationLink);
-                                });
-                            }
-                        } else {
-                            // If the API returns an error (e.g. invalid userId), log it but don't crash
-                            console.error('Error fetching notifications:', data.message);
-                            notificationCount.classList.add('hidden');
-                            notificationsList.innerHTML = '<p class="no-notifications">Could not load notifications.</p>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching notifications:', error);
-                        notificationCount.classList.add('hidden');
-                        notificationsList.innerHTML = '<p class="no-notifications">Could not load notifications.</p>';
-                    });
-            } else {
-                // Don't even try to fetch if the user ID isn't a valid number
-                notificationCount.classList.add('hidden');
-            }
-        }
-
-        // Mark notification as read
-        notificationsList.addEventListener('click', function(event) {
-            const target = event.target.closest('.notification-item');
-            if (target) {
-                const notificationId = target.dataset.notificationId;
-                // Ensure notificationId is valid before sending
-                if (notificationId && !isNaN(notificationId)) {
-                    fetch(`notifications_api.jsp?action=mark_read&id=${notificationId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status !== 'success') {
-                                console.error('Failed to mark notification as read.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error marking notification as read:', error);
-                        });
+            websocket.onmessage = function(event) {
+                const message = JSON.parse(event.data);
+                if (message.type === "new_message_count") {
+                    messageCountSpan.textContent = message.count;
+                    if (message.count > 0) {
+                        messageCountSpan.classList.add('has-messages'); // Add a class for styling
+                    } else {
+                        messageCountSpan.classList.remove('has-messages');
+                    }
                 }
-            }
-        });
+            };
 
-        // Toggle dropdown visibility
-        notificationBell.addEventListener('click', function() {
-            notificationsDropdown.classList.toggle('show');
-            if (notificationsDropdown.classList.contains('show')) {
-                fetchNotifications(); // Fetch notifications when dropdown is opened
-            }
-        });
+            websocket.onclose = function(event) {
+                console.log("WebSocket disconnected:", event);
+                // Optionally, try to reconnect after a delay
+            };
 
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function(event) {
-            if (notificationBell && !notificationBell.contains(event.target) && !notificationsDropdown.contains(event.target)) {
-                notificationsDropdown.classList.remove('show');
-            }
-        });
-
-        // Initial fetch on page load
-        fetchNotifications();
-        // Periodically fetch every 60 seconds
-        setInterval(fetchNotifications, 60000);
-
+            websocket.onerror = function(error) {
+                console.error("WebSocket error:", error);
+            };
+        }
     });
 </script>
+<% } %>

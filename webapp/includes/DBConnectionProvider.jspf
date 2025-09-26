@@ -5,11 +5,11 @@
 
 <%! // Start of JSP declaration block
 public Connection getDbConnection() throws SQLException, ClassNotFoundException {
-    String dbUrl = "jdbc:mariadb://localhost:3306/academic_center_db";
-    String dbUser = "academic_user";
+    String dbUrl = "jdbc:mysql://localhost:3306/dbms_project";
+    String dbUser = "dbms_user";
     String dbPassword = "ashraf";
 
-    Class.forName("org.mariadb.jdbc.Driver");
+    Class.forName("com.mysql.jdbc.Driver");
     return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 }
 %>

@@ -13,6 +13,10 @@
         <url-pattern>*.jsp</url-pattern>
     </filter-mapping>
 
+    <listener>
+        <listener-class>com.academic.RealtimeManager</listener-class>
+    </listener>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

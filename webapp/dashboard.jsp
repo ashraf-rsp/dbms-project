@@ -76,7 +76,7 @@
 <head>
     <title>Dashboard - Academic Center</title>
 </head>
-<body>
+<body data-userid="<%= request.getAttribute("userId") %>">
     <% request.setAttribute("title", "Dashboard"); %>
     <%@ include file="includes/header.jsp" %>
 

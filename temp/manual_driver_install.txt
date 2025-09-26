@@ -1,0 +1,15 @@
+Instructions for manually installing the JDBC driver:
+
+1. Open your File Explorer.
+
+2. Go to the project's lib folder. You can copy and paste this path into the address bar:
+   E:\2025\PersonalProject\dbms-project\webapp\WEB-INF\lib
+
+3. Copy the driver file. You will see a file named mysql-connector-j-8.0.33.jar. Right-click on it and select "Copy".
+
+4. Go to Tomcat's lib folder. You can copy and paste this path into the address bar:
+   D:\Java\tomcat\lib
+
+5. Paste the driver file. Right-click in an empty space inside this folder and select "Paste".
+
+Once you've done that, the mysql-connector-j-8.0.33.jar file will be in Tomcat's main library folder. Please let me know when you have finished, and I will try redeploying the application again.

@@ -3,7 +3,7 @@
 <%
     String plainPassword = request.getParameter("password");
     if (plainPassword != null && !plainPassword.isEmpty()) {
-        String hashedPassword = PasswordUtil.hash(plainPassword);
+        String hashedPassword = PasswordUtil.hashPassword(plainPassword);
         out.print(hashedPassword);
     } else {
         out.print("Error: No password provided.");
