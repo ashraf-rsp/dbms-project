@@ -20,6 +20,28 @@
             pstmt.setString(2, announcementContent);
             pstmt.executeUpdate();
 
+            // After creating the announcement, create a notification for all users
+            try {
+                // Get all user IDs
+                Statement userStmt = conn.createStatement();
+                ResultSet userRs = userStmt.executeQuery("SELECT UserID FROM Users");
+
+                String notificationSql = "INSERT INTO Notifications (UserID, Message, IsRead) VALUES (?, ?, 0)";
+                PreparedStatement notificationPstmt = conn.prepareStatement(notificationSql);
+
+                while (userRs.next()) {
+                    int userId = userRs.getInt("UserID");
+                    notificationPstmt.setInt(1, userId);
+                    notificationPstmt.setString(2, "New announcement posted: " + announcementTitle);
+                    notificationPstmt.addBatch();
+                }
+                notificationPstmt.executeBatch(); // Execute batch insert
+
+            } catch (SQLException e) {
+                // Log this error but don't stop the process if notifications fail
+                System.err.println("Error creating notifications for announcement: " + e.getMessage());
+            }
+
             session.setAttribute("message", "Announcement published successfully.");
             session.setAttribute("status", "success");
 
