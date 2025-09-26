@@ -10,10 +10,10 @@
             <% if (session.getAttribute("loggedInUser") != null) { %>
                 
 
-                <div class="notification-icon" id="notification-bell">
+                <a href="announcements.jsp" class="notification-icon" id="notification-bell" style="text-decoration: none; color: inherit;">
                     <i class="fas fa-bell"></i>
                     <span class="notification-count" id="notification-count">0</span>
-                </div>
+                </a>
 
                 <div class="message-icon">
                     <a href="messages.jsp"><i class="fas fa-comment-dots"></i></a>
