@@ -1,8 +1,10 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, jakarta.servlet.http.HttpServletResponse" %>
 <%@ include file="db_connection.jsp" %>
 <%
     String action = request.getParameter("action");
     String userRole = (String) request.getAttribute("userRole");
+
+    System.err.println("--- ANNOUNCEMENT PROCESS: Received action='" + action + "' ---"); // Debugging line
 
     if (!"Admin".equals(userRole)) {
         response.sendRedirect("access_denied.jsp");
@@ -44,6 +46,7 @@
 
             session.setAttribute("message", "Announcement published successfully.");
             session.setAttribute("status", "success");
+            response.sendRedirect("announcements.jsp");
 
         } else if ("delete".equals(action)) {
             int alertId = Integer.parseInt(request.getParameter("alertId"));
@@ -53,14 +56,21 @@
             pstmt.setInt(1, alertId);
             pstmt.executeUpdate();
 
-            session.setAttribute("message", "Announcement deleted successfully.");
-            session.setAttribute("status", "success");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\": \"success\", \"message\": \"Announcement deleted successfully.\"}");
+            return; // Stop execution
+        } else {
+            // Fallback for invalid action
+            response.setContentType("application/json");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+            response.getWriter().write("{\"status\": \"error\", \"message\": \"Invalid or missing action parameter.\"}");
+            return;
         }
     } catch (Exception e) {
-        session.setAttribute("message", "An error occurred: " + e.getMessage());
-        session.setAttribute("status", "error");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"status\": \"error\", \"message\": \"" + e.getMessage() + "\"}");
         e.printStackTrace();
+        return; // Stop execution
     }
-
-    response.sendRedirect("announcements.jsp");
 %>

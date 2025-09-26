@@ -77,7 +77,7 @@
                                     for (Map<String, Object> announcement : announcements) {
                                         String date = ((Timestamp) announcement.get("Timestamp")).toString().substring(0, 10);
                             %>
-                                <tr class="announcement-row">
+                                <tr class="announcement-item" data-title="<%= announcement.get("Title") %>" data-content="<%= announcement.get("Content") %>">
                                     <td><%= announcement.get("Title") %></td>
                                     <td><%= date %></td>
                                     <% if ("Admin".equals(userRole)) { %>
@@ -144,36 +144,97 @@
         </main>
     </div>
     
+    <!-- Announcement View Modal -->
+    <div id="announcement-modal" class="modal-container" style="display:none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button id="modal-close-button" class="modal-close-button">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+        </div>
+    </div>
+
     <%@ include file="includes/footer.jsp" %>
 </body>
 </html>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.delete-announcement-button').forEach(button => {
-            button.addEventListener('click', function() {
-                if (confirm('Are you sure you want to delete this announcement?')) {
-                    const alertId = this.dataset.alertId;
-                    const formData = new FormData();
-                    formData.append('action', 'delete');
-                    formData.append('alertId', alertId);
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal elements
+    const modal = document.getElementById('announcement-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalButton = document.getElementById('modal-close-button');
+    const modalBackdrop = document.querySelector('.modal-backdrop');
 
-                    fetch('announcements_process.jsp', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.reload();
-                        } else {
-                            alert('Error deleting announcement.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error deleting announcement.');
-                    });
-                }
-            });
+    // Function to open the modal
+    function openModal(title, content) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = content; // Use innerHTML to render potential HTML content
+        modal.style.display = 'flex';
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Event listeners for closing the modal
+    closeModalButton.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', closeModal);
+
+    // Event listener for opening the modal
+    document.querySelectorAll('.announcement-item').forEach(item => {
+        item.addEventListener('click', function(event) {
+            // Don't open modal if the delete button was clicked
+            if (event.target.closest('.delete-announcement-button')) {
+                return;
+            }
+            const title = this.dataset.title;
+            const content = this.dataset.content;
+            openModal(title, content);
         });
     });
+
+    // Enhanced delete functionality
+    document.querySelectorAll('.delete-announcement-button').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this announcement?')) {
+                const alertId = this.dataset.alertId;
+                const announcementItem = this.closest('.announcement-item');
+                
+                const bodyParams = new URLSearchParams();
+                bodyParams.append('action', 'delete');
+                bodyParams.append('alertId', alertId);
+
+                fetch('announcements_process.jsp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: bodyParams
+                })
+                .then(response => response.json()) // Expect a JSON response
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Smoothly remove the element from the DOM
+                        announcementItem.style.transition = 'opacity 0.5s ease';
+                        announcementItem.style.opacity = '0';
+                        setTimeout(() => {
+                            announcementItem.remove();
+                        }, 500);
+                    } else {
+                        alert('Error deleting announcement: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the announcement.');
+                });
+            }
+        });
+    });
+});
 </script>
