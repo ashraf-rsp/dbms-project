@@ -33,7 +33,6 @@ D:\Java\tomcat\webapps\dbms-project\login.jsp
 D:\Java\tomcat\webapps\dbms-project\login_process.jsp
 D:\Java\tomcat\webapps\dbms-project\logout.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_absent.jsp
-D:\Java\tomcat\webapps\dbms-project\mark_all_messages_read.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_all_notifications_read.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_attendance.jsp
 D:\Java\tomcat\webapps\dbms-project\mark_attendance_process.jsp
@@ -119,5 +118,4 @@ D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\jakarta.servlet-api-6.1.0.jar
 D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\jakarta.websocket-api-2.2.0.jar
 D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\javax.servlet-api-4.0.1.jar
 D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\javax.websocket-api-1.1.jar
-D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\json.jar
 D:\Java\tomcat\webapps\dbms-project\WEB-INF\lib\mysql-connector-j-8.0.33.jar
