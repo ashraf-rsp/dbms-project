@@ -8,6 +8,7 @@
     String dbPassword = "ashraf";
 
     Connection conn = null;
+    System.err.println("--- db_connection.jsp: Attempting to connect to the database ---");
     try {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);

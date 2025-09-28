@@ -9,23 +9,29 @@ timeout /t 5 /nobreak > nul
 
 echo Tomcat stopped.
 
-echo Clearing Tomcat work directory completely...
-if exist "%CATALINA_HOME%\work" (
-    rmdir /s /q "%CATALINA_HOME%\work"
-    mkdir "%CATALINA_HOME%\work"
-    echo Work directory cleared and recreated.
-) else (
-    echo Work directory not found, skipping.
+echo Performing aggressive Tomcat cleanup...
+
+if exist "%CATALINA_HOME%\webapps\dbms-project" (
+    echo Deleting deployed application directory...
+    rmdir /s /q "%CATALINA_HOME%\webapps\dbms-project"
 )
 
-echo Clearing Tomcat temp directory...
-if exist "%CATALINA_HOME%\temp" (
-    rmdir /s /q "%CATALINA_HOME%\temp"
-    mkdir "%CATALINA_HOME%\temp"
-    echo Temp directory cleared and recreated.
-) else (
-    echo Temp directory not found, skipping.
+if exist "%CATALINA_HOME%\work\Catalina\localhost\dbms-project" (
+    echo Deleting application's work directory...
+    rmdir /s /q "%CATALINA_HOME%\work\Catalina\localhost\dbms-project"
 )
+
+if exist "%CATALINA_HOME%\work\Catalina\localhost" (
+    echo Clearing contents of general work directory...
+    del /s /q "%CATALINA_HOME%\work\Catalina\localhost\*"
+)
+
+if exist "%CATALINA_HOME%\temp" (
+    echo Clearing contents of temp directory...
+    del /s /q "%CATALINA_HOME%\temp\*"
+)
+
+echo Aggressive cleanup finished.
 
 echo Deploying application...
 robocopy webapp "%CATALINA_HOME%\webapps\dbms-project" /E /PURGE /NFL /NDL /NJH /NJS /nc /ns /np > nul
