@@ -249,6 +249,9 @@
                         <textarea id="chat-reply-input" placeholder="Type your reply..."></textarea>
                         <button id="chat-send-button" class="button primary-button">Send</button>
                     </div>
+                    <div class="modal-actions">
+                        <button class="button primary-button reply-message-button"><i class="fas fa-reply"></i> Reply</button>
+                    </div>
                 </div>
             </div>
         </main>
