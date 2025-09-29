@@ -1,0 +1,16 @@
+CREATE TABLE students (
+    StudentID VARCHAR2(255) NOT NULL,
+    UserID NUMBER(11) DEFAULT NULL,
+    StudentName VARCHAR2(255) NOT NULL,
+    Phone VARCHAR2(20) DEFAULT NULL,
+    DOB DATE DEFAULT NULL,
+    RegistrationCode VARCHAR2(255) DEFAULT NULL,
+    Status VARCHAR2(50) DEFAULT 'Pending',
+    ParentNameProvided VARCHAR2(255) DEFAULT NULL,
+    ParentEmailProvided VARCHAR2(255) DEFAULT NULL,
+    ParentPhoneProvided VARCHAR2(255) DEFAULT NULL,
+    PhotoURL VARCHAR2(255) DEFAULT NULL,
+    PRIMARY KEY (StudentID),
+    UNIQUE (UserID),
+    UNIQUE (RegistrationCode)
+);

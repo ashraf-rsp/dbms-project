@@ -1,4 +1,0 @@
-<div class="form-group">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" value="<%= profileName %>" required>
-</div>

@@ -1,0 +1,21 @@
+CREATE TABLE grades (
+    GradeID NUMBER(11) NOT NULL,
+    EnrollmentID NUMBER(11) DEFAULT NULL,
+    GradePercentage NUMBER(5,2) DEFAULT NULL,
+    GradeLetter VARCHAR2(5) DEFAULT NULL,
+    GradedByUserID NUMBER(11) DEFAULT NULL,
+    GradeDate DATE DEFAULT NULL,
+    PRIMARY KEY (GradeID)
+);
+
+CREATE SEQUENCE grades_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER grades_trigger
+BEFORE INSERT ON grades
+FOR EACH ROW
+BEGIN
+    SELECT grades_seq.NEXTVAL
+    INTO :new.GradeID
+    FROM dual;
+END;
+/

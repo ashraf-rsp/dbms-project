@@ -1,1 +1,0 @@
-<p><strong>Admin Username:</strong> <%= profileName %></p>

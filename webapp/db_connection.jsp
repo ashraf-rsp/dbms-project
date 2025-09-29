@@ -2,21 +2,24 @@
 <%@ page import="java.sql.DriverManager" %>
 <%@ page import="java.sql.SQLException" %>
 <%
-    // Database credentials
-    String dbUrl = "jdbc:mysql://localhost:3306/dbms_project";
-    String dbUser = "dbms_user";
-    String dbPassword = "ashraf";
-
     Connection conn = null;
-    System.err.println("--- db_connection.jsp: Attempting to connect to the database ---");
     try {
+        /*
+        // OLD MySQL Credentials
+        String dbUrl_mysql = "jdbc:mysql://localhost:3306/dbms_project";
+        String dbUser_mysql = "dbms_user";
+        String dbPassword_mysql = "ashraf";
         Class.forName("com.mysql.jdbc.Driver");
+        */
+
+        // NEW Oracle Credentials
+        String dbUrl = "jdbc:oracle:thin:@//localhost:1521/XE";
+        String dbUser = "c##dbms";
+        String dbPassword = "ashraf";
+        Class.forName("oracle.jdbc.driver.OracleDriver");
         conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     } catch (SQLException e) {
-        // Log the exception or handle it as needed
         System.err.println("Database connection error: " + e.getMessage());
-        // Optionally, redirect to an error page or display a message
-        // response.sendRedirect("error.jsp?message=Database connection failed");
     } catch (ClassNotFoundException e) {
         System.err.println("JDBC Driver not found: " + e.getMessage());
     }

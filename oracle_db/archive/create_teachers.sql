@@ -1,0 +1,15 @@
+CREATE TABLE teachers (
+    TeacherID VARCHAR2(255) NOT NULL,
+    UserID NUMBER(11) DEFAULT NULL,
+    TeacherName VARCHAR2(255) NOT NULL,
+    SubjectTaught VARCHAR2(255) DEFAULT NULL,
+    Email VARCHAR2(255) DEFAULT NULL,
+    Phone VARCHAR2(20) DEFAULT NULL,
+    DOB DATE DEFAULT NULL,
+    RegistrationCode VARCHAR2(255) DEFAULT NULL,
+    Status VARCHAR2(50) DEFAULT 'Pending',
+    PhotoURL VARCHAR2(255) DEFAULT NULL,
+    PRIMARY KEY (TeacherID),
+    UNIQUE (UserID),
+    UNIQUE (RegistrationCode)
+);

@@ -1,8 +1,0 @@
-<div class="form-group">
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" name="firstName" value="<%= request.getAttribute("parentFirstName") != null ? request.getAttribute("parentFirstName") : "" %>" required>
-</div>
-<div class="form-group">
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" name="lastName" value="<%= request.getAttribute("parentLastName") != null ? request.getAttribute("parentLastName") : "" %>" required>
-</div>

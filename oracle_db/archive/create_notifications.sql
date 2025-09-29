@@ -1,0 +1,24 @@
+CREATE TABLE notifications (
+    NotificationID NUMBER(11) NOT NULL,
+    UserID NUMBER(11) DEFAULT NULL,
+    UserRole VARCHAR2(50) DEFAULT NULL,
+    Message CLOB DEFAULT NULL,
+    "Timestamp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    IsRead NUMBER(1) DEFAULT 0,
+    Link VARCHAR2(255) DEFAULT NULL,
+    "Type" VARCHAR2(50) DEFAULT NULL,
+    AlertID NUMBER(11) DEFAULT NULL,
+    PRIMARY KEY (NotificationID)
+);
+
+CREATE SEQUENCE notifications_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER notifications_trigger
+BEFORE INSERT ON notifications
+FOR EACH ROW
+BEGIN
+    SELECT notifications_seq.NEXTVAL
+    INTO :new.NotificationID
+    FROM dual;
+END;
+/

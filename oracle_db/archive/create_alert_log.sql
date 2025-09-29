@@ -1,0 +1,21 @@
+CREATE TABLE alert_log (
+    AlertID NUMBER(11) NOT NULL,
+    ParentID NUMBER(11) DEFAULT NULL,
+    Message CLOB DEFAULT NULL,
+    "Timestamp" TIMESTAMP DEFAULT NULL,
+    Title VARCHAR2(255) NOT NULL,
+    Content CLOB DEFAULT NULL,
+    PRIMARY KEY (AlertID)
+);
+
+CREATE SEQUENCE alert_log_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER alert_log_trigger
+BEFORE INSERT ON alert_log
+FOR EACH ROW
+BEGIN
+    SELECT alert_log_seq.NEXTVAL
+    INTO :new.AlertID
+    FROM dual;
+END;
+/

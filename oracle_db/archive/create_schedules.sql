@@ -1,0 +1,22 @@
+CREATE TABLE schedules (
+    ScheduleID NUMBER(11) NOT NULL,
+    CourseID NUMBER(11) DEFAULT NULL,
+    DayOfWeek VARCHAR2(10) DEFAULT NULL,
+    StartTime VARCHAR2(8) DEFAULT NULL,
+    EndTime VARCHAR2(8) DEFAULT NULL,
+    Room VARCHAR2(50) DEFAULT NULL,
+    TeacherUserID NUMBER(11) DEFAULT NULL,
+    PRIMARY KEY (ScheduleID)
+);
+
+CREATE SEQUENCE schedules_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER schedules_trigger
+BEFORE INSERT ON schedules
+FOR EACH ROW
+BEGIN
+    SELECT schedules_seq.NEXTVAL
+    INTO :new.ScheduleID
+    FROM dual;
+END;
+/

@@ -1,0 +1,6 @@
+CREATE TABLE user_message_status (
+    UserID NUMBER(11) NOT NULL,
+    UnreadCount NUMBER(11) DEFAULT 0,
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (UserID)
+);

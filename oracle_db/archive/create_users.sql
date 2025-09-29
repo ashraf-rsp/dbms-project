@@ -1,0 +1,27 @@
+CREATE TABLE users (
+    UserID NUMBER(11) NOT NULL,
+    Username VARCHAR2(50) DEFAULT NULL,
+    PasswordHash VARCHAR2(255) DEFAULT NULL,
+    UserType VARCHAR2(20) DEFAULT NULL,
+    ParentID NUMBER(11) DEFAULT NULL,
+    RegistrationCode VARCHAR2(255) DEFAULT NULL,
+    AdminName VARCHAR2(255) DEFAULT NULL,
+    Email VARCHAR2(255) DEFAULT NULL,
+    IsActive NUMBER(1) DEFAULT 1,
+    PRIMARY KEY (UserID),
+    UNIQUE (Username),
+    UNIQUE (RegistrationCode),
+    UNIQUE (Email)
+);
+
+CREATE SEQUENCE users_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER users_trigger
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    SELECT users_seq.NEXTVAL
+    INTO :new.UserID
+    FROM dual;
+END;
+/

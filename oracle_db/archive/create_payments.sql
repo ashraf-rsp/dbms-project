@@ -1,0 +1,19 @@
+CREATE TABLE payments (
+    PaymentID NUMBER(11) NOT NULL,
+    EnrollmentID NUMBER(11) DEFAULT NULL,
+    Amount NUMBER(10,2) DEFAULT NULL,
+    PaymentDate DATE DEFAULT NULL,
+    PRIMARY KEY (PaymentID)
+);
+
+CREATE SEQUENCE payments_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER payments_trigger
+BEFORE INSERT ON payments
+FOR EACH ROW
+BEGIN
+    SELECT payments_seq.NEXTVAL
+    INTO :new.PaymentID
+    FROM dual;
+END;
+/

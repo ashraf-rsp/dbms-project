@@ -2,6 +2,7 @@ D:\Java\tomcat\webapps\dbms-project\access_denied.jsp
 D:\Java\tomcat\webapps\dbms-project\admin_profile.jsp
 D:\Java\tomcat\webapps\dbms-project\announcements.jsp
 D:\Java\tomcat\webapps\dbms-project\announcements_process.jsp
+D:\Java\tomcat\webapps\dbms-project\archive
 D:\Java\tomcat\webapps\dbms-project\assets
 D:\Java\tomcat\webapps\dbms-project\assign_course_process.jsp
 D:\Java\tomcat\webapps\dbms-project\assign_teacher.jsp
@@ -42,7 +43,6 @@ D:\Java\tomcat\webapps\dbms-project\mark_notification_read.jsp
 D:\Java\tomcat\webapps\dbms-project\messages.jsp
 D:\Java\tomcat\webapps\dbms-project\parent_courses.jsp
 D:\Java\tomcat\webapps\dbms-project\parent_profile.jsp
-D:\Java\tomcat\webapps\dbms-project\profile.jsp
 D:\Java\tomcat\webapps\dbms-project\profile.jsp.bak
 D:\Java\tomcat\webapps\dbms-project\profile_process.jsp
 D:\Java\tomcat\webapps\dbms-project\profile_process.jsp.bak
@@ -69,6 +69,7 @@ D:\Java\tomcat\webapps\dbms-project\view_grades.jsp
 D:\Java\tomcat\webapps\dbms-project\view_payments.jsp
 D:\Java\tomcat\webapps\dbms-project\WEB-INF
 D:\Java\tomcat\webapps\dbms-project\websocket_endpoint.jsp
+D:\Java\tomcat\webapps\dbms-project\archive\profile.jsp
 D:\Java\tomcat\webapps\dbms-project\assets\images
 D:\Java\tomcat\webapps\dbms-project\assets\images\placeholder-student.png
 D:\Java\tomcat\webapps\dbms-project\assets\images\placeholder-teacher.png
@@ -93,7 +94,9 @@ D:\Java\tomcat\webapps\dbms-project\includes\meta.jsp
 D:\Java\tomcat\webapps\dbms-project\includes\parent_profile_details.jspf
 D:\Java\tomcat\webapps\dbms-project\includes\parent_profile_edit_fields.jspf
 D:\Java\tomcat\webapps\dbms-project\includes\sidebar.jsp
+D:\Java\tomcat\webapps\dbms-project\includes\student_profile_details.jspf
 D:\Java\tomcat\webapps\dbms-project\includes\student_profile_edit_fields.jspf
+D:\Java\tomcat\webapps\dbms-project\includes\teacher_profile_details.jspf
 D:\Java\tomcat\webapps\dbms-project\includes\teacher_profile_edit_fields.jspf
 D:\Java\tomcat\webapps\dbms-project\js\components.js
 D:\Java\tomcat\webapps\dbms-project\js\main.js

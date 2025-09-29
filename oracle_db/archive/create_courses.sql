@@ -1,0 +1,22 @@
+CREATE TABLE courses (
+    CourseID NUMBER(11) NOT NULL,
+    CourseName VARCHAR2(100) DEFAULT NULL,
+    CourseDescription CLOB DEFAULT NULL,
+    CourseFee NUMBER(10,2) DEFAULT NULL,
+    CourseCode VARCHAR2(50) DEFAULT NULL,
+    CreditHours NUMBER(11) DEFAULT NULL,
+    SemesterID NUMBER(11) DEFAULT NULL,
+    PRIMARY KEY (CourseID)
+);
+
+CREATE SEQUENCE courses_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER courses_trigger
+BEFORE INSERT ON courses
+FOR EACH ROW
+BEGIN
+    SELECT courses_seq.NEXTVAL
+    INTO :new.CourseID
+    FROM dual;
+END;
+/

@@ -1,0 +1,24 @@
+CREATE TABLE messages (
+    MessageID NUMBER(11) NOT NULL,
+    SenderUserID NUMBER(11) DEFAULT NULL,
+    ReceiverUserID NUMBER(11) DEFAULT NULL,
+    Subject VARCHAR2(255) DEFAULT NULL,
+    Content CLOB DEFAULT NULL,
+    "Timestamp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    IsRead NUMBER(1) DEFAULT 0,
+    DeletedBySender NUMBER(1) DEFAULT 0 NOT NULL,
+    DeletedByReceiver NUMBER(1) DEFAULT 0 NOT NULL,
+    PRIMARY KEY (MessageID)
+);
+
+CREATE SEQUENCE messages_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER messages_trigger
+BEFORE INSERT ON messages
+FOR EACH ROW
+BEGIN
+    SELECT messages_seq.NEXTVAL
+    INTO :new.MessageID
+    FROM dual;
+END;
+/
